@@ -1,0 +1,77 @@
+{
+  "title": "知识库 + 网络双源",
+  "description": "先检索知识库并写入变量，再 DuckDuckGo 搜索，LLM 综合知识库与网页摘要（类似 LightningRAG 混合检索）",
+  "templateName": "hybrid_kb_and_web",
+  "category": "检索",
+  "tags": ["知识库", "DuckDuckGo", "混合"],
+  "dsl": {
+    "components": {
+      "begin": {
+        "obj": { "component_name": "Begin", "params": { "prologue": "你好！我会同时参考你的知识库与公开网络信息。" } },
+        "downstream": ["retrieval_0"],
+        "upstream": []
+      },
+      "retrieval_0": {
+        "obj": {
+          "component_name": "Retrieval",
+          "params": {
+            "query": "{sys.query}",
+            "top_n": 6,
+            "empty_response": "（知识库暂无相关内容）",
+            "kb_ids": []
+          }
+        },
+        "downstream": ["setvar_0"],
+        "upstream": ["begin"]
+      },
+      "setvar_0": {
+        "obj": {
+          "component_name": "SetVariable",
+          "params": {
+            "assignments": [{ "key": "sys.kb_snippets", "value": "{retrieval_0@formalized_content}" }]
+          }
+        },
+        "downstream": ["duckduckgo_0"],
+        "upstream": ["retrieval_0"]
+      },
+      "duckduckgo_0": {
+        "obj": {
+          "component_name": "DuckDuckGo",
+          "params": { "query": "{sys.query}", "channel": "general", "top_n": 6, "timeout": 15 }
+        },
+        "downstream": ["generate_0"],
+        "upstream": ["setvar_0"]
+      },
+      "generate_0": {
+        "obj": {
+          "component_name": "LLM",
+          "params": {
+            "llm_id": "ollama@llama3.2",
+            "creativity": "balance",
+            "sys_prompt": "综合回答用户。优先使用「知识库」；不足时用「网络摘要」补充，并标明来源类型。\n\n【知识库】\n{sys.kb_snippets}\n\n【网络摘要】\n{duckduckgo_0@formalized_content}",
+            "prompts": [{ "role": "user", "content": "问题：{sys.query}" }]
+          }
+        },
+        "downstream": ["message_0"],
+        "upstream": ["duckduckgo_0"]
+      },
+      "message_0": {
+        "obj": { "component_name": "Message", "params": { "content": ["{generate_0@content}"] } },
+        "downstream": [],
+        "upstream": ["generate_0"]
+      }
+    },
+    "path": ["begin", "retrieval_0", "setvar_0", "duckduckgo_0", "generate_0", "message_0"],
+    "globals": {
+      "sys.query": "",
+      "sys.user_id": "",
+      "sys.conversation_turns": 0,
+      "sys.files": [],
+      "sys.kb_snippets": "",
+      "sys.await_reply": "",
+      "env.tavily_api_key": ""
+    },
+    "history": [],
+    "retrieval": []
+  }
+}

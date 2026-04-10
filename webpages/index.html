@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="assets/logo.png" type="image/png" />
+    <meta
+      name="description"
+      content="LightningRAG is a Go (Gin) and Vue 3 full-stack RAG and admin foundation. Compared with typical Python stacks, it offers higher performance, compiled deployment, smaller artifacts, and stronger concurrency."
+    />
+    <meta
+      name="keywords"
+      content="LightningRAG,RAG,retrieval-augmented generation,Gin,Vue 3,Go,full-stack,admin,knowledge base,open source"
+    />
+    <meta name="author" content="LightningRAG" />
+    <meta name="theme-color" content="#4d70ff" />
+    <meta name="robots" content="index,follow" />
+    <!-- If deployed under a subpath, update canonical, og:url, and sitemap absolute URLs. -->
+    <link rel="canonical" href="https://lightningrag.com/" />
+    <title>
+      LightningRAG — High-performance full-stack RAG and development platform
+    </title>
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="LightningRAG" />
+    <meta
+      property="og:title"
+      content="LightningRAG — High-performance full-stack RAG and development platform"
+    />
+    <meta
+      property="og:description"
+      content="Enterprise RAG and admin platform built with Go and Vue. Fast, shippable as binaries, compact, and scalable concurrency."
+    />
+    <meta property="og:url" content="https://lightningrag.com/" />
+    <meta
+      property="og:image"
+      content="https://lightningrag.com/assets/logo.png"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="stylesheet" href="css/site.css" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "LightningRAG",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Linux, Windows, macOS",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "description": "Full-stack RAG and admin foundation with Gin and Vue 3, featuring JWT, dynamic routes, permissions, and code generation.",
+        "url": "https://lightningrag.com/",
+        "codeRepository": "https://github.com/LightningRAG/LightningRAG",
+        "license": "https://www.apache.org/licenses/LICENSE-2.0"
+      }
+    </script>
+  </head>
+  <body>
+    <a class="sr-only" href="#main" data-i18n="a11y.skipMain">Skip to main content</a>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a
+          class="site-brand"
+          href="index.html"
+          data-i18n-aria-label="a11y.brandHome"
+          aria-label="LightningRAG home"
+        >
+          <img
+            src="assets/logo.png"
+            data-i18n-alt="brand.logoAlt"
+            alt="LightningRAG"
+            width="40"
+            height="40"
+            loading="eager"
+          />
+          <span>LightningRAG</span>
+        </a>
+        <nav class="site-nav" aria-label="Main navigation" data-i18n-aria-label="a11y.navMain">
+          <a href="#features" data-i18n="nav.features">Features</a>
+          <a href="#advantages" data-i18n="nav.advantages">Advantages</a>
+          <a href="articles/" data-i18n="nav.articles">Articles</a>
+          <a href="guide/index.html" data-i18n="nav.docs">Documentation</a>
+          <a href="license.html" data-i18n="nav.license">Commercial license</a>
+        </nav>
+        <div class="site-header__actions">
+          <label class="sr-only" for="lr-lang-select" data-i18n="ui.langAria"
+            >Language</label
+          >
+          <select
+            id="lr-lang-select"
+            class="lr-lang-select"
+            aria-label="Language"
+            data-i18n-aria-label="ui.langAria"
+          >
+            <option value="en">English</option>
+            <option value="zh-CN">简体中文</option>
+            <option value="zh-TW">繁體中文</option>
+            <option value="es">Español</option>
+            <option value="fr">Français</option>
+            <option value="de">Deutsch</option>
+            <option value="ja">日本語</option>
+            <option value="ko">한국어</option>
+            <option value="pt">Português</option>
+            <option value="ru">Русский</option>
+            <option value="it">Italiano</option>
+          </select>
+          <a
+            class="btn btn--primary"
+            href="https://github.com/LightningRAG/LightningRAG"
+            rel="noopener noreferrer"
+            data-i18n="btn.github"
+            >GitHub</a
+          >
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="wrap">
+          <span class="hero__badge" data-i18n="hero.badge"
+            >Go · Gin · Vue 3 · Full-stack RAG platform</span
+          >
+          <h1 id="hero-title" data-i18n="hero.title">
+            A high-performance foundation for enterprise RAG and business backends
+          </h1>
+          <p class="hero__sub" data-i18n="hero.sub">
+            LightningRAG brings together authentication, dynamic routing,
+            knowledge bases, and agents so you can focus on business logic and
+            model quality—not rebuilding infrastructure.
+          </p>
+          <div class="hero__cta">
+            <a
+              class="btn btn--primary"
+              href="https://github.com/LightningRAG/LightningRAG"
+              rel="noopener noreferrer"
+              data-i18n="hero.ctaSource"
+              >View source on GitHub</a
+            >
+            <a
+              class="btn btn--outline"
+              href="guide/index.html"
+              data-i18n="hero.ctaDocs"
+              >Read the docs</a
+            >
+          </div>
+        </div>
+      </section>
+
+      <section id="features" class="section" aria-labelledby="features-title">
+        <div class="wrap">
+          <h2 id="features-title" class="section__title" data-i18n="features.title">
+            Product highlights
+          </h2>
+          <p class="section__lead" data-i18n="features.lead">
+            Extend a proven full-stack architecture for RAG—from knowledge bases
+            to agent orchestration—with one unified stack and delivery model.
+          </p>
+          <div class="grid-cards grid-cards--3">
+            <article class="card">
+              <div class="card__icon" aria-hidden="true">⚡</div>
+              <h3 data-i18n="features.c1t">Full-stack, unified</h3>
+              <p data-i18n="features.c1p">
+                Gin on the backend and Vue 3 on the frontend, plus JWT, dynamic
+                menus, Casbin, and code generation—ship admin consoles and RAG
+                pipelines faster.
+              </p>
+            </article>
+            <article class="card">
+              <div class="card__icon" aria-hidden="true">📚</div>
+              <h3 data-i18n="features.c2t">RAG-ready workflows</h3>
+              <p data-i18n="features.c2p">
+                Retrieval-augmented pipelines where knowledge, documents, and
+                agents integrate with your users and permissions—ideal for
+                private deployments and customization.
+              </p>
+            </article>
+            <article class="card">
+              <div class="card__icon" aria-hidden="true">🔧</div>
+              <h3 data-i18n="features.c3t">Extensible and integrable</h3>
+              <p data-i18n="features.c3p">
+                Modular hooks for vector stores, model services, and enterprise
+                SSO. Website content and documentation can evolve together with
+                articles and release notes.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section
+        id="advantages"
+        class="section section--tight"
+        aria-labelledby="adv-title"
+      >
+        <div class="wrap">
+          <h2 id="adv-title" class="section__title" data-i18n="adv.title">
+            Core advantages vs. typical Python projects
+          </h2>
+          <p class="section__lead" data-i18n="adv.lead">
+            A Go-based compiled backend complements interpreted Python stacks in
+            performance, shipping model, and operations—especially when latency,
+            concurrency, and deployment footprint matter.
+          </p>
+          <div class="compare">
+            <ul class="compare__list">
+              <li>
+                <strong data-i18n="adv.s1t">Speed and throughput</strong>
+                <span data-i18n="adv.s1p">
+                  Native binaries start quickly with predictable GC. For
+                  high-concurrency retrieval and API aggregation, you typically
+                  get steadier latency and higher throughput—and simpler
+                  horizontal scaling.</span
+                >
+              </li>
+              <li>
+                <strong data-i18n="adv.s2t"
+                  >Compiled delivery and stronger code protection</strong
+                >
+                <span data-i18n="adv.s2p">
+                  Ship one or a few binaries without exposing a plain source tree
+                  on the server—often better for protecting implementation
+                  details than typical Python source deployments.</span
+                >
+              </li>
+              <li>
+                <strong data-i18n="adv.s3t">Smaller deployment footprint</strong>
+                <span data-i18n="adv.s3p">
+                  No need to ship a full interpreter and large runtime stacks for
+                  the core service—leaner images and artifacts, including at the
+                  edge and in resource-constrained environments.</span
+                >
+              </li>
+              <li>
+                <strong data-i18n="adv.s4t"
+                  >Higher concurrent user capacity</strong
+                >
+                <span data-i18n="adv.s4p">
+                  Goroutines and lower baseline memory suit long-lived connections
+                  and multi-tenant scenarios—often more simultaneous sessions and
+                  admin operations on the same hardware.</span
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="cta-title">
+        <div class="wrap" style="text-align: center">
+          <h2
+            id="cta-title"
+            class="section__title"
+            style="margin-bottom: 1rem"
+            data-i18n="bottom.title"
+          >
+            Try it and contribute
+          </h2>
+          <p
+            class="section__lead"
+            style="margin-left: auto; margin-right: auto"
+            data-i18n="bottom.lead"
+          >
+            Licensed under Apache 2.0. Stars, issues, and pull requests are
+            welcome.
+          </p>
+          <p
+            class="section__lead"
+            style="margin-left: auto; margin-right: auto; margin-top: 0.75rem"
+          >
+            <a href="license.html" data-i18n="bottom.commercial"
+              >Need a commercial license? Contact us.</a
+            >
+          </p>
+          <div class="hero__cta">
+            <a
+              class="btn btn--primary"
+              href="https://github.com/LightningRAG/LightningRAG"
+              rel="noopener noreferrer"
+              data-i18n="bottom.github"
+              >GitHub: LightningRAG/LightningRAG</a
+            >
+            <a class="btn btn--outline" href="articles/" data-i18n="bottom.articles"
+              >Browse articles (updated over time)</a
+            >
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-footer__inner">
+        <p data-i18n="footer.copy">
+          © LightningRAG open-source community. All rights reserved.
+        </p>
+        <div class="site-footer__links">
+          <a href="guide/index.html" data-i18n="footer.docs">Documentation</a>
+          <a
+            href="https://github.com/LightningRAG/LightningRAG"
+            rel="noopener noreferrer"
+            data-i18n="footer.githubRepo"
+            >GitHub repository</a
+          >
+          <a href="articles/" data-i18n="footer.articles">Articles</a>
+          <a href="license.html" data-i18n="footer.license">Commercial license</a>
+          <a href="sitemap.xml" data-i18n="footer.sitemap">Sitemap</a>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="js/home-i18n.js"></script>
+  </body>
+</html>

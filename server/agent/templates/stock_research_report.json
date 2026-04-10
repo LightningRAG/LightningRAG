@@ -1,0 +1,53 @@
+{
+  "title": "资讯型研报摘要",
+  "description": "以新闻向检索 + LLM 输出简报（非投资建议；LightningRAG stock 模板简化，未接专用行情接口）。",
+  "templateName": "stock_research_report",
+  "category": "网络",
+  "tags": ["新闻", "研报", "DuckDuckGo"],
+  "dsl": {
+    "components": {
+      "begin": {
+        "obj": { "component_name": "Begin", "params": { "prologue": "输入标的或行业关键词，我会整理公开资讯摘要。" } },
+        "downstream": ["news_0"],
+        "upstream": []
+      },
+      "news_0": {
+        "obj": {
+          "component_name": "DuckDuckGo",
+          "params": { "query": "{sys.query}", "channel": "news", "top_n": 10, "timeout": 15 }
+        },
+        "downstream": ["report_0"],
+        "upstream": ["begin"]
+      },
+      "report_0": {
+        "obj": {
+          "component_name": "LLM",
+          "params": {
+            "llm_id": "ollama@llama3.2",
+            "creativity": "precise",
+            "sys_prompt": "你是信息整理员（非持牌投顾）。基于新闻摘要输出：要点列表、时间线感知（若有）、风险提示「仅供参考，不构成投资建议」。\n\n新闻摘要：\n{news_0@formalized_content}",
+            "prompts": [{ "role": "user", "content": "关注对象：{sys.query}" }]
+          }
+        },
+        "downstream": ["message_0"],
+        "upstream": ["news_0"]
+      },
+      "message_0": {
+        "obj": { "component_name": "Message", "params": { "content": ["{report_0@content}"] } },
+        "downstream": [],
+        "upstream": ["report_0"]
+      }
+    },
+    "path": ["begin", "news_0", "report_0", "message_0"],
+    "globals": {
+      "sys.query": "",
+      "sys.user_id": "",
+      "sys.conversation_turns": 0,
+      "sys.files": [],
+      "sys.await_reply": "",
+      "env.tavily_api_key": ""
+    },
+    "history": [],
+    "retrieval": []
+  }
+}

@@ -1,0 +1,104 @@
+diff --git a/node_modules/@form-create/designer/src/components/ai/AiPanel.vue b/node_modules/@form-create/designer/src/components/ai/AiPanel.vue
+index 13a3169..dabb280 100644
+--- a/node_modules/@form-create/designer/src/components/ai/AiPanel.vue
++++ b/node_modules/@form-create/designer/src/components/ai/AiPanel.vue
+@@ -441,22 +441,23 @@ export default {
+             localStorage.removeItem('fc_ai_chat');
+         },
+         refreshSuggestions() {
++            const tr = this.t;
+             const allSuggestions = [
+-                '生成一个就诊满意度问卷表单',
+-                '创建一个建议收集表单，包含联系人、联系邮箱、分类和建议内容',
+-                '追加一个用户信息表单',
+-                '添加一个标签组件，显示文本为 "Tag"',
+-                '生成一个Vue组件，实现金额输入框',
+-                '生成一个js版本的高精度加法',
+-                '添加一个日期选择器组件，用于选择出生日期',
+-                '删除商品简介字段',
+-                '当单选框选择 "选项1" 时，显示输入框组件',
+-                '设置输入框为必填，并限制长度必须大于13',
+-                '商品价格字段使用数字输入框组件',
+-                '给输入类组件补充占位提示文本（placeholder）',
+-                '添加手机号格式验证',
+-                '添加自定义验证：确认密码必须与密码一致',
+-                '将姓名和手机号并排显示在同一行',
++                tr('ai.suggest.visitSatisfactionSurvey'),
++                tr('ai.suggest.feedbackCollectionForm'),
++                tr('ai.suggest.appendUserProfileForm'),
++                tr('ai.suggest.addTagComponent'),
++                tr('ai.suggest.vueAmountInput'),
++                tr('ai.suggest.jsHighPrecisionAdd'),
++                tr('ai.suggest.birthDatePicker'),
++                tr('ai.suggest.removeProductIntro'),
++                tr('ai.suggest.radioOption1ShowsInput'),
++                tr('ai.suggest.inputRequiredMinLen'),
++                tr('ai.suggest.productPriceNumber'),
++                tr('ai.suggest.addInputPlaceholders'),
++                tr('ai.suggest.phoneFormatValidation'),
++                tr('ai.suggest.confirmPasswordMatch'),
++                tr('ai.suggest.namePhoneSameRow'),
+             ];
+ 
+             if (this.page * 4 < allSuggestions.length) {
+diff --git a/node_modules/@form-create/designer/src/locale/en.js b/node_modules/@form-create/designer/src/locale/en.js
+index 0d5534c..157d6b0 100644
+--- a/node_modules/@form-create/designer/src/locale/en.js
++++ b/node_modules/@form-create/designer/src/locale/en.js
+@@ -40,6 +40,27 @@ const En = {
+         change: 'Change',
+         placeholder: 'Please describe your requirements...',
+         error: 'AI service is temporarily unavailable, please try again later',
++        suggest: {
++            visitSatisfactionSurvey: 'Generate a visit satisfaction survey form',
++            feedbackCollectionForm:
++                'Create a feedback collection form with contact name, email, category, and feedback content',
++            appendUserProfileForm: 'Append a user profile form',
++            addTagComponent: 'Add a tag component that displays the text "Tag"',
++            vueAmountInput: 'Generate a Vue component that implements an amount/money input',
++            jsHighPrecisionAdd: 'Generate a JavaScript high-precision addition implementation',
++            birthDatePicker: 'Add a date picker component for selecting date of birth',
++            removeProductIntro: 'Remove the product description field',
++            radioOption1ShowsInput:
++                'When the radio option "Option 1" is selected, show a text input component',
++            inputRequiredMinLen:
++                'Make the input required and require length greater than 13',
++            productPriceNumber: 'Use a number input for the product price field',
++            addInputPlaceholders: 'Add placeholder text to input-like components',
++            phoneFormatValidation: 'Add phone number format validation',
++            confirmPasswordMatch:
++                'Add custom validation: confirm password must match password',
++            namePhoneSameRow: 'Display name and phone number side by side in one row',
++        },
+     },
+     warning: {
+         name: 'Unique identifier for the component, used to access and modify its configuration rules.',
+diff --git a/node_modules/@form-create/designer/src/locale/zh-cn.js b/node_modules/@form-create/designer/src/locale/zh-cn.js
+index 9bb0414..4f02807 100644
+--- a/node_modules/@form-create/designer/src/locale/zh-cn.js
++++ b/node_modules/@form-create/designer/src/locale/zh-cn.js
+@@ -40,6 +40,24 @@ const ZhCn = {
+         change: '换一换',
+         placeholder: '请描述您的需求...',
+         error: 'AI 服务暂时不可用，请稍后重试',
++        suggest: {
++            visitSatisfactionSurvey: '生成一个就诊满意度问卷表单',
++            feedbackCollectionForm:
++                '创建一个建议收集表单，包含联系人、联系邮箱、分类和建议内容',
++            appendUserProfileForm: '追加一个用户信息表单',
++            addTagComponent: '添加一个标签组件，显示文本为 "Tag"',
++            vueAmountInput: '生成一个Vue组件，实现金额输入框',
++            jsHighPrecisionAdd: '生成一个js版本的高精度加法',
++            birthDatePicker: '添加一个日期选择器组件，用于选择出生日期',
++            removeProductIntro: '删除商品简介字段',
++            radioOption1ShowsInput: '当单选框选择 "选项1" 时，显示输入框组件',
++            inputRequiredMinLen: '设置输入框为必填，并限制长度必须大于13',
++            productPriceNumber: '商品价格字段使用数字输入框组件',
++            addInputPlaceholders: '给输入类组件补充占位提示文本（placeholder）',
++            phoneFormatValidation: '添加手机号格式验证',
++            confirmPasswordMatch: '添加自定义验证：确认密码必须与密码一致',
++            namePhoneSameRow: '将姓名和手机号并排显示在同一行',
++        },
+     },
+     warning: {
+         name: '组件的唯一标识，用于获取和修改该组件的配置规则。通过该标识可以精确定位组件，实现对组件属性和行为的控制。',

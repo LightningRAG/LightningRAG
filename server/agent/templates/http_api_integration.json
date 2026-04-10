@@ -1,0 +1,60 @@
+{
+  "title": "HTTP 接口 + 解析",
+  "description": "调用公开 HTTP 接口获取 JSON，再由 LLM 转述为自然语言（默认示例 httpbin）",
+  "templateName": "http_api_integration",
+  "category": "工具",
+  "tags": ["HTTPRequest", "API"],
+  "dsl": {
+    "components": {
+      "begin": {
+        "obj": { "component_name": "Begin", "params": { "prologue": "你好！我会请求接口并为你解读返回内容。" } },
+        "downstream": ["http_0"],
+        "upstream": []
+      },
+      "http_0": {
+        "obj": {
+          "component_name": "HTTPRequest",
+          "params": {
+            "url": "https://httpbin.org/json",
+            "method": "GET",
+            "timeout": 30,
+            "headers": {},
+            "params": {},
+            "clean_html": false
+          }
+        },
+        "downstream": ["generate_0"],
+        "upstream": ["begin"]
+      },
+      "generate_0": {
+        "obj": {
+          "component_name": "LLM",
+          "params": {
+            "llm_id": "ollama@llama3.2",
+            "creativity": "precise",
+            "sys_prompt": "下面是一段 HTTP 响应原文，请用中文简要说明关键信息；若为空或报错请说明。\n\n响应：\n{http_0@result}",
+            "prompts": [{ "role": "user", "content": "用户关注点（可忽略）：{sys.query}" }]
+          }
+        },
+        "downstream": ["message_0"],
+        "upstream": ["http_0"]
+      },
+      "message_0": {
+        "obj": { "component_name": "Message", "params": { "content": ["{generate_0@content}"] } },
+        "downstream": [],
+        "upstream": ["generate_0"]
+      }
+    },
+    "path": ["begin", "http_0", "generate_0", "message_0"],
+    "globals": {
+      "sys.query": "",
+      "sys.user_id": "",
+      "sys.conversation_turns": 0,
+      "sys.files": [],
+      "sys.await_reply": "",
+      "env.tavily_api_key": ""
+    },
+    "history": [],
+    "retrieval": []
+  }
+}

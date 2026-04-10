@@ -1,0 +1,47 @@
+{
+  "title": "智能体（重试与延迟）",
+  "description": "使用 Agent 组件（支持 max_retries）完成单轮推理，适合需要稳健调用的场景",
+  "templateName": "smart_agent_pipeline",
+  "category": "生成",
+  "tags": ["Agent", "智能体"],
+  "dsl": {
+    "components": {
+      "begin": {
+        "obj": { "component_name": "Begin", "params": { "prologue": "你好！我是智能体助手。" } },
+        "downstream": ["agent_0"],
+        "upstream": []
+      },
+      "agent_0": {
+        "obj": {
+          "component_name": "Agent",
+          "params": {
+            "llm_id": "ollama@llama3.2",
+            "creativity": "balance",
+            "sys_prompt": "你是可靠的助手，逐步思考后给出简洁回答。",
+            "user_prompt": "{sys.query}",
+            "max_retries": 2,
+            "delay_after_error": 1
+          }
+        },
+        "downstream": ["message_0"],
+        "upstream": ["begin"]
+      },
+      "message_0": {
+        "obj": { "component_name": "Message", "params": { "content": ["{agent_0@content}"] } },
+        "downstream": [],
+        "upstream": ["agent_0"]
+      }
+    },
+    "path": ["begin", "agent_0", "message_0"],
+    "globals": {
+      "sys.query": "",
+      "sys.user_id": "",
+      "sys.conversation_turns": 0,
+      "sys.files": [],
+      "sys.await_reply": "",
+      "env.tavily_api_key": ""
+    },
+    "history": [],
+    "retrieval": []
+  }
+}

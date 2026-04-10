@@ -1,0 +1,268 @@
+package system
+
+import (
+	"strconv"
+
+	"github.com/LightningRAG/LightningRAG/server/global"
+	"github.com/LightningRAG/LightningRAG/server/i18n"
+	"github.com/LightningRAG/LightningRAG/server/model/common/response"
+	"github.com/LightningRAG/LightningRAG/server/model/system"
+	"github.com/LightningRAG/LightningRAG/server/model/system/request"
+	"github.com/LightningRAG/LightningRAG/server/utils"
+	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
+)
+
+type DictionaryDetailApi struct{}
+
+// CreateSysDictionaryDetail
+// @Tags      SysDictionaryDetail
+// @Summary   创建SysDictionaryDetail
+// @Security  ApiKeyAuth
+// @accept    application/json
+// @Produce   application/json
+// @Param     data  body      system.SysDictionaryDetail     true  "SysDictionaryDetail模型"
+// @Success   200   {object}  response.Response{msg=string}  "创建SysDictionaryDetail"
+// @Router    /sysDictionaryDetail/createSysDictionaryDetail [post]
+func (s *DictionaryDetailApi) CreateSysDictionaryDetail(c *gin.Context) {
+	var detail system.SysDictionaryDetail
+	err := c.ShouldBindJSON(&detail)
+	if err != nil {
+		response.FailWithError(c, err)
+		return
+	}
+	err = dictionaryDetailService.CreateSysDictionaryDetail(detail)
+	if err != nil {
+		global.LRAG_LOG.Error("创建失败!", zap.Error(err))
+		response.FailWithMessage(i18n.Msg(c, "common.create_failed"), c)
+		return
+	}
+	response.OkWithMessage(i18n.Msg(c, "common.create_success"), c)
+}
+
+// DeleteSysDictionaryDetail
+// @Tags      SysDictionaryDetail
+// @Summary   删除SysDictionaryDetail
+// @Security  ApiKeyAuth
+// @accept    application/json
+// @Produce   application/json
+// @Param     data  body      system.SysDictionaryDetail     true  "SysDictionaryDetail模型"
+// @Success   200   {object}  response.Response{msg=string}  "删除SysDictionaryDetail"
+// @Router    /sysDictionaryDetail/deleteSysDictionaryDetail [delete]
+func (s *DictionaryDetailApi) DeleteSysDictionaryDetail(c *gin.Context) {
+	var detail system.SysDictionaryDetail
+	err := c.ShouldBindJSON(&detail)
+	if err != nil {
+		response.FailWithError(c, err)
+		return
+	}
+	err = dictionaryDetailService.DeleteSysDictionaryDetail(detail)
+	if err != nil {
+		global.LRAG_LOG.Error("删除失败!", zap.Error(err))
+		response.FailWithMessage(i18n.Msg(c, "common.delete_failed"), c)
+		return
+	}
+	response.OkWithMessage(i18n.Msg(c, "common.delete_success"), c)
+}
+
+// UpdateSysDictionaryDetail
+// @Tags      SysDictionaryDetail
+// @Summary   更新SysDictionaryDetail
+// @Security  ApiKeyAuth
+// @accept    application/json
+// @Produce   application/json
+// @Param     data  body      system.SysDictionaryDetail     true  "更新SysDictionaryDetail"
+// @Success   200   {object}  response.Response{msg=string}  "更新SysDictionaryDetail"
+// @Router    /sysDictionaryDetail/updateSysDictionaryDetail [put]
+func (s *DictionaryDetailApi) UpdateSysDictionaryDetail(c *gin.Context) {
+	var detail system.SysDictionaryDetail
+	err := c.ShouldBindJSON(&detail)
+	if err != nil {
+		response.FailWithError(c, err)
+		return
+	}
+	err = dictionaryDetailService.UpdateSysDictionaryDetail(&detail)
+	if err != nil {
+		global.LRAG_LOG.Error("更新失败!", zap.Error(err))
+		response.FailWithMessage(i18n.Msg(c, "common.update_failed"), c)
+		return
+	}
+	response.OkWithMessage(i18n.Msg(c, "common.update_success"), c)
+}
+
+// FindSysDictionaryDetail
+// @Tags      SysDictionaryDetail
+// @Summary   用id查询SysDictionaryDetail
+// @Security  ApiKeyAuth
+// @accept    application/json
+// @Produce   application/json
+// @Param     data  query     system.SysDictionaryDetail                                 true  "用id查询SysDictionaryDetail"
+// @Success   200   {object}  response.Response{data=map[string]interface{},msg=string}  "用id查询SysDictionaryDetail"
+// @Router    /sysDictionaryDetail/findSysDictionaryDetail [get]
+func (s *DictionaryDetailApi) FindSysDictionaryDetail(c *gin.Context) {
+	var detail system.SysDictionaryDetail
+	err := c.ShouldBindQuery(&detail)
+	if err != nil {
+		response.FailWithError(c, err)
+		return
+	}
+	err = utils.Verify(detail, utils.IdVerify)
+	if err != nil {
+		response.FailWithError(c, err)
+		return
+	}
+	reSysDictionaryDetail, err := dictionaryDetailService.GetSysDictionaryDetail(detail.ID)
+	if err != nil {
+		global.LRAG_LOG.Error("查询失败!", zap.Error(err))
+		response.FailWithMessage(i18n.Msg(c, "common.query_failed"), c)
+		return
+	}
+	response.OkWithDetailed(gin.H{"reSysDictionaryDetail": reSysDictionaryDetail}, i18n.Msg(c, "common.query_success"), c)
+}
+
+// GetSysDictionaryDetailList
+// @Tags      SysDictionaryDetail
+// @Summary   分页获取SysDictionaryDetail列表
+// @Security  ApiKeyAuth
+// @accept    application/json
+// @Produce   application/json
+// @Param     data  query     request.SysDictionaryDetailSearch                       true  "页码, 每页大小, 搜索条件"
+// @Success   200   {object}  response.Response{data=response.PageResult,msg=string}  "分页获取SysDictionaryDetail列表,返回包括列表,总数,页码,每页数量"
+// @Router    /sysDictionaryDetail/getSysDictionaryDetailList [get]
+func (s *DictionaryDetailApi) GetSysDictionaryDetailList(c *gin.Context) {
+	var pageInfo request.SysDictionaryDetailSearch
+	err := c.ShouldBindQuery(&pageInfo)
+	if err != nil {
+		response.FailWithError(c, err)
+		return
+	}
+	list, total, err := dictionaryDetailService.GetSysDictionaryDetailInfoList(pageInfo)
+	if err != nil {
+		global.LRAG_LOG.Error("获取失败!", zap.Error(err))
+		response.FailWithMessage(i18n.Msg(c, "common.get_failed"), c)
+		return
+	}
+	response.OkWithDetailed(response.PageResult{
+		List:     list,
+		Total:    total,
+		Page:     pageInfo.Page,
+		PageSize: pageInfo.PageSize,
+	}, "获取成功", c)
+}
+
+// GetDictionaryTreeList
+// @Tags      SysDictionaryDetail
+// @Summary   获取字典详情树形结构
+// @Security  ApiKeyAuth
+// @accept    application/json
+// @Produce   application/json
+// @Param     sysDictionaryID  query     int                                                true  "字典ID"
+// @Success   200              {object}  response.Response{data=[]system.SysDictionaryDetail,msg=string}  "获取字典详情树形结构"
+// @Router    /sysDictionaryDetail/getDictionaryTreeList [get]
+func (s *DictionaryDetailApi) GetDictionaryTreeList(c *gin.Context) {
+	sysDictionaryID := c.Query("sysDictionaryID")
+	if sysDictionaryID == "" {
+		response.FailWithMessage(i18n.Msg(c, "validation.dict_id_required"), c)
+		return
+	}
+
+	var id uint
+	if idUint64, err := strconv.ParseUint(sysDictionaryID, 10, 32); err != nil {
+		response.FailWithMessage(i18n.Msg(c, "validation.dict_id_invalid"), c)
+		return
+	} else {
+		id = uint(idUint64)
+	}
+
+	list, err := dictionaryDetailService.GetDictionaryTreeList(id)
+	if err != nil {
+		global.LRAG_LOG.Error("获取失败!", zap.Error(err))
+		response.FailWithMessage(i18n.Msg(c, "common.get_failed"), c)
+		return
+	}
+	response.OkWithDetailed(gin.H{"list": list}, i18n.Msg(c, "common.fetch_success"), c)
+}
+
+// GetDictionaryTreeListByType
+// @Tags      SysDictionaryDetail
+// @Summary   根据字典类型获取字典详情树形结构
+// @Security  ApiKeyAuth
+// @accept    application/json
+// @Produce   application/json
+// @Param     type  query     string                                                true  "字典类型"
+// @Success   200   {object}  response.Response{data=[]system.SysDictionaryDetail,msg=string}  "获取字典详情树形结构"
+// @Router    /sysDictionaryDetail/getDictionaryTreeListByType [get]
+func (s *DictionaryDetailApi) GetDictionaryTreeListByType(c *gin.Context) {
+	dictType := c.Query("type")
+	if dictType == "" {
+		response.FailWithMessage(i18n.Msg(c, "validation.dict_type_required"), c)
+		return
+	}
+
+	list, err := dictionaryDetailService.GetDictionaryTreeListByType(dictType)
+	if err != nil {
+		global.LRAG_LOG.Error("获取失败!", zap.Error(err))
+		response.FailWithMessage(i18n.Msg(c, "common.get_failed"), c)
+		return
+	}
+	response.OkWithDetailed(gin.H{"list": list}, i18n.Msg(c, "common.fetch_success"), c)
+}
+
+// GetDictionaryDetailsByParent
+// @Tags      SysDictionaryDetail
+// @Summary   根据父级ID获取字典详情
+// @Security  ApiKeyAuth
+// @accept    application/json
+// @Produce   application/json
+// @Param     data  query     request.GetDictionaryDetailsByParentRequest                true  "查询参数"
+// @Success   200   {object}  response.Response{data=[]system.SysDictionaryDetail,msg=string}  "获取字典详情列表"
+// @Router    /sysDictionaryDetail/getDictionaryDetailsByParent [get]
+func (s *DictionaryDetailApi) GetDictionaryDetailsByParent(c *gin.Context) {
+	var req request.GetDictionaryDetailsByParentRequest
+	err := c.ShouldBindQuery(&req)
+	if err != nil {
+		response.FailWithError(c, err)
+		return
+	}
+
+	list, err := dictionaryDetailService.GetDictionaryDetailsByParent(req)
+	if err != nil {
+		global.LRAG_LOG.Error("获取失败!", zap.Error(err))
+		response.FailWithMessage(i18n.Msg(c, "common.get_failed"), c)
+		return
+	}
+	response.OkWithDetailed(gin.H{"list": list}, i18n.Msg(c, "common.fetch_success"), c)
+}
+
+// GetDictionaryPath
+// @Tags      SysDictionaryDetail
+// @Summary   获取字典详情的完整路径
+// @Security  ApiKeyAuth
+// @accept    application/json
+// @Produce   application/json
+// @Param     id  query     uint                                                true  "字典详情ID"
+// @Success   200 {object}  response.Response{data=[]system.SysDictionaryDetail,msg=string}  "获取字典详情路径"
+// @Router    /sysDictionaryDetail/getDictionaryPath [get]
+func (s *DictionaryDetailApi) GetDictionaryPath(c *gin.Context) {
+	idStr := c.Query("id")
+	if idStr == "" {
+		response.FailWithMessage(i18n.Msg(c, "validation.dict_detail_id_required"), c)
+		return
+	}
+
+	var id uint
+	if idUint64, err := strconv.ParseUint(idStr, 10, 32); err != nil {
+		response.FailWithMessage(i18n.Msg(c, "validation.dict_detail_id_invalid"), c)
+		return
+	} else {
+		id = uint(idUint64)
+	}
+
+	path, err := dictionaryDetailService.GetDictionaryPath(id)
+	if err != nil {
+		global.LRAG_LOG.Error("获取失败!", zap.Error(err))
+		response.FailWithMessage(i18n.Msg(c, "common.get_failed"), c)
+		return
+	}
+	response.OkWithDetailed(gin.H{"path": path}, i18n.Msg(c, "common.fetch_success"), c)
+}

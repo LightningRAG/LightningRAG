@@ -1,0 +1,118 @@
+# 构建并推送 server / web 镜像：默认 GHCR；若配置 Secrets 则同时推送阿里云（与 deploy 中镜像路径一致）
+# 触发：推送 v* 标签、Release 发布、手动 workflow_dispatch
+name: Publish Docker images
+
+on:
+  push:
+    tags:
+      - "v*"
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "镜像标签（例如 latest、v1.2.3）"
+        required: true
+        default: "latest"
+
+concurrency:
+  group: docker-publish-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+env:
+  DOCKER_BUILDKIT: "1"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Lowercase repository for GHCR
+        id: lc
+        run: |
+          echo "repository=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
+
+      - name: Resolve image tag
+        id: tag
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            T="${{ inputs.image_tag }}"
+          elif [ "${{ github.event_name }}" = "release" ]; then
+            T="${{ github.event.release.tag_name }}"
+          else
+            T="${GITHUB_REF#refs/tags/}"
+          fi
+          echo "value=${T}" >> "$GITHUB_OUTPUT"
+          echo "Publishing tag: ${T}"
+
+      - name: Prepare tag lists (GHCR + optional Aliyun)
+        id: tags
+        env:
+          VER: ${{ steps.tag.outputs.value }}
+          LC_REPO: ${{ steps.lc.outputs.repository }}
+          ALI_REG: ${{ secrets.ALIYUN_REGISTRY }}
+        run: |
+          S="ghcr.io/${LC_REPO}/server:${VER}"$'\n'"ghcr.io/${LC_REPO}/server:latest"
+          W="ghcr.io/${LC_REPO}/web:${VER}"$'\n'"ghcr.io/${LC_REPO}/web:latest"
+          if [ -n "${ALI_REG}" ]; then
+            S="${S}"$'\n'"${ALI_REG}/lrag/server:${VER}"
+            W="${W}"$'\n'"${ALI_REG}/lrag/web:${VER}"
+          fi
+          {
+            echo "server<<TAGS_EOF"
+            echo "${S}"
+            echo "TAGS_EOF"
+            echo "web<<TAGS_EOF"
+            echo "${W}"
+            echo "TAGS_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Login to Aliyun Registry (optional)
+        if: ${{ secrets.ALIYUN_REGISTRY != '' && secrets.ALIYUN_DOCKERHUB_USER != '' && secrets.ALIYUN_DOCKERHUB_PASSWORD != '' }}
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.ALIYUN_REGISTRY }}
+          username: ${{ secrets.ALIYUN_DOCKERHUB_USER }}
+          password: ${{ secrets.ALIYUN_DOCKERHUB_PASSWORD }}
+
+      # Go 镜像多架构成本低；前端 Vite 在 QEMU 下构建 arm64 易超时/OOM，故 web 默认仅 amd64
+      - name: Build and push server
+        uses: docker/build-push-action@v6
+        with:
+          context: ./server
+          file: ./server/Dockerfile
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: ${{ steps.tags.outputs.server }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push web
+        uses: docker/build-push-action@v6
+        with:
+          context: ./web
+          file: ./web/Dockerfile
+          push: true
+          platforms: linux/amd64
+          tags: ${{ steps.tags.outputs.web }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

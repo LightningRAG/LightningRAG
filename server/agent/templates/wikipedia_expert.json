@@ -1,0 +1,53 @@
+{
+  "title": "维基百科专家",
+  "description": "从维基百科拉取摘要后由 LLM 作答，适合百科类问题",
+  "templateName": "wikipedia_expert",
+  "category": "网络",
+  "tags": ["Wikipedia", "百科"],
+  "dsl": {
+    "components": {
+      "begin": {
+        "obj": { "component_name": "Begin", "params": { "prologue": "你好！我会基于维基百科摘要为你说明。" } },
+        "downstream": ["wiki_0"],
+        "upstream": []
+      },
+      "wiki_0": {
+        "obj": {
+          "component_name": "Wikipedia",
+          "params": { "query": "{sys.query}", "language": "zh", "top_n": 5, "timeout": 30 }
+        },
+        "downstream": ["generate_0"],
+        "upstream": ["begin"]
+      },
+      "generate_0": {
+        "obj": {
+          "component_name": "LLM",
+          "params": {
+            "llm_id": "ollama@llama3.2",
+            "creativity": "precise",
+            "sys_prompt": "根据以下维基百科摘录回答用户，引用时说明来自维基百科；若摘录为空请如实说明。\n\n摘录：\n{wiki_0@formalized_content}",
+            "prompts": [{ "role": "user", "content": "{sys.query}" }]
+          }
+        },
+        "downstream": ["message_0"],
+        "upstream": ["wiki_0"]
+      },
+      "message_0": {
+        "obj": { "component_name": "Message", "params": { "content": ["{generate_0@content}"] } },
+        "downstream": [],
+        "upstream": ["generate_0"]
+      }
+    },
+    "path": ["begin", "wiki_0", "generate_0", "message_0"],
+    "globals": {
+      "sys.query": "",
+      "sys.user_id": "",
+      "sys.conversation_turns": 0,
+      "sys.files": [],
+      "sys.await_reply": "",
+      "env.tavily_api_key": ""
+    },
+    "history": [],
+    "retrieval": []
+  }
+}

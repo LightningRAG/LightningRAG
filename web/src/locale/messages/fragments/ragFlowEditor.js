@@ -1,0 +1,86 @@
+import { flowEditorPanelEn, flowEditorPanelZhCN } from './ragFlowEditorPanel.js'
+
+/**
+ * RAG Agent 画布：侧栏组件名、节点标题（与 componentTypes.js 的 componentName 一致）
+ */
+export const ragFlowEditorEn = {
+  paletteTitle: 'Components',
+  selectNodeHint: 'Click a node on the canvas to configure it',
+  paletteCore: 'Core',
+  paletteTools: 'Tools',
+  paletteToolsAria: 'Tool components',
+  configTitle: 'Configure {name}',
+  nodeFallback: 'Node',
+  creativityPrecise: 'Precise',
+  creativityBalance: 'Balanced',
+  creativityImprovise: 'Creative',
+  comp: {
+    Begin: 'Start',
+    Retrieval: 'Retrieval',
+    LLM: 'Generate',
+    Agent: 'Agent',
+    Message: 'Output',
+    Switch: 'Branch',
+    Categorize: 'Intent classify',
+    HTTPRequest: 'HTTP request',
+    Iteration: 'Iterate',
+    TextProcessing: 'Text',
+    ExecuteSQL: 'Run SQL',
+    DocsGenerator: 'Doc export',
+    MCP: 'MCP tool',
+    SetVariable: 'Set variable',
+    Transformer: 'LLM transform',
+    AwaitResponse: 'Wait for reply',
+    DuckDuckGo: 'DuckDuckGo',
+    Wikipedia: 'Wikipedia',
+    ArXiv: 'arXiv',
+    TavilySearch: 'Tavily',
+    VariableAssigner: 'Var assign',
+    VariableAggregator: 'Var merge',
+    ListOperations: 'List ops',
+    StringTransform: 'String transform',
+    Invoke: 'Invoke'
+  },
+  panel: flowEditorPanelEn
+}
+
+export const ragFlowEditorZhCN = {
+  paletteTitle: '组件库',
+  selectNodeHint: '点击画布上的节点以配置参数',
+  paletteCore: '核心组件',
+  paletteTools: '工具',
+  paletteToolsAria: '工具类组件',
+  configTitle: '配置 {name}',
+  nodeFallback: '节点',
+  creativityPrecise: '精确',
+  creativityBalance: '平衡',
+  creativityImprovise: '创意',
+  comp: {
+    Begin: '开始',
+    Retrieval: '检索',
+    LLM: '生成',
+    Agent: '智能体',
+    Message: '输出',
+    Switch: '条件分支',
+    Categorize: '意图分类',
+    HTTPRequest: 'HTTP 请求',
+    Iteration: '迭代',
+    TextProcessing: '文本处理',
+    ExecuteSQL: '执行 SQL',
+    DocsGenerator: '文档生成',
+    MCP: 'MCP 工具',
+    SetVariable: '设置变量',
+    Transformer: 'LLM 转换',
+    AwaitResponse: '等待回复',
+    DuckDuckGo: 'DuckDuckGo',
+    Wikipedia: '维基百科',
+    ArXiv: 'arXiv',
+    TavilySearch: 'Tavily 搜索',
+    VariableAssigner: '变量赋值',
+    VariableAggregator: '变量聚合',
+    ListOperations: '列表操作',
+    StringTransform: '字符串变换',
+    Invoke: 'Invoke 请求'
+  },
+  panel: flowEditorPanelZhCN
+}

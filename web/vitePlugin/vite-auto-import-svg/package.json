@@ -1,0 +1,15 @@
+{
+  "name": "vite-auto-import-svg",
+  "version": "2.6.0",
+  "description": "auto add icon to project",
+  "main": "index.min.js",
+  "scripts": {
+    "compress": "uglifyjs index.js -o index.min.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "uglify-js": "^3.19.3"
+  }
+}

@@ -1,0 +1,9 @@
+# LightningRAG 静态宣传站
+# 若站点部署在子路径，请将 Sitemap 改为完整 URL，例如 https://example.com/webpages/sitemap.xml
+
+User-agent: *
+Allow: /
+# 模板文件，勿纳入收录
+Disallow: /articles/_article-template.html
+
+Sitemap: https://lightningrag.com/sitemap.xml

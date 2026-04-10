@@ -1,0 +1,50 @@
+/web/node_modules
+/web/dist
+
+.DS_Store
+
+# local env files
+.env.local
+.env.*.local
+
+# Compose 本机覆盖（参见 deploy/docker-compose-online/compose.override.example.yaml）
+deploy/docker-compose-online/compose.override.yaml
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+rm_file/
+/server/log/
+/server/lrag
+/server/server
+/server/latest_log
+/server/__debug_bin*
+/server/*.local.yaml
+server/uploads/
+
+*.iml
+web/.pnpm-debug.log
+web/pnpm-lock.yaml
+
+# binary files
+*.exe
+
+# SQLite database files
+*.db
+*.sqlite
+*.sqlite3
+/references/
+/server/webui/webdist/
+/dist/
+/server/lightningrag

@@ -1,0 +1,65 @@
+# LightningRAG 前后端（在线镜像）+ 中间件
+# 在 deploy/docker-compose-online 目录执行:
+#   docker compose up -d
+# 启用更多中间件时先编辑 .env 中 COMPOSE_PROFILES，例如:
+#   COMPOSE_PROFILES=minio,elasticsearch,pgsql,mongo
+
+include:
+  - ./docker-compose-base.yaml
+
+x-logging: &lrag-app-logging
+  driver: json-file
+  options:
+    max-size: "50m"
+    max-file: "5"
+
+services:
+  lrag-server:
+    image: ${LRAG_SERVER_IMAGE}
+    container_name: lrag-server
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./config/config.compose-online.yaml:/go/src/github.com/LightningRAG/LightningRAG/server/config.docker.yaml:ro
+    ports:
+      - "${LRAG_SERVER_PORT}:8888"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - lrag
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:8888/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 90s
+    logging: *lrag-app-logging
+
+  lrag-web:
+    image: ${LRAG_WEB_IMAGE}
+    container_name: lrag-web
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "${LRAG_WEB_PORT}:8080"
+    depends_on:
+      lrag-server:
+        condition: service_healthy
+    volumes:
+      - ./nginx/my.conf:/etc/nginx/conf.d/my.conf:ro
+    networks:
+      - lrag
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:8080/ || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    logging: *lrag-app-logging

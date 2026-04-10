@@ -1,0 +1,61 @@
+{
+  "title": "Tavily 搜索助手",
+  "description": "Tavily 面向 LLM 的搜索结果 + 生成；请在节点或 globals.env.tavily_api_key 配置 API Key",
+  "templateName": "tavily_search_assistant",
+  "category": "网络",
+  "tags": ["Tavily", "搜索"],
+  "dsl": {
+    "components": {
+      "begin": {
+        "obj": { "component_name": "Begin", "params": { "prologue": "你好！使用 Tavily 搜索为你查找资料（需配置 API Key）。" } },
+        "downstream": ["tavily_0"],
+        "upstream": []
+      },
+      "tavily_0": {
+        "obj": {
+          "component_name": "TavilySearch",
+          "params": {
+            "query": "{sys.query}",
+            "api_key": "",
+            "topic": "general",
+            "search_depth": "basic",
+            "max_results": 6,
+            "include_answer": true,
+            "timeout": 30
+          }
+        },
+        "downstream": ["generate_0"],
+        "upstream": ["begin"]
+      },
+      "generate_0": {
+        "obj": {
+          "component_name": "LLM",
+          "params": {
+            "llm_id": "ollama@llama3.2",
+            "creativity": "balance",
+            "sys_prompt": "根据下列 Tavily 检索结果回答用户，区分事实与推测；若检索为空或失败请说明。\n\n检索结果：\n{tavily_0@formalized_content}",
+            "prompts": [{ "role": "user", "content": "{sys.query}" }]
+          }
+        },
+        "downstream": ["message_0"],
+        "upstream": ["tavily_0"]
+      },
+      "message_0": {
+        "obj": { "component_name": "Message", "params": { "content": ["{generate_0@content}"] } },
+        "downstream": [],
+        "upstream": ["generate_0"]
+      }
+    },
+    "path": ["begin", "tavily_0", "generate_0", "message_0"],
+    "globals": {
+      "sys.query": "",
+      "sys.user_id": "",
+      "sys.conversation_turns": 0,
+      "sys.files": [],
+      "sys.await_reply": "",
+      "env.tavily_api_key": ""
+    },
+    "history": [],
+    "retrieval": []
+  }
+}

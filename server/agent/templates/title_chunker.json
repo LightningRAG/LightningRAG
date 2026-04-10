@@ -1,0 +1,58 @@
+{
+  "title": "按行迭代处理",
+  "description": "将多行输入逐行交给 LLM（类似按「块」处理；无独立 Title Chunker 节点，用 Iteration 实现）。",
+  "templateName": "title_chunker",
+  "category": "工具",
+  "tags": ["Iteration", "批处理"],
+  "dsl": {
+    "components": {
+      "begin": {
+        "obj": { "component_name": "Begin", "params": { "prologue": "每行一条任务或段落，我会逐行处理并合并结果。" } },
+        "downstream": ["iteration_0"],
+        "upstream": []
+      },
+      "iteration_0": {
+        "obj": {
+          "component_name": "Iteration",
+          "params": {
+            "input": "{sys.query}",
+            "delimiter": "newline",
+            "downstream": "line_llm_0"
+          }
+        },
+        "downstream": ["line_llm_0"],
+        "upstream": ["begin"]
+      },
+      "line_llm_0": {
+        "obj": {
+          "component_name": "LLM",
+          "params": {
+            "llm_id": "ollama@llama3.2",
+            "creativity": "precise",
+            "sys_prompt": "对下列单行内容用一句话处理或摘要（保持原语言）。",
+            "prompts": [{ "role": "user", "content": "{iteration.current}" }]
+          }
+        },
+        "downstream": ["message_0"],
+        "upstream": ["iteration_0"]
+      },
+      "message_0": {
+        "obj": { "component_name": "Message", "params": { "content": ["{iteration_0@formalized_content}"] } },
+        "downstream": [],
+        "upstream": ["line_llm_0"]
+      }
+    },
+    "path": ["begin", "iteration_0", "line_llm_0", "message_0"],
+    "globals": {
+      "sys.query": "",
+      "sys.user_id": "",
+      "sys.conversation_turns": 0,
+      "sys.files": [],
+      "iteration.current": "",
+      "sys.await_reply": "",
+      "env.tavily_api_key": ""
+    },
+    "history": [],
+    "retrieval": []
+  }
+}

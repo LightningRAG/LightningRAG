@@ -1,0 +1,55 @@
+{
+  "title": "自选知识库（智能体）",
+  "description": "Retrieval + Agent 组件，适合需要重试策略的问答；请在 Retrieval 中绑定 kb_ids。",
+  "templateName": "choose_your_knowledge_base_agent",
+  "category": "检索",
+  "tags": ["知识库", "Agent"],
+  "dsl": {
+    "components": {
+      "begin": {
+        "obj": { "component_name": "Begin", "params": { "prologue": "你好！" } },
+        "downstream": ["retrieval_0"],
+        "upstream": []
+      },
+      "retrieval_0": {
+        "obj": {
+          "component_name": "Retrieval",
+          "params": { "query": "{sys.query}", "top_n": 8, "empty_response": "（无）", "kb_ids": [] }
+        },
+        "downstream": ["agent_0"],
+        "upstream": ["begin"]
+      },
+      "agent_0": {
+        "obj": {
+          "component_name": "Agent",
+          "params": {
+            "llm_id": "ollama@llama3.2",
+            "creativity": "balance",
+            "sys_prompt": "你是知识库助手。依据下列检索结果作答；若无有效内容请说明。\n\n{retrieval_0@formalized_content}",
+            "user_prompt": "{sys.query}",
+            "max_retries": 2,
+            "delay_after_error": 1
+          }
+        },
+        "downstream": ["message_0"],
+        "upstream": ["retrieval_0"]
+      },
+      "message_0": {
+        "obj": { "component_name": "Message", "params": { "content": ["{agent_0@content}"] } },
+        "downstream": [],
+        "upstream": ["agent_0"]
+      }
+    },
+    "path": ["begin", "retrieval_0", "agent_0", "message_0"],
+    "globals": {
+      "sys.query": "",
+      "sys.user_id": "",
+      "sys.conversation_turns": 0,
+      "sys.files": [],
+      "sys.await_reply": "",
+      "env.tavily_api_key": ""
+    },
+    "history": [],
+    "retrieval": []
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "title": "绘图提示词助手",
+  "description": "无多模态组件时：根据文字场景描述生成文生图英文 Prompt（对齐 LightningRAG image_lingo 的「语言」侧能力）。",
+  "templateName": "image_lingo",
+  "category": "生成",
+  "tags": ["Prompt", "图像", "LLM"],
+  "dsl": {
+    "components": {
+      "begin": {
+        "obj": { "component_name": "Begin", "params": { "prologue": "描述你想要的画面，我会给出适合扩散模型的英文提示词。" } },
+        "downstream": ["prompt_0"],
+        "upstream": []
+      },
+      "prompt_0": {
+        "obj": {
+          "component_name": "LLM",
+          "params": {
+            "llm_id": "ollama@llama3.2",
+            "creativity": "improvise",
+            "sys_prompt": "输出两段：1）英文 image prompt（逗号分隔关键词，含风格/光线/镜头）2）中文简短说明。不要输出违法内容。",
+            "prompts": [{ "role": "user", "content": "场景：{sys.query}" }]
+          }
+        },
+        "downstream": ["message_0"],
+        "upstream": ["begin"]
+      },
+      "message_0": {
+        "obj": { "component_name": "Message", "params": { "content": ["{prompt_0@content}"] } },
+        "downstream": [],
+        "upstream": ["prompt_0"]
+      }
+    },
+    "path": ["begin", "prompt_0", "message_0"],
+    "globals": {
+      "sys.query": "",
+      "sys.user_id": "",
+      "sys.conversation_turns": 0,
+      "sys.files": [],
+      "sys.await_reply": "",
+      "env.tavily_api_key": ""
+    },
+    "history": [],
+    "retrieval": []
+  }
+}

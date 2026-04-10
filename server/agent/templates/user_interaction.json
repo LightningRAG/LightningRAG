@@ -1,0 +1,57 @@
+{
+  "title": "用户补充输入（AwaitResponse）",
+  "description": "演示 AwaitResponse：首轮可先不要求非空；第二轮在 API 的 workflowGlobals 中传入 sys.await_reply。详见节点说明。",
+  "templateName": "user_interaction",
+  "category": "交互",
+  "tags": ["AwaitResponse", "多轮"],
+  "dsl": {
+    "components": {
+      "begin": {
+        "obj": { "component_name": "Begin", "params": { "prologue": "你好！接下来会请你补充一些信息。" } },
+        "downstream": ["await_0"],
+        "upstream": []
+      },
+      "await_0": {
+        "obj": {
+          "component_name": "AwaitResponse",
+          "params": {
+            "message": "如需补充细节，请在下次请求的 workflowGlobals 中设置 \"sys.await_reply\"。若暂无补充可留空继续。",
+            "variable_key": "sys.await_reply",
+            "require_non_empty": false
+          }
+        },
+        "downstream": ["generate_0"],
+        "upstream": ["begin"]
+      },
+      "generate_0": {
+        "obj": {
+          "component_name": "LLM",
+          "params": {
+            "llm_id": "ollama@llama3.2",
+            "creativity": "balance",
+            "sys_prompt": "综合用户主问题与补充信息作答。补充信息可能为空。\n\n补充：\n{await_0@formalized_content}",
+            "prompts": [{ "role": "user", "content": "主问题：{sys.query}" }]
+          }
+        },
+        "downstream": ["message_0"],
+        "upstream": ["await_0"]
+      },
+      "message_0": {
+        "obj": { "component_name": "Message", "params": { "content": ["{generate_0@content}"] } },
+        "downstream": [],
+        "upstream": ["generate_0"]
+      }
+    },
+    "path": ["begin", "await_0", "generate_0", "message_0"],
+    "globals": {
+      "sys.query": "",
+      "sys.user_id": "",
+      "sys.conversation_turns": 0,
+      "sys.files": [],
+      "sys.await_reply": "",
+      "env.tavily_api_key": ""
+    },
+    "history": [],
+    "retrieval": []
+  }
+}

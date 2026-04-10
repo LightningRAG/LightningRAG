@@ -1,0 +1,13 @@
+# 用法（在 deploy/kubernetes 目录）：
+#   kubectl apply -k .
+# 建议在 apply 前编辑各 Deployment 的 image、ConfigMap/Secret，并视情况增加 namespace。
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - server/lrag-server-configmap.yaml
+  - server/lrag-server-deployment.yaml
+  - server/lrag-server-service.yaml
+  - web/lrag-web-configmap.yaml
+  - web/lrag-web-deployment.yaml
+  - web/lrag-web-service.yaml
+  - web/lrag-web-ingress.yaml

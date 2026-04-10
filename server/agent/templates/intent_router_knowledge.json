@@ -1,0 +1,101 @@
+{
+  "title": "意图路由（知识问答 / 闲聊）",
+  "description": "Categorize 将用户分流：问答走知识库 RAG，闲聊走独立 LLM（对齐 LightningRAG 多策略路由）",
+  "templateName": "intent_router_knowledge",
+  "category": "控制流",
+  "tags": ["Categorize", "知识库", "分支"],
+  "dsl": {
+    "components": {
+      "begin": {
+        "obj": { "component_name": "Begin", "params": { "prologue": "你好！我会判断你是想查资料还是闲聊。" } },
+        "downstream": ["categorize_0"],
+        "upstream": []
+      },
+      "categorize_0": {
+        "obj": {
+          "component_name": "Categorize",
+          "params": {
+            "input": "{sys.query}",
+            "llm_id": "ollama@llama3.2",
+            "categories": [
+              {
+                "name": "qa",
+                "description": "需要从知识库或事实回答的问题",
+                "examples": ["公司年假政策", "产品如何安装", "什么是向量数据库"],
+                "downstream": "retrieval_0"
+              },
+              {
+                "name": "chat",
+                "description": "问候、感谢、无关闲聊",
+                "examples": ["你好", "谢谢", "今天天气不错"],
+                "downstream": "chat_llm_0"
+              }
+            ]
+          }
+        },
+        "downstream": ["retrieval_0", "chat_llm_0"],
+        "upstream": ["begin"]
+      },
+      "retrieval_0": {
+        "obj": {
+          "component_name": "Retrieval",
+          "params": {
+            "query": "{sys.query}",
+            "top_n": 6,
+            "empty_response": "未找到相关知识",
+            "kb_ids": []
+          }
+        },
+        "downstream": ["gen_kb_0"],
+        "upstream": ["categorize_0"]
+      },
+      "gen_kb_0": {
+        "obj": {
+          "component_name": "LLM",
+          "params": {
+            "llm_id": "ollama@llama3.2",
+            "creativity": "precise",
+            "sys_prompt": "根据知识库回答；若无相关内容请说明。\n\n知识库：\n{retrieval_0@formalized_content}",
+            "prompts": [{ "role": "user", "content": "{sys.query}" }]
+          }
+        },
+        "downstream": ["msg_kb_0"],
+        "upstream": ["retrieval_0"]
+      },
+      "msg_kb_0": {
+        "obj": { "component_name": "Message", "params": { "content": ["{gen_kb_0@content}"] } },
+        "downstream": [],
+        "upstream": ["gen_kb_0"]
+      },
+      "chat_llm_0": {
+        "obj": {
+          "component_name": "LLM",
+          "params": {
+            "llm_id": "ollama@llama3.2",
+            "creativity": "improvise",
+            "sys_prompt": "你是友好、简洁的闲聊助手。",
+            "prompts": [{ "role": "user", "content": "{sys.query}" }]
+          }
+        },
+        "downstream": ["msg_chat_0"],
+        "upstream": ["categorize_0"]
+      },
+      "msg_chat_0": {
+        "obj": { "component_name": "Message", "params": { "content": ["{chat_llm_0@content}"] } },
+        "downstream": [],
+        "upstream": ["chat_llm_0"]
+      }
+    },
+    "path": ["begin", "categorize_0", "retrieval_0", "gen_kb_0", "msg_kb_0", "chat_llm_0", "msg_chat_0"],
+    "globals": {
+      "sys.query": "",
+      "sys.user_id": "",
+      "sys.conversation_turns": 0,
+      "sys.files": [],
+      "sys.await_reply": "",
+      "env.tavily_api_key": ""
+    },
+    "history": [],
+    "retrieval": []
+  }
+}

@@ -1,0 +1,92 @@
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+#
+# 发布流程（与 Makefile 的 build-server-embed-local 一致）：
+# 1. 在 web/ 构建前端 → web/dist
+# 2. scripts/sync-web-dist.sh 同步到 server/webui/webdist（供 go:embed）
+# 3. 在 server/ 交叉编译多平台二进制
+#
+# go.mod 位于 server/，必须配置 gomod.dir，否则在仓库根目录执行 go list -m 会失败。
+#
+# 本地试跑（不上传）：goreleaser release --snapshot --clean --skip=publish
+# 正式发版：推送 v* 标签（见 .github/workflows/goreleaser.yml）
+version: 2
+
+project_name: lightningrag
+
+gomod:
+  dir: server
+
+before:
+  hooks:
+    - sh -c "cd web && npm install --no-audit --no-fund && npm run build"
+    - bash scripts/sync-web-dist.sh
+
+builds:
+  - id: lightningrag
+    dir: server
+    main: .
+    binary: lightningrag
+    env:
+      - CGO_ENABLED=0
+      - GO111MODULE=on
+    flags:
+      - -trimpath
+    ldflags:
+      - -s
+      - -w
+    goos:
+      - linux
+      - windows
+      - darwin
+      - freebsd
+    goarch:
+      - amd64
+      - arm64
+      - "386"
+      - arm
+    goarm:
+      - "7"
+    ignore:
+      # macOS 仅 amd64 / arm64
+      - goos: darwin
+        goarch: "386"
+      - goos: darwin
+        goarch: arm
+      # Windows on ARM 使用 arm64；省略 32 位 arm 以减小矩阵
+      - goos: windows
+        goarch: arm
+
+archives:
+  - id: default
+    ids:
+      - lightningrag
+    formats:
+      - tar.gz
+    format_overrides:
+      - goos: windows
+        formats:
+          - zip
+    files:
+      - src: server/config.docker.yaml
+        dst: config.yaml
+      - src: server/resource
+        dst: resource
+
+checksum:
+  name_template: "{{ .ProjectName }}_{{ .Version }}_checksums.txt"
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-snapshot"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^chore:"
+      - Merge pull request
+      - Merge branch
+
+release:
+  draft: false

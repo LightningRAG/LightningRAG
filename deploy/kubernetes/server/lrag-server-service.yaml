@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: lightningrag-server
+  annotations:
+    app.kubernetes.io/name: lightningrag-backend
+    github: "https://github.com/LightningRAG/LightningRAG.git"
+    app.kubernetes.io/version: 0.0.1
+  labels:
+    app: lightningrag-server
+    version: lightningrag-vue3
+spec:
+  selector:
+    app: lightningrag-server
+    version: lightningrag-vue3
+  ports:
+    - port: 8888
+      name: http
+      targetPort: 8888
+  type: ClusterIP
+#  type: NodePort

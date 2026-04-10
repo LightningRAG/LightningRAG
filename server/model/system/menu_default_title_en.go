@@ -1,0 +1,61 @@
+package system
+
+// defaultEnglishMenuTitle maps sys_base_menus.name to English meta.title (DB fallback when i18n is off).
+// Must stay aligned with web/src/locale/messages/en.js → menu.names.*
+var defaultEnglishMenuTitle = map[string]string{
+	"dashboard":                "Dashboard",
+	"about":                    "About",
+	"superAdmin":               "Super Admin",
+	"person":                   "Profile",
+	"rag":                      "RAG Knowledge Base",
+	"example":                  "Examples",
+	"systemTools":              "System Tools",
+	"https://lightningrag.com": "Official website",
+	"state":                    "Server status",
+	"plugin":                   "Plugins",
+	"authority":                "Roles",
+	"menu":                     "Menus",
+	"api":                      "API management",
+	"user":                     "Users",
+	"dictionary":               "Dictionaries",
+	"operation":                "Operation log",
+	"sysParams":                "Parameters",
+	"oauthProvider":            "Third-party sign-in",
+	"knowledgeBase":            "Knowledge bases",
+	"ragDocumentRetrieval":     "Document retrieval",
+	"ragDocuments":             "Documents",
+	"ragKnowledgeGraph":        "Knowledge graph",
+	"conversation":             "Chat",
+	"ragAgent":                 "Agent builder",
+	"ragAgentEditor":           "Agent editor",
+	"ragModel":                 "Model settings",
+	"ragSystemModel":           "System configuration",
+	"ragChannelConnectors":     "Channel connectors",
+	"upload":                   "Media library",
+	"breakpoint":               "Resumable upload",
+	"customer":                 "Customers (sample)",
+	"autoCode":                 "Code generator",
+	"formCreate":               "Form builder",
+	"system":                   "System settings",
+	"autoCodeAdmin":            "Codegen admin",
+	"loginLog":                 "Login log",
+	"apiToken":                 "API Token",
+	"autoCodeEdit":             "Automation code - ${id}",
+	"autoPkg":                  "Template config",
+	"exportTemplate":           "Export templates",
+	"skills":                   "Skills",
+	"picture":                  "AI page sketch",
+	"mcpTool":                  "MCP tools template",
+	"mcpTest":                  "MCP tools test",
+	"sysVersion":               "Versions",
+	"sysError":                 "Error log",
+	"installPlugin":            "Install plugin",
+	"pubPlug":                  "Package plugin",
+	"plugin-email":             "Email plugin",
+	"anInfo":                   "Announcements (sample)",
+}
+
+// DefaultMenuTitleEnglish returns the canonical English menu title for route Name, or empty if unknown.
+func DefaultMenuTitleEnglish(routeName string) string {
+	return defaultEnglishMenuTitle[routeName]
+}

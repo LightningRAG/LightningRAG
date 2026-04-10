@@ -1,0 +1,337 @@
+aliyun-oss:
+    endpoint: yourEndpoint
+    access-key-id: yourAccessKeyId
+    access-key-secret: yourAccessKeySecret
+    bucket-name: yourBucketName
+    bucket-url: yourBucketUrl
+    base-path: yourBasePath
+autocode:
+    web: web/src
+    root: /Users/iotserv/git/LightningRAG
+    server: server
+    module: github.com/LightningRAG/LightningRAG/server
+    ai-path: ""
+aws-s3:
+    bucket: xxxxx-10005608
+    region: ap-shanghai
+    endpoint: ""
+    secret-id: your-secret-id
+    secret-key: your-secret-key
+    base-url: https://lightningrag.com
+    path-prefix: github.com/LightningRAG/LightningRAG/server
+    s3-force-path-style: false
+    disable-ssl: false
+captcha:
+    key-long: 6
+    img-width: 240
+    img-height: 80
+    open-captcha: 0
+    open-captcha-timeout: 3600
+cloudflare-r2:
+    bucket: xxxx0bucket
+    base-url: https://lightningrag.com
+    path: uploads
+    account-id: xxx_account_id
+    access-key-id: xxx_key_id
+    secret-access-key: xxx_secret_key
+cors:
+    mode: strict-whitelist
+    whitelist:
+        - allow-origin: example1.com
+          allow-methods: POST, GET
+          allow-headers: Content-Type,AccessToken,X-CSRF-Token, Authorization, Token,X-Token,X-User-Id
+          expose-headers: Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type
+          allow-credentials: true
+        - allow-origin: example2.com
+          allow-methods: GET, POST
+          allow-headers: content-type
+          expose-headers: Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type
+          allow-credentials: true
+db-list:
+    - type: ""
+      alias-name: ""
+      prefix: ""
+      port: ""
+      config: ""
+      db-name: ""
+      username: ""
+      password: ""
+      path: ""
+      engine: ""
+      log-mode: ""
+      max-idle-conns: 10
+      max-open-conns: 100
+      singular: false
+      log-zap: false
+      disable: true
+disk-list:
+    - mount-point: /
+email:
+    to: xxx@qq.com
+    from: xxx@163.com
+    host: smtp.163.com
+    secret: xxx
+    nickname: test
+    port: 465
+    is-ssl: true
+    is-loginauth: false
+excel:
+    dir: ./resource/excel/
+hua-wei-obs:
+    path: you-path
+    bucket: you-bucket
+    endpoint: you-endpoint
+    access-key: you-access-key
+    secret-key: you-secret-key
+jwt:
+    signing-key: ee18b6a8-7575-4e8d-bae1-b33c513a6b11
+    expires-time: 7d
+    buffer-time: 1d
+    issuer: qmPlus
+local:
+    path: uploads/file
+    store-path: uploads/file
+mcp:
+    name: LightningRAG_MCP
+    version: v1.0.0
+    sse_path: /sse
+    message_path: /message
+    url_prefix: ""
+    addr: 8889
+    separate: false
+minio:
+    endpoint: yourEndpoint
+    access-key-id: yourAccessKeyId
+    access-key-secret: yourAccessKeySecret
+    bucket-name: yourBucketName
+    use-ssl: false
+    base-path: ""
+    bucket-url: http://host:9000/yourBucketName
+mongo:
+    coll: ""
+    options: ""
+    database: ""
+    username: ""
+    password: ""
+    auth-source: ""
+    min-pool-size: 0
+    max-pool-size: 100
+    socket-timeout-ms: 0
+    connect-timeout-ms: 0
+    is-zap: false
+    hosts:
+        - host: ""
+          port: ""
+mssql:
+    prefix: ""
+    port: ""
+    config: ""
+    db-name: ""
+    username: ""
+    password: ""
+    path: ""
+    engine: ""
+    log-mode: ""
+    max-idle-conns: 10
+    max-open-conns: 100
+    singular: false
+    log-zap: false
+mysql:
+    prefix: ""
+    port: ""
+    config: charset=utf8mb4&parseTime=True&loc=Local
+    db-name:
+    username:
+    password:
+    path:
+    engine: ""
+    log-mode: error
+    max-idle-conns: 10
+    max-open-conns: 100
+    singular: false
+    log-zap: false
+#mysql:
+#    prefix: ""
+#    port: "5455"
+#    config: charset=utf8mb4&parseTime=True&loc=Local
+#    db-name: lrag
+#    username: root
+#    password: rag@lightningrag
+#    path: 127.0.0.1
+#    engine: ""
+#    log-mode: error
+#    max-idle-conns: 10
+#    max-open-conns: 100
+#    singular: false
+#    log-zap: false
+oracle:
+    prefix: ""
+    port: ""
+    config: ""
+    db-name: ""
+    username: ""
+    password: ""
+    path: ""
+    engine: ""
+    log-mode: ""
+    max-idle-conns: 10
+    max-open-conns: 100
+    singular: false
+    log-zap: false
+pgsql:
+    prefix: ""
+    port: ""
+    config: ""
+    db-name: ""
+    username: ""
+    password: ""
+    path: ""
+    engine: ""
+    log-mode: ""
+    max-idle-conns: 10
+    max-open-conns: 100
+    singular: false
+    log-zap: false
+qiniu:
+    zone: ZoneHuaDong
+    bucket: ""
+    img-path: ""
+    access-key: ""
+    secret-key: ""
+    use-https: false
+    use-cdn-domains: false
+redis:
+    name: ""
+    addr: 127.0.0.1:6379
+    password: ""
+    db: 0
+    useCluster: false
+    clusterAddrs:
+        - 172.21.0.3:7000
+        - 172.21.0.4:7001
+        - 172.21.0.2:7002
+redis-list:
+    - name: cache
+      addr: 127.0.0.1:6379
+      password: ""
+      db: 0
+      useCluster: false
+      clusterAddrs:
+        - 172.21.0.3:7000
+        - 172.21.0.4:7001
+        - 172.21.0.2:7002
+sqlite:
+    prefix: ""
+    port: ""
+    config: ""
+    db-name: ""
+    username: ""
+    password: ""
+    path: ""
+    engine: ""
+    log-mode: ""
+    max-idle-conns: 10
+    max-open-conns: 100
+    singular: false
+    log-zap: false
+system:
+    db-type: mysql
+    oss-type: local
+    router-prefix: ""
+    addr: 8888
+    iplimit-count: 15000
+    iplimit-time: 3600
+    use-multipoint: false
+    use-redis: false
+    use-mongo: false
+    use-strict-auth: false
+    disable-auto-migrate: false
+    # 是否由后端通过 go:embed 托管前端（见 README 与 scripts/sync-web-dist.sh）；默认关闭保持与 Nginx 分离部署一致
+    embed-web-ui: true
+tencent-cos:
+    bucket: xxxxx-10005608
+    region: ap-shanghai
+    secret-id: your-secret-id
+    secret-key: your-secret-key
+    base-url: https://lightningrag.com
+    path-prefix: github.com/LightningRAG/LightningRAG/server
+# RAG 可选默认（借鉴 LightningRAG 集中配置；注释或置 0 则使用代码内置默认）
+rag:
+    default-conversation-chunk-top-k: 0
+    # 对话 / queryData / Agent 未传 topK 时扩大检索候选池（0=内置 Ragflow 式 1024，与 references/ragflow topk 默认一致）；设为 1 且不大于 chunkTopK 时可减弱扩展
+    default-conversation-retrieve-pool-top-k: 0
+    # 文档检索接口默认返回条数（0=内置 8）；LightRAG DEFAULT_CHUNK_TOP_K=20 可作对照，按需调高
+    default-knowledge-base-retrieve-top-n: 0
+    # 文档检索未传 topK 时候选池（0=内置 1024 宽召回，对齐 Ragflow）；最终返回条数仍受 max-retrieve-top-n 与 topN 限制
+    default-knowledge-base-retrieve-pool-top-k: 0
+    # 最终返回/注入上下文的切片条数上限（0=内置 50）；与向量索引侧候选上限解耦
+    max-retrieve-top-n: 0
+    # 向量/融合/Rerank 前候选池上限（0=内置 1024，对齐 Ragflow Dealer.retrieval top）；不超过向量实现硬顶
+    max-retrieve-candidate-top-k: 0
+    # hybrid/mix（无图谱）融合权重，均为 0 时用 Ragflow 0.05 全文 + 0.95 向量
+    hybrid-fusion-term-weight: 0
+    hybrid-fusion-vector-weight: 0
+    # 融合分（归一化加权和）下限，0=不过滤；0.2 近似 Ragflow retrieval similarity_threshold（尺度因存储而异，需实测）
+    hybrid-fusion-min-score: 0
+    # true 时关闭 hybrid/mix 零命中后的纯向量宽召回重试
+    hybrid-fusion-skip-empty-retry: false
+    # true 时关闭纯 vector/global（无图谱）与 PageIndex 向量腿在零命中后的无阈值宽池重试
+    vector-skip-empty-retry: false
+    # true 时关闭 keyword/local（无图谱）在零命中后的宽松全文重试
+    keyword-skip-empty-retry: false
+    # 向量检索分数加权：score *= 1 + weight*clamp(metadata.rank_boost,0,1)；ES/PG/MySQL 均生效；0 关闭
+    elasticsearch-score-rank-boost-weight: 0
+    # 索引入库时默认 metadata.rank_boost（0~1），仅当未设置时写入；可与 rag_chunks.metadata JSON 中的 rank_boost 并存（JSON 优先）
+    default-chunk-rank-boost: 0
+    # true 时按切片序号衰减 rank_boost（首块 1、末块趋近 floor）；与 default-chunk-rank-boost 二选一（位置优先）；图谱向量单条视为 1 段
+    chunk-rank-boost-by-position: false
+    # 位置衰减下限（0~1），0 表示 0.35
+    chunk-rank-boost-position-floor: 0
+    # 知识图谱：首轮抽取后再跑一轮补抽遗漏实体/关系（借鉴 LightRAG gleaning；0=关闭，1=推荐）
+    kg-extract-max-gleaning: 0
+    # 补抽多轮请求的粗算输入 token 上限（0=内置默认 20480，与 LightRAG max_extract_input_tokens 同量级）
+    kg-extract-gleaning-max-input-tokens: 0
+    # 请求未传 cosineThreshold 时使用的向量相似度下限（0~1）；0=不启用，0.2 对齐 LightRAG DEFAULT_COSINE_THRESHOLD
+    default-cosine-threshold: 0
+    # 知识图谱：实体名最大长度（0=内置 256，对齐 LightRAG DEFAULT_ENTITY_NAME_MAX_LENGTH）
+    kg-entity-name-max-runes: 0
+    # 实体/关系 description 合并后最大长度（0=内置 16384）
+    kg-stored-description-max-runes: 0
+    # 关系 keywords 最大长度（0=内置 4096）
+    kg-stored-keywords-max-runes: 0
+    # 单实体/单关系最多关联切片数（0=不限制；300 对齐 LightRAG max_source_ids_per_*）
+    kg-max-chunks-per-entity: 0
+    kg-max-chunks-per-relationship: 0
+    # fifo=保留较新切片关联（LightRAG 默认）；keep=保留较旧
+    kg-chunk-link-limit-method: ""
+    # 实体/关系 description 多条合并后用 LLM 摘要（对齐 LightRAG summarize_entity_descriptions）；0=关闭，3≈上游 force_llm_summary_on_merge
+    kg-merge-summarize-min-segments: 0
+    kg-merge-summary-target-runes: 0
+    # 合并描述 LLM 摘要结果缓存秒数（0=关闭；与 LightRAG summary 类 LLM 缓存同思路）；段数很多时会自动 map-reduce 多轮摘要
+    kg-merge-summarize-llm-cache-ttl-seconds: 0
+    # 图谱检索每命中一个实体/关系最多展开多少关联切片（0=不限制；5 对齐 LightRAG DEFAULT_RELATED_CHUNK_NUMBER）
+    kg-retriever-related-chunk-number: 0
+    # 公开渠道 Webhook：单 IP + 单 connectorId 每分钟最大请求数；0=不限制；需 Redis
+    channel-webhook-ip-limit-per-minute: 0
+    # 公开 OAuth（/base/oauth/*）：单 IP 每分钟最大请求数；0=不限制；需 Redis
+    oauth-ip-limit-per-minute: 0
+    # Webhook 幂等表 rag_channel_webhook_events 保留天数；0=默认 7；-1=不跑每日清理
+    channel-webhook-event-retention-days: 0
+    # 出站重试队列扫描间隔（秒）；0=默认 30；范围 5～300；-1=不注册定时任务（仍入队，改配置后重启再扫）
+    channel-outbound-poll-seconds: 0
+    # 单条出站任务最大执行次数（超过则丢弃并打日志）；0=默认 8；最大 24
+    channel-outbound-max-attempts: 0
+    # 每轮定时任务最多处理条数；0=默认 32；最大 128
+    channel-outbound-batch-size: 0
+    # 多实例出站队列行认领租约（秒）；0=默认 180；范围 30～3600
+    channel-outbound-claim-lease-seconds: 0
+zap:
+    level: info
+    prefix: '[github.com/LightningRAG/LightningRAG/server]'
+    format: console
+    director: log
+    encode-level: LowercaseColorLevelEncoder
+    stacktrace-key: stacktrace
+    show-line: true
+    log-in-console: true
+    retention-day: -1

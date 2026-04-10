@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="../assets/logo.png" type="image/png" />
+    <meta
+      name="description"
+      content="LightningRAG documentation: quick start, local development, RAG knowledge bases, models, chat, and agents."
+    />
+    <meta name="theme-color" content="#4d70ff" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://lightningrag.com/guide/" />
+    <title>Documentation — LightningRAG</title>
+    <link rel="stylesheet" href="../css/site.css" />
+  </head>
+  <body data-doc-page="hub">
+    <a class="sr-only" href="#main" data-i18n="a11y.skipMain">Skip to main content</a>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a
+          class="site-brand"
+          href="../index.html"
+          data-i18n-aria-label="a11y.brandHome"
+          aria-label="LightningRAG home"
+        >
+          <img
+            src="../assets/logo.png"
+            data-i18n-alt="brand.logoAlt"
+            alt="LightningRAG"
+            width="40"
+            height="40"
+            loading="eager"
+          />
+          <span>LightningRAG</span>
+        </a>
+        <nav class="site-nav" aria-label="Main navigation" data-i18n-aria-label="a11y.navMain">
+          <a href="../index.html#features" data-i18n="nav.features">Features</a>
+          <a href="../index.html#advantages" data-i18n="nav.advantages">Advantages</a>
+          <a href="../articles/" data-i18n="nav.articles">Articles</a>
+          <a href="index.html" aria-current="page" data-i18n="nav.docs">Documentation</a>
+          <a href="../license.html" data-i18n="nav.license">Commercial license</a>
+        </nav>
+        <div class="site-header__actions">
+          <label class="sr-only" for="lr-lang-select" data-i18n="ui.langAria">Language</label>
+          <select
+            id="lr-lang-select"
+            class="lr-lang-select"
+            aria-label="Language"
+            data-i18n-aria-label="ui.langAria"
+          >
+            <option value="en">English</option>
+            <option value="zh-CN">简体中文</option>
+            <option value="zh-TW">繁體中文</option>
+            <option value="es">Español</option>
+            <option value="fr">Français</option>
+            <option value="de">Deutsch</option>
+            <option value="ja">日本語</option>
+            <option value="ko">한국어</option>
+            <option value="pt">Português</option>
+            <option value="ru">Русский</option>
+            <option value="it">Italiano</option>
+          </select>
+          <a
+            class="btn btn--primary"
+            href="https://github.com/LightningRAG/LightningRAG"
+            rel="noopener noreferrer"
+            data-i18n="btn.github"
+            >GitHub</a
+          >
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="section section--tight">
+        <div class="wrap">
+          <h1 class="section__title" data-i18n="docHub.title">Documentation</h1>
+          <p class="section__lead" data-i18n="docHub.lead">
+            Learn how to run LightningRAG locally, then use knowledge bases, models,
+            conversational RAG, and agent flows in the admin console.
+          </p>
+
+          <div class="docs-card-grid docs-card-grid--4">
+            <article class="card">
+              <div class="card__icon" aria-hidden="true">🚀</div>
+              <h3 data-i18n="docHub.c1t">Quick start</h3>
+              <p data-i18n="docHub.c1p">
+                Prerequisites, clone the repo, run the Go server and Vue frontend, and
+                optional Swagger / Docker paths.
+              </p>
+              <a href="start-quickly/initialization.html" data-i18n="docHub.c1a">Open quick start →</a>
+            </article>
+            <article class="card">
+              <div class="card__icon" aria-hidden="true">📚</div>
+              <h3 data-i18n="docHub.c2t">RAG features & agents</h3>
+              <p data-i18n="docHub.c2p">
+                Knowledge bases, embedding and chat models, retrieval Q&A with citations,
+                and visual agent orchestration.
+              </p>
+              <a href="using/rag-features.html" data-i18n="docHub.c2a">Open usage guide →</a>
+            </article>
+            <article class="card">
+              <div class="card__icon" aria-hidden="true">🔗</div>
+              <h3 data-i18n="docHub.c3t">Source & license</h3>
+              <p data-i18n="docHub.c3p">
+                Apache 2.0. See the README for commercial terms, contributing, and the
+                full feature list.
+              </p>
+              <p style="margin: 0; display: flex; flex-direction: column; gap: 0.35rem">
+                <a
+                  href="https://github.com/LightningRAG/LightningRAG"
+                  rel="noopener noreferrer"
+                  data-i18n="docHub.c3a"
+                  >View on GitHub →</a
+                >
+                <a href="../license.html" data-i18n="docHub.c3license"
+                  >Commercial license & contact →</a
+                >
+              </p>
+            </article>
+            <article class="card">
+              <div class="card__icon" aria-hidden="true">🖼️</div>
+              <h3 data-i18n="docHub.c4t">Product interface</h3>
+              <p data-i18n="docHub.c4p">
+                Screenshots of the admin console: knowledge bases, document lists, retrieval, AI
+                chat, models, RAG config, and agent flows.
+              </p>
+              <a href="preview.html" data-i18n="docHub.c4a">View product UI →</a>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-footer__inner">
+        <p data-i18n="footer.copy">
+          © LightningRAG open-source community. All rights reserved.
+        </p>
+        <div class="site-footer__links">
+          <a href="../index.html" data-i18n="footer.home">Home</a>
+          <a href="index.html" data-i18n="footer.docs">Documentation</a>
+          <a href="../articles/" data-i18n="footer.articles">Articles</a>
+          <a href="../license.html" data-i18n="footer.license">Commercial license</a>
+          <a href="../sitemap.xml" data-i18n="footer.sitemap">Sitemap</a>
+          <a
+            href="https://github.com/LightningRAG/LightningRAG"
+            rel="noopener noreferrer"
+            data-i18n="footer.githubRepo"
+            >GitHub repository</a
+          >
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="../js/docs-i18n.js"></script>
+  </body>
+</html>

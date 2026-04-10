@@ -1,0 +1,74 @@
+{
+  "title": "深度搜索 R（Tavily）",
+  "description": "与 LightningRAG deep_search_r 名称对应：Tavily 检索 + 提炼 + 综合（需配置 API Key）。",
+  "templateName": "deep_search_r",
+  "category": "网络",
+  "tags": ["Tavily", "深度", "Transformer"],
+  "dsl": {
+    "components": {
+      "begin": {
+        "obj": { "component_name": "Begin", "params": { "prologue": "使用 Tavily 做深度检索（请在节点或 env.tavily_api_key 填写密钥）。" } },
+        "downstream": ["tavily_0"],
+        "upstream": []
+      },
+      "tavily_0": {
+        "obj": {
+          "component_name": "TavilySearch",
+          "params": {
+            "query": "{sys.query}",
+            "api_key": "",
+            "topic": "general",
+            "search_depth": "advanced",
+            "max_results": 8,
+            "include_answer": true,
+            "timeout": 45
+          }
+        },
+        "downstream": ["transformer_0"],
+        "upstream": ["begin"]
+      },
+      "transformer_0": {
+        "obj": {
+          "component_name": "Transformer",
+          "params": {
+            "input": "{tavily_0@formalized_content}",
+            "llm_id": "ollama@llama3.2",
+            "creativity": "precise",
+            "instruction": "将检索结果整理为：关键事实、来源线索、待核实点；勿编造。"
+          }
+        },
+        "downstream": ["synth_0"],
+        "upstream": ["tavily_0"]
+      },
+      "synth_0": {
+        "obj": {
+          "component_name": "LLM",
+          "params": {
+            "llm_id": "ollama@llama3.2",
+            "creativity": "balance",
+            "sys_prompt": "基于要点写完整回答，段落清晰，结尾列信息局限。\n\n要点：\n{transformer_0@formalized_content}",
+            "prompts": [{ "role": "user", "content": "{sys.query}" }]
+          }
+        },
+        "downstream": ["message_0"],
+        "upstream": ["transformer_0"]
+      },
+      "message_0": {
+        "obj": { "component_name": "Message", "params": { "content": ["{synth_0@content}"] } },
+        "downstream": [],
+        "upstream": ["synth_0"]
+      }
+    },
+    "path": ["begin", "tavily_0", "transformer_0", "synth_0", "message_0"],
+    "globals": {
+      "sys.query": "",
+      "sys.user_id": "",
+      "sys.conversation_turns": 0,
+      "sys.files": [],
+      "sys.await_reply": "",
+      "env.tavily_api_key": ""
+    },
+    "history": [],
+    "retrieval": []
+  }
+}

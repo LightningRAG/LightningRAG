@@ -1,0 +1,45 @@
+{
+  "title": "简历与岗位评估",
+  "description": "在一条问题中同时粘贴「岗位描述」与「简历要点」，由 LLM 给出匹配度与面试建议（LightningRAG CV 模板简化版）。",
+  "templateName": "cv_analysis_and_candidate_evaluation",
+  "category": "业务",
+  "tags": ["招聘", "LLM"],
+  "dsl": {
+    "components": {
+      "begin": {
+        "obj": { "component_name": "Begin", "params": { "prologue": "请在一次提问中用「岗位：… 简历：…」格式粘贴内容。" } },
+        "downstream": ["eval_0"],
+        "upstream": []
+      },
+      "eval_0": {
+        "obj": {
+          "component_name": "LLM",
+          "params": {
+            "llm_id": "ollama@llama3.2",
+            "creativity": "balance",
+            "sys_prompt": "你是资深招聘顾问。输出：1）匹配度（高/中/低）及理由 2）优势与风险 3）面试追问建议。保持客观，避免歧视性表述。",
+            "prompts": [{ "role": "user", "content": "{sys.query}" }]
+          }
+        },
+        "downstream": ["message_0"],
+        "upstream": ["begin"]
+      },
+      "message_0": {
+        "obj": { "component_name": "Message", "params": { "content": ["{eval_0@content}"] } },
+        "downstream": [],
+        "upstream": ["eval_0"]
+      }
+    },
+    "path": ["begin", "eval_0", "message_0"],
+    "globals": {
+      "sys.query": "",
+      "sys.user_id": "",
+      "sys.conversation_turns": 0,
+      "sys.files": [],
+      "sys.await_reply": "",
+      "env.tavily_api_key": ""
+    },
+    "history": [],
+    "retrieval": []
+  }
+}

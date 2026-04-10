@@ -1,0 +1,133 @@
+# 可选中间件：按需通过 profile 启用
+# 示例：docker compose --profile minio --profile pgsql --profile elasticsearch --profile mongo up -d
+# 或在环境中设置：COMPOSE_PROFILES=minio,pgsql,elasticsearch,mongo
+#
+# Elasticsearch：默认 docker.elastic.co。拉取失败时可设 ES_IMAGE 为完整镜像名（含 tag），例如内网镜像站。
+# 未设 ES_IMAGE 时可用 ES_STACK_VERSION 只改 tag（默认 8.15.3）。
+
+x-logging: &dev-json-logging
+  driver: json-file
+  options:
+    max-size: "50m"
+    max-file: "5"
+
+volumes:
+  minio_data:
+  postgres_data:
+  elasticsearch_data:
+  mongo_data:
+
+services:
+  minio:
+    profiles:
+      - minio
+    image: quay.io/minio/minio:RELEASE.2025-06-13T11-33-47Z
+    container_name: lightningrag-minio
+    restart: always
+    command: ["server", "--console-address", ":9001", "/data"]
+    environment:
+      MINIO_ROOT_USER: "${MINIO_ROOT_USER:-minioadmin}"
+      MINIO_ROOT_PASSWORD: "${MINIO_ROOT_PASSWORD:-minioadmin}"
+    ports:
+      - "${EXPOSE_MINIO_PORT:-19000}:9000"
+      - "${EXPOSE_MINIO_CONSOLE_PORT:-19001}:9001"
+    volumes:
+      - minio_data:/data
+    networks:
+      network:
+        ipv4_address: 177.7.0.15
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 20s
+    logging: *dev-json-logging
+
+  postgres:
+    profiles:
+      - pgsql
+    image: pgvector/pgvector:pg16
+    container_name: lightningrag-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: "${POSTGRES_USER:-lrag}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-rag@lightningrag}"
+      POSTGRES_DB: "${POSTGRES_DB:-lightningrag}"
+    ports:
+      - "${EXPOSE_POSTGRES_PORT:-15432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    shm_size: 256mb
+    networks:
+      network:
+        ipv4_address: 177.7.0.16
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 20s
+    logging: *dev-json-logging
+
+  elasticsearch:
+    profiles:
+      - elasticsearch
+    image: ${ES_IMAGE:-docker.elastic.co/elasticsearch/elasticsearch:${ES_STACK_VERSION:-8.15.3}}
+    container_name: lightningrag-elasticsearch
+    restart: always
+    environment:
+      - node.name=lrag-es01
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - xpack.security.http.ssl.enabled=false
+      - xpack.security.transport.ssl.enabled=false
+      - cluster.routing.allocation.disk.watermark.low=1gb
+      - cluster.routing.allocation.disk.watermark.high=512mb
+      - cluster.routing.allocation.disk.watermark.flood_stage=256mb
+      - ES_JAVA_OPTS=-Xms${ES_JAVA_HEAP_MB:-512}m -Xmx${ES_JAVA_HEAP_MB:-512}m
+    ports:
+      - "${EXPOSE_ES_PORT:-19200}:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      network:
+        ipv4_address: 177.7.0.17
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:9200 >/dev/null || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+    logging: *dev-json-logging
+
+  mongo:
+    profiles:
+      - mongo
+    image: mongo:7
+    container_name: lightningrag-mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "${MONGO_INITDB_ROOT_USERNAME:-lrag}"
+      MONGO_INITDB_ROOT_PASSWORD: "${MONGO_INITDB_ROOT_PASSWORD:-rag@lightningrag}"
+    ports:
+      - "${EXPOSE_MONGO_PORT:-17017}:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      network:
+        ipv4_address: 177.7.0.18
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - |
+          mongosh -u "$$MONGO_INITDB_ROOT_USERNAME" -p "$$MONGO_INITDB_ROOT_PASSWORD" --authenticationDatabase admin --quiet --eval 'db.adminCommand("ping").ok' | grep -q 1
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 40s
+    logging: *dev-json-logging

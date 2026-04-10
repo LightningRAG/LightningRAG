@@ -1,0 +1,45 @@
+{
+  "title": "客户评价分析",
+  "description": "将用户输入中的评价文本做情感与主题分析（无需额外组件；把评价写在问题中）。",
+  "templateName": "customer_review_analysis",
+  "category": "业务",
+  "tags": ["分析", "LLM"],
+  "dsl": {
+    "components": {
+      "begin": {
+        "obj": { "component_name": "Begin", "params": { "prologue": "请粘贴一条或多条客户评价，我会给出情感、主题与改进建议。" } },
+        "downstream": ["analyze_0"],
+        "upstream": []
+      },
+      "analyze_0": {
+        "obj": {
+          "component_name": "LLM",
+          "params": {
+            "llm_id": "ollama@llama3.2",
+            "creativity": "precise",
+            "sys_prompt": "你是客服分析助手。对用户提供的评价：1）情感倾向 2）关键主题 3）可执行改进建议。使用要点列表输出。",
+            "prompts": [{ "role": "user", "content": "评价内容：\n{sys.query}" }]
+          }
+        },
+        "downstream": ["message_0"],
+        "upstream": ["begin"]
+      },
+      "message_0": {
+        "obj": { "component_name": "Message", "params": { "content": ["{analyze_0@content}"] } },
+        "downstream": [],
+        "upstream": ["analyze_0"]
+      }
+    },
+    "path": ["begin", "analyze_0", "message_0"],
+    "globals": {
+      "sys.query": "",
+      "sys.user_id": "",
+      "sys.conversation_turns": 0,
+      "sys.files": [],
+      "sys.await_reply": "",
+      "env.tavily_api_key": ""
+    },
+    "history": [],
+    "retrieval": []
+  }
+}

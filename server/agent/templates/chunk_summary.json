@@ -1,0 +1,53 @@
+{
+  "title": "分块摘要",
+  "description": "对齐 LightningRAG chunk 摘要思路：检索后由 Transformer 压缩为要点列表。",
+  "templateName": "chunk_summary",
+  "category": "生成",
+  "tags": ["Retrieval", "Transformer", "摘要"],
+  "dsl": {
+    "components": {
+      "begin": {
+        "obj": { "component_name": "Begin", "params": { "prologue": "你好！我会把知识库命中的内容提炼成要点。" } },
+        "downstream": ["retrieval_0"],
+        "upstream": []
+      },
+      "retrieval_0": {
+        "obj": {
+          "component_name": "Retrieval",
+          "params": { "query": "{sys.query}", "top_n": 10, "empty_response": "无检索结果", "kb_ids": [] }
+        },
+        "downstream": ["transformer_0"],
+        "upstream": ["begin"]
+      },
+      "transformer_0": {
+        "obj": {
+          "component_name": "Transformer",
+          "params": {
+            "input": "{retrieval_0@formalized_content}",
+            "llm_id": "ollama@llama3.2",
+            "creativity": "precise",
+            "instruction": "将输入的每条知识库片段合并整理为不超过 8 条要点，使用与用户相同的语言，不要编造。"
+          }
+        },
+        "downstream": ["message_0"],
+        "upstream": ["retrieval_0"]
+      },
+      "message_0": {
+        "obj": { "component_name": "Message", "params": { "content": ["{transformer_0@formalized_content}"] } },
+        "downstream": [],
+        "upstream": ["transformer_0"]
+      }
+    },
+    "path": ["begin", "retrieval_0", "transformer_0", "message_0"],
+    "globals": {
+      "sys.query": "",
+      "sys.user_id": "",
+      "sys.conversation_turns": 0,
+      "sys.files": [],
+      "sys.await_reply": "",
+      "env.tavily_api_key": ""
+    },
+    "history": [],
+    "retrieval": []
+  }
+}

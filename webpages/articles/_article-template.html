@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<!--
+  文章页骨架：复制本文件为 articles/你的文章slug.html，替换 TITLE、DESCRIPTION、正文与 JSON-LD。
+  在 articles/index.html 的 article-list 中添加链接，并在 sitemap.xml 注册 URL。
+-->
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="../assets/logo.png" type="image/png" />
+    <meta name="description" content="文章摘要，50–160 字为宜。" />
+    <meta name="keywords" content="LightningRAG,相关关键词" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://lightningrag.com/articles/你的slug.html" />
+    <title>文章标题 — LightningRAG</title>
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="文章标题 — LightningRAG" />
+    <meta property="og:description" content="文章摘要" />
+    <meta property="og:url" content="https://lightningrag.com/articles/你的slug.html" />
+    <link rel="stylesheet" href="../css/site.css" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": "文章标题",
+        "description": "文章摘要",
+        "author": { "@type": "Organization", "name": "LightningRAG" },
+        "publisher": {
+          "@type": "Organization",
+          "name": "LightningRAG",
+          "url": "https://lightningrag.com/"
+        },
+        "datePublished": "2025-03-27",
+        "dateModified": "2025-03-27",
+        "mainEntityOfPage": "https://lightningrag.com/articles/你的slug.html"
+      }
+    </script>
+  </head>
+  <body>
+    <a class="sr-only" href="#main">跳到主要内容</a>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="site-brand" href="../index.html">
+          <img
+            src="../assets/logo.png"
+            alt="LightningRAG"
+            width="40"
+            height="40"
+            loading="eager"
+          />
+          <span>LightningRAG</span>
+        </a>
+        <nav class="site-nav" aria-label="主导航">
+          <a href="../index.html#features">产品特点</a>
+          <a href="../index.html#advantages">核心优势</a>
+          <a href="index.html">文章</a>
+          <a href="../guide/index.html">文档</a>
+          <a href="../license.html">商用授权</a>
+        </nav>
+        <div class="site-header__actions">
+          <a
+            class="btn btn--outline"
+            href="https://github.com/LightningRAG/LightningRAG"
+            rel="noopener noreferrer"
+            >GitHub</a
+          >
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <article class="section">
+        <div class="wrap prose">
+          <p><a href="index.html">← 返回文章列表</a></p>
+          <h1 class="section__title">文章标题</h1>
+          <p style="color: var(--lr-text-muted); font-size: 0.9375rem">
+            <time datetime="2025-03-27">2025 年 3 月 27 日</time>
+          </p>
+          <p>正文段落……</p>
+        </div>
+      </article>
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-footer__inner">
+        <p>© LightningRAG</p>
+        <div class="site-footer__links">
+          <a href="../index.html">首页</a>
+          <a href="index.html">文章</a>
+          <a href="../guide/index.html">文档</a>
+          <a href="../license.html">商用授权</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

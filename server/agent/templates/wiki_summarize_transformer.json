@@ -1,0 +1,54 @@
+{
+  "title": "维基 + LLM 二次提炼",
+  "description": "先查维基百科，再用 Transformer 组件压缩为要点列表",
+  "templateName": "wiki_summarize_transformer",
+  "category": "生成",
+  "tags": ["Wikipedia", "Transformer"],
+  "dsl": {
+    "components": {
+      "begin": {
+        "obj": { "component_name": "Begin", "params": { "prologue": "你好！我会查维基并提炼要点。" } },
+        "downstream": ["wiki_0"],
+        "upstream": []
+      },
+      "wiki_0": {
+        "obj": {
+          "component_name": "Wikipedia",
+          "params": { "query": "{sys.query}", "language": "zh", "top_n": 4, "timeout": 30 }
+        },
+        "downstream": ["transformer_0"],
+        "upstream": ["begin"]
+      },
+      "transformer_0": {
+        "obj": {
+          "component_name": "Transformer",
+          "params": {
+            "input": "{wiki_0@formalized_content}",
+            "llm_id": "ollama@llama3.2",
+            "creativity": "precise",
+            "temperature": 0.2,
+            "instruction": "将输入的维基摘录整理为 5 条以内的要点，每条一行，使用与用户相同的语言。"
+          }
+        },
+        "downstream": ["message_0"],
+        "upstream": ["wiki_0"]
+      },
+      "message_0": {
+        "obj": { "component_name": "Message", "params": { "content": ["{transformer_0@formalized_content}"] } },
+        "downstream": [],
+        "upstream": ["transformer_0"]
+      }
+    },
+    "path": ["begin", "wiki_0", "transformer_0", "message_0"],
+    "globals": {
+      "sys.query": "",
+      "sys.user_id": "",
+      "sys.conversation_turns": 0,
+      "sys.files": [],
+      "sys.await_reply": "",
+      "env.tavily_api_key": ""
+    },
+    "history": [],
+    "retrieval": []
+  }
+}

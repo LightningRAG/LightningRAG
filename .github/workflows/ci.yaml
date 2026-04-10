@@ -1,0 +1,240 @@
+name: CI
+
+on:
+  push:
+    branches: ["*"]
+  pull_request:
+  release:
+    types: [created, edited, published]
+  workflow_dispatch:
+    inputs:
+      lrag_version:
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  frontend:
+    if: github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'release'
+    name: Frontend (Node 20 + pnpm)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    env:
+      NODE_OPTIONS: --max-old-space-size=6144
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install and build
+        run: |
+          pnpm install
+          pnpm run locale:check
+          pnpm run build
+
+  backend:
+    if: github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'release'
+    name: Backend (Go)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: server/go.mod
+          cache-dependency-path: server/go.sum
+
+      - name: Vet, test, build
+        working-directory: server
+        run: |
+          go mod download
+          go vet ./...
+          go test ./... -count=1 -short
+          go build -v -race -o /tmp/lrag-server .
+
+  # 以下任务依赖上游组织与 Secrets，fork 仓库默认跳过
+  devops-test:
+    if: github.ref == 'refs/heads/test' && github.repository_owner == 'lightningrag'
+    name: devops-test
+    needs: [backend, frontend]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.x]
+        go-version: ["1.24.2"]
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+      - name: Sed Config
+        env:
+          PROD: ${{ secrets.PROD }}
+          TESTING: ${{ secrets.TESTING }}
+        shell: bash
+        run: |
+          git branch
+          ls -l
+          sed -i "s/${PROD}/${TESTING}/g" web/.env.production
+          sed -i 's/${basePath}:${basePort}/${basePath}/g' web/src/view/systemTools/formCreate/index.vue
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - name: Build web
+        run: |
+          cd web && pnpm install && pnpm run build
+      - name: Use Go ${{ matrix.go-version }}
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go-version }}
+      - name: Build server
+        run: |
+          cd server && go mod tidy && CGO_ENABLED=0 go build && mkdir -p ../web/ser && mv server ../web/ser/ && ls -la ../web/ser/
+      - name: Deploy over SSH
+        env:
+          KEY: ${{ secrets.KEY }}
+          HOST: ${{ secrets.HOST }}
+          USER: ${{ secrets.USER }}
+          PROT: ${{ secrets.PROT }}
+          MKDIRTEST: ${{ secrets.MKDIRTEST }}
+        run: |
+          mkdir -p ~/.ssh/ && echo "$KEY" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          scp -P ${PROT} -o StrictHostKeyChecking=no -r web/dist/* ${USER}@${HOST}:${MKDIRTEST}dist/
+          scp -P ${PROT} -o StrictHostKeyChecking=no -r web/ser/* ${USER}@${HOST}:${MKDIRTEST}
+          ssh -p ${PROT} -o StrictHostKeyChecking=no ${USER}@${HOST} "cd ${MKDIRTEST}resource/ && rm -rf ${MKDIRTEST}resource/*"
+          scp -P ${PROT} -o StrictHostKeyChecking=no -r server/resource/* ${USER}@${HOST}:${MKDIRTEST}resource/
+          ssh -p ${PROT} -o StrictHostKeyChecking=no ${USER}@${HOST} "cd ${MKDIRTEST} && bash restart.sh > /dev/null 2>&1 &"
+
+  release-pr:
+    if: github.event_name == 'workflow_dispatch' && github.repository_owner == 'lightningrag'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+      - name: Bump version strings
+        env:
+          LRAG_VERSION: ${{ inputs.lrag_version }}
+        shell: bash
+        run: |
+          sed -i 's/当前版本.*`$/当前版本:v'${LRAG_VERSION##v}'`/' web/src/core/config.js
+          sed -i 's/当前版本.*$/当前版本:v'${LRAG_VERSION##v}'/' server/core/server.go
+          sed -i 's/当前版本.*$/当前版本:v'${LRAG_VERSION##v}'/' web/src/core/lightningrag.js
+          sed -i 's/"version": ".*",$/"version": "'${LRAG_VERSION##v}'",/' web/package.json
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add . && git commit -m "release: v${LRAG_VERSION##v}"
+      - name: Push
+        uses: ad-m/github-push-action@v0.8.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
+      - uses: google-github-actions/release-please-action@v3
+        with:
+          command: release-pr
+          release-type: simple
+          changelog-path: docs/CHANGELOG.md
+          release-as: ${{ inputs.lrag_version }}
+          package-name: LightningRAG
+          changelog-types: '[{"type":"feat","section":"Features","hidden":false},{"type":"fix","section":"Bug Fixes","hidden":false},{"type":"chore","section":"Miscellaneous","hidden":false}]'
+
+  release-please:
+    if: github.ref == 'refs/heads/main' || github.event_name == 'release'
+    runs-on: ubuntu-latest
+    needs: [backend, frontend]
+    permissions:
+      contents: write
+      pull-requests: write
+    outputs:
+      release_created: ${{ steps.release_please.outputs.release_created }}
+      tag_name: ${{ steps.release_please.outputs.tag_name }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: google-github-actions/release-please-action@v3
+        id: release_please
+        with:
+          command: github-release
+          release-type: simple
+          changelog-path: docs/CHANGELOG.md
+          package-name: LightningRAG
+          changelog-types: '[{"type":"feat","section":"Features","hidden":false},{"type":"fix","section":"Bug Fixes","hidden":false},{"type":"chore","section":"Miscellaneous","hidden":false}]'
+
+  devops-prod:
+    if: >-
+      github.repository_owner == 'lightningrag' &&
+      (needs.release-please.outputs.release_created == 'true' ||
+       github.event_name == 'release')
+    runs-on: ubuntu-latest
+    needs: [release-please]
+    name: devops-prod
+    strategy:
+      matrix:
+        node-version: [20.x]
+        go-version: ["1.24.2"]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Show release tag
+        run: |
+          echo "tag_name=${{ needs.release-please.outputs.tag_name }}"
+      - name: Sed Config
+        shell: bash
+        run: |
+          git branch
+          ls -l
+          sed -i 's/${basePath}:${basePort}/${basePath}/g' web/src/view/systemTools/formCreate/index.vue
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - name: Build web
+        run: |
+          cd web && pnpm install && pnpm run build
+      - name: Use Go ${{ matrix.go-version }}
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go-version }}
+      - name: Build server
+        run: |
+          cd server && go mod tidy && CGO_ENABLED=0 go build && mkdir -p ../web/ser && mv server ../web/ser/
+      - name: Deploy over SSH
+        env:
+          KEY: ${{ secrets.KEY }}
+          HOST: ${{ secrets.HOST }}
+          USER: ${{ secrets.USER }}
+          PROT: ${{ secrets.PROT }}
+          MKDIR: ${{ secrets.MKDIR }}
+        run: |
+          mkdir -p ~/.ssh/ && echo "$KEY" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          scp -P ${PROT} -o StrictHostKeyChecking=no -r web/dist/* ${USER}@${HOST}:${MKDIR}dist/
+          scp -P ${PROT} -o StrictHostKeyChecking=no -r web/ser/* ${USER}@${HOST}:${MKDIR}
+          ssh -p ${PROT} -o StrictHostKeyChecking=no ${USER}@${HOST} "cd ${MKDIR}resource/ && rm -rf ${MKDIR}resource/*"
+          scp -P ${PROT} -o StrictHostKeyChecking=no -r server/resource/* ${USER}@${HOST}:${MKDIR}resource/
+          ssh -p ${PROT} -o StrictHostKeyChecking=no ${USER}@${HOST} "cd ${MKDIR} && bash restart.sh > /dev/null 2>&1 &"

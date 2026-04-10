@@ -1,0 +1,53 @@
+{
+  "title": "SEO 博客草稿",
+  "description": "结合知识库素材输出带标题与关键词建议的博客 Markdown（LightningRAG seo_blog 简化版）。",
+  "templateName": "seo_blog",
+  "category": "生成",
+  "tags": ["SEO", "知识库", "内容"],
+  "dsl": {
+    "components": {
+      "begin": {
+        "obj": { "component_name": "Begin", "params": { "prologue": "提供主题或关键词，我会结合知识库写 SEO 向草稿。" } },
+        "downstream": ["retrieval_0"],
+        "upstream": []
+      },
+      "retrieval_0": {
+        "obj": {
+          "component_name": "Retrieval",
+          "params": { "query": "{sys.query}", "top_n": 8, "empty_response": "（无素材）", "kb_ids": [] }
+        },
+        "downstream": ["blog_0"],
+        "upstream": ["begin"]
+      },
+      "blog_0": {
+        "obj": {
+          "component_name": "LLM",
+          "params": {
+            "llm_id": "ollama@llama3.2",
+            "creativity": "balance",
+            "sys_prompt": "输出 Markdown 博客草稿：H1 标题、导语、2-4 个小节、结尾 CTA；附「建议 meta 描述」与「关键词列表」。仅使用或改写知识库素材，勿编造事实。\n\n素材：\n{retrieval_0@formalized_content}",
+            "prompts": [{ "role": "user", "content": "主题：{sys.query}" }]
+          }
+        },
+        "downstream": ["message_0"],
+        "upstream": ["retrieval_0"]
+      },
+      "message_0": {
+        "obj": { "component_name": "Message", "params": { "content": ["{blog_0@content}"] } },
+        "downstream": [],
+        "upstream": ["blog_0"]
+      }
+    },
+    "path": ["begin", "retrieval_0", "blog_0", "message_0"],
+    "globals": {
+      "sys.query": "",
+      "sys.user_id": "",
+      "sys.conversation_turns": 0,
+      "sys.files": [],
+      "sys.await_reply": "",
+      "env.tavily_api_key": ""
+    },
+    "history": [],
+    "retrieval": []
+  }
+}

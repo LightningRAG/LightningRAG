@@ -1,0 +1,57 @@
+{
+  "title": "长文导入与压缩",
+  "description": "无 Parser/Chunker 组件时的替代方案：将用户输入整段文本合并占位后由 Transformer 摘要（对齐 LightningRAG 管线意图的极简版）。",
+  "templateName": "advanced_ingestion_pipeline",
+  "category": "工具",
+  "tags": ["TextProcessing", "Transformer", "长文本"],
+  "dsl": {
+    "components": {
+      "begin": {
+        "obj": { "component_name": "Begin", "params": { "prologue": "将长文粘贴到问题中，我会做结构化压缩。" } },
+        "downstream": ["ingest_0"],
+        "upstream": []
+      },
+      "ingest_0": {
+        "obj": {
+          "component_name": "TextProcessing",
+          "params": {
+            "method": "merge",
+            "script": "{sys.query}",
+            "delimiter": "newline"
+          }
+        },
+        "downstream": ["transformer_0"],
+        "upstream": ["begin"]
+      },
+      "transformer_0": {
+        "obj": {
+          "component_name": "Transformer",
+          "params": {
+            "input": "{ingest_0@content}",
+            "llm_id": "ollama@llama3.2",
+            "creativity": "precise",
+            "instruction": "输出：标题建议、分段摘要、关键词；若输入过短请说明。"
+          }
+        },
+        "downstream": ["message_0"],
+        "upstream": ["ingest_0"]
+      },
+      "message_0": {
+        "obj": { "component_name": "Message", "params": { "content": ["{transformer_0@formalized_content}"] } },
+        "downstream": [],
+        "upstream": ["transformer_0"]
+      }
+    },
+    "path": ["begin", "ingest_0", "transformer_0", "message_0"],
+    "globals": {
+      "sys.query": "",
+      "sys.user_id": "",
+      "sys.conversation_turns": 0,
+      "sys.files": [],
+      "sys.await_reply": "",
+      "env.tavily_api_key": ""
+    },
+    "history": [],
+    "retrieval": []
+  }
+}

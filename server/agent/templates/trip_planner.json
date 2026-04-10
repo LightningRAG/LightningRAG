@@ -1,0 +1,61 @@
+{
+  "title": "行程规划助手",
+  "description": "DuckDuckGo + 维基摘录 + LLM 生成行程草案（LightningRAG trip_planner 简化版，非实时订票）。",
+  "templateName": "trip_planner",
+  "category": "网络",
+  "tags": ["旅行", "DuckDuckGo", "Wikipedia"],
+  "dsl": {
+    "components": {
+      "begin": {
+        "obj": { "component_name": "Begin", "params": { "prologue": "告诉我目的地、天数与偏好，我会结合公开信息给出行程草案。" } },
+        "downstream": ["duckduckgo_0"],
+        "upstream": []
+      },
+      "duckduckgo_0": {
+        "obj": {
+          "component_name": "DuckDuckGo",
+          "params": { "query": "{sys.query}", "channel": "general", "top_n": 6, "timeout": 15 }
+        },
+        "downstream": ["wiki_0"],
+        "upstream": ["begin"]
+      },
+      "wiki_0": {
+        "obj": {
+          "component_name": "Wikipedia",
+          "params": { "query": "{sys.query}", "language": "zh", "top_n": 3, "timeout": 25 }
+        },
+        "downstream": ["plan_0"],
+        "upstream": ["duckduckgo_0"]
+      },
+      "plan_0": {
+        "obj": {
+          "component_name": "LLM",
+          "params": {
+            "llm_id": "ollama@llama3.2",
+            "creativity": "balance",
+            "sys_prompt": "你是旅行规划助手。综合「网络摘要」与「百科」输出日程草案（可按天分段），注明信息来源可能不全，需用户二次核实交通与门票。\n\n网络摘要：\n{duckduckgo_0@formalized_content}\n\n百科：\n{wiki_0@formalized_content}",
+            "prompts": [{ "role": "user", "content": "{sys.query}" }]
+          }
+        },
+        "downstream": ["message_0"],
+        "upstream": ["wiki_0"]
+      },
+      "message_0": {
+        "obj": { "component_name": "Message", "params": { "content": ["{plan_0@content}"] } },
+        "downstream": [],
+        "upstream": ["plan_0"]
+      }
+    },
+    "path": ["begin", "duckduckgo_0", "wiki_0", "plan_0", "message_0"],
+    "globals": {
+      "sys.query": "",
+      "sys.user_id": "",
+      "sys.conversation_turns": 0,
+      "sys.files": [],
+      "sys.await_reply": "",
+      "env.tavily_api_key": ""
+    },
+    "history": [],
+    "retrieval": []
+  }
+}

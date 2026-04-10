@@ -1,0 +1,14 @@
+# 覆盖端口或开发挂载：复制为 compose.override.yaml 后，在同一目录执行 docker compose up -d
+# Compose 会自动合并 compose.override.yaml（与 docker-compose.yaml 同级）。
+#
+#   cp compose.override.example.yaml compose.override.yaml
+#
+# 注意：compose.override.yaml 建议加入 .gitignore，避免把本机路径提交进仓库。
+
+services:
+  lrag-server:
+    ports:
+      - "18888:8888"
+  lrag-web:
+    ports:
+      - "18080:8080"

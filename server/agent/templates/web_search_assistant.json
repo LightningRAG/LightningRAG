@@ -1,0 +1,53 @@
+{
+  "title": "网页搜索助手",
+  "description": "与 LightningRAG「Web Search Assistant」同名简化版：DuckDuckGo 检索 + 回答（亦可在编辑器中替换为 TavilySearch）。",
+  "templateName": "web_search_assistant",
+  "category": "网络",
+  "tags": ["搜索", "DuckDuckGo"],
+  "dsl": {
+    "components": {
+      "begin": {
+        "obj": { "component_name": "Begin", "params": { "prologue": "你好！我会先搜索再总结。" } },
+        "downstream": ["duckduckgo_0"],
+        "upstream": []
+      },
+      "duckduckgo_0": {
+        "obj": {
+          "component_name": "DuckDuckGo",
+          "params": { "query": "{sys.query}", "channel": "general", "top_n": 10, "timeout": 15 }
+        },
+        "downstream": ["generate_0"],
+        "upstream": ["begin"]
+      },
+      "generate_0": {
+        "obj": {
+          "component_name": "LLM",
+          "params": {
+            "llm_id": "ollama@llama3.2",
+            "creativity": "balance",
+            "sys_prompt": "基于检索摘要回答问题，无法确认时请说明。摘要：\n{duckduckgo_0@formalized_content}",
+            "prompts": [{ "role": "user", "content": "{sys.query}" }]
+          }
+        },
+        "downstream": ["message_0"],
+        "upstream": ["duckduckgo_0"]
+      },
+      "message_0": {
+        "obj": { "component_name": "Message", "params": { "content": ["{generate_0@content}"] } },
+        "downstream": [],
+        "upstream": ["generate_0"]
+      }
+    },
+    "path": ["begin", "duckduckgo_0", "generate_0", "message_0"],
+    "globals": {
+      "sys.query": "",
+      "sys.user_id": "",
+      "sys.conversation_turns": 0,
+      "sys.files": [],
+      "sys.await_reply": "",
+      "env.tavily_api_key": ""
+    },
+    "history": [],
+    "retrieval": []
+  }
+}

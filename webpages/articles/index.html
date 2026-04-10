@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="../assets/logo.png" type="image/png" />
+    <meta
+      name="description"
+      content="LightningRAG 技术文章与更新：架构实践、部署优化、RAG 场景等。内容持续扩充。"
+    />
+    <meta
+      name="keywords"
+      content="LightningRAG,文章,技术博客,RAG,Go,Vue"
+    />
+    <meta name="theme-color" content="#4d70ff" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://lightningrag.com/articles/" />
+    <title>文章 — LightningRAG</title>
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="LightningRAG" />
+    <meta property="og:title" content="文章 — LightningRAG" />
+    <meta
+      property="og:description"
+      content="LightningRAG 技术文章与更新，持续扩充中。"
+    />
+    <meta property="og:url" content="https://lightningrag.com/articles/" />
+    <link rel="stylesheet" href="../css/site.css" />
+    <!--
+      扩展说明：新增文章时 ——
+      1. 在本目录新建 slug.html（如 deployment-guide.html），使用与下文「文章页骨架」相同的 head/nav/footer 结构。
+      2. 在本页 <ul class="article-list"> 中增加一条 <li><a href="slug.html">标题<span class="meta">摘要或日期</span></a></li>
+      3. 在 ../sitemap.xml 中增加对应 <url><loc>https://lightningrag.com/articles/slug.html</loc>...</url>
+    -->
+  </head>
+  <body>
+    <a class="sr-only" href="#main">跳到主要内容</a>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="site-brand" href="../index.html" aria-label="LightningRAG 首页">
+          <img
+            src="../assets/logo.png"
+            alt="LightningRAG"
+            width="40"
+            height="40"
+            loading="eager"
+          />
+          <span>LightningRAG</span>
+        </a>
+        <nav class="site-nav" aria-label="主导航">
+          <a href="../index.html#features">产品特点</a>
+          <a href="../index.html#advantages">核心优势</a>
+          <a href="index.html" aria-current="page">文章</a>
+          <a href="../guide/index.html">文档</a>
+          <a href="../license.html">商用授权</a>
+        </nav>
+        <div class="site-header__actions">
+          <a
+            class="btn btn--primary"
+            href="https://github.com/LightningRAG/LightningRAG"
+            rel="noopener noreferrer"
+            >GitHub</a
+          >
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="section">
+        <div class="wrap">
+          <h1 class="section__title">文章</h1>
+          <p class="section__lead prose">
+            这里将收录 LightningRAG
+            的架构说明、部署实践、RAG 调优与版本动态等。下列列表可随时追加条目；新增独立页面后请同步更新站点地图以利于
+            SEO。
+          </p>
+
+          <ul class="article-list">
+            <!-- 示例：有文章后取消注释并修改 href/文案
+            <li>
+              <a href="example-first-post.html">
+                第一篇示例文章
+                <span class="meta">2025-03-27 · 部署与运维</span>
+              </a>
+            </li>
+            -->
+          </ul>
+
+          <p class="prose" style="margin-top: 2rem; font-size: 0.9375rem">
+            暂无文章时，可直接阅读
+            <a href="../guide/index.html">文档</a>
+            获取完整指南；商用授权与报价请见
+            <a href="../license.html">license.html</a>；开源仓库：
+            <a
+              href="https://github.com/LightningRAG/LightningRAG"
+              rel="noopener noreferrer"
+              >github.com/LightningRAG/LightningRAG</a
+            >。
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-footer__inner">
+        <p>© LightningRAG 开源社区。</p>
+        <div class="site-footer__links">
+          <a href="../index.html">首页</a>
+          <a href="../guide/index.html">文档</a>
+          <a href="../license.html">商用授权</a>
+          <a href="../sitemap.xml">站点地图</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

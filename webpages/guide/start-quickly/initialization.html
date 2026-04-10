@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="../../assets/logo.png" type="image/png" />
+    <meta
+      name="description"
+      content="Set up Node.js and Go, run the Gin API and Vue 3 admin, and open Swagger for LightningRAG."
+    />
+    <meta name="theme-color" content="#4d70ff" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://lightningrag.com/guide/start-quickly/initialization.html" />
+    <title>Quick start — LightningRAG</title>
+    <link rel="stylesheet" href="../../css/site.css" />
+  </head>
+  <body data-doc-page="init">
+    <a class="sr-only" href="#main" data-i18n="a11y.skipMain">Skip to main content</a>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a
+          class="site-brand"
+          href="../../index.html"
+          data-i18n-aria-label="a11y.brandHome"
+          aria-label="LightningRAG home"
+        >
+          <img
+            src="../../assets/logo.png"
+            data-i18n-alt="brand.logoAlt"
+            alt="LightningRAG"
+            width="40"
+            height="40"
+            loading="eager"
+          />
+          <span>LightningRAG</span>
+        </a>
+        <nav class="site-nav" aria-label="Main navigation" data-i18n-aria-label="a11y.navMain">
+          <a href="../../index.html#features" data-i18n="nav.features">Features</a>
+          <a href="../../index.html#advantages" data-i18n="nav.advantages">Advantages</a>
+          <a href="../../articles/" data-i18n="nav.articles">Articles</a>
+          <a href="../index.html" data-i18n="nav.docs">Documentation</a>
+          <a href="../../license.html" data-i18n="nav.license">Commercial license</a>
+        </nav>
+        <div class="site-header__actions">
+          <label class="sr-only" for="lr-lang-select" data-i18n="ui.langAria">Language</label>
+          <select
+            id="lr-lang-select"
+            class="lr-lang-select"
+            aria-label="Language"
+            data-i18n-aria-label="ui.langAria"
+          >
+            <option value="en">English</option>
+            <option value="zh-CN">简体中文</option>
+            <option value="zh-TW">繁體中文</option>
+            <option value="es">Español</option>
+            <option value="fr">Français</option>
+            <option value="de">Deutsch</option>
+            <option value="ja">日本語</option>
+            <option value="ko">한국어</option>
+            <option value="pt">Português</option>
+            <option value="ru">Русский</option>
+            <option value="it">Italiano</option>
+          </select>
+          <a
+            class="btn btn--primary"
+            href="https://github.com/LightningRAG/LightningRAG"
+            rel="noopener noreferrer"
+            data-i18n="btn.github"
+            >GitHub</a
+          >
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="section section--tight">
+        <div class="wrap">
+          <ul class="docs-breadcrumb">
+            <li><a href="../index.html" data-i18n="breadcrumb.hub">Documentation</a></li>
+            <li aria-current="page"><span data-i18n="breadcrumb.init">Quick start</span></li>
+          </ul>
+
+          <article class="doc-page">
+            <h1 data-i18n="pageInit.title">Quick start</h1>
+            <p class="section__lead" data-i18n="pageInit.lead">
+              LightningRAG is a Go (Gin) + Vue 3 full-stack project. Run the API and admin UI
+              on your machine, then explore APIs via Swagger.
+            </p>
+
+            <h2 data-i18n="pageInit.prereqH">Prerequisites</h2>
+            <ul>
+              <li data-i18n="pageInit.p1">Node.js &gt; v18.16.0</li>
+              <li data-i18n="pageInit.p2">Go &gt;= 1.22</li>
+              <li data-i18n="pageInit.p3">Git, and an IDE (GoLand or VS Code recommended)</li>
+            </ul>
+
+            <h2 data-i18n="pageInit.serverH">Backend (server)</h2>
+            <p data-i18n="pageInit.s1">
+              Open the server directory as the project root in your IDE (not the repository
+              root). Then install tools and run:
+            </p>
+            <pre class="doc-code" translate="no"><code>git clone https://github.com/LightningRAG/LightningRAG.git
+cd LightningRAG/server
+go generate
+go run .</code></pre>
+            <p class="doc-note" data-i18n="pageInit.sNote">
+              Default API listens on port 8888. Configure databases and Redis via config files
+              under server/ as needed.
+            </p>
+
+            <h2 data-i18n="pageInit.webH">Frontend (web)</h2>
+            <p data-i18n="pageInit.w1">
+              From the web directory, install dependencies and start the dev server. Point the UI
+              at your local API base URL in environment or proxy settings if required.
+            </p>
+            <pre class="doc-code" translate="no"><code>cd LightningRAG/web
+npm install
+npm run serve</code></pre>
+
+            <h2 data-i18n="pageInit.swaggerH">Swagger API docs</h2>
+            <p data-i18n="pageInit.sw1">
+              Install swag, run swag init inside server/, restart the API, then open
+              /swagger/index.html on the API host.
+            </p>
+            <pre class="doc-code" translate="no"><code>go install github.com/swaggo/swag/cmd/swag@latest
+cd LightningRAG/server
+swag init</code></pre>
+
+            <h2 data-i18n="pageInit.dockerH">Docker &amp; compose</h2>
+            <p data-i18n="pageInit.d1">
+              For containerized dependencies or full stacks, see deploy/docker-compose in the
+              repository. Adjust profiles and .env for your vector store and services.
+            </p>
+
+            <h2 data-i18n="pageInit.moreH">Next steps</h2>
+            <p data-i18n="pageInit.m1">
+              Read the repository README for Casbin menus, code generation, plugin layout, and RAG
+              module details. Commercial use follows Apache 2.0 with the notices described there.
+            </p>
+            <p>
+              <a href="../../license.html" data-i18n="pageInit.m2license"
+                >Commercial license & contact →</a
+              >
+            </p>
+            <p>
+              <a href="../using/rag-features.html" data-i18n="docHub.c2a">Open usage guide →</a>
+            </p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-footer__inner">
+        <p data-i18n="footer.copy">
+          © LightningRAG open-source community. All rights reserved.
+        </p>
+        <div class="site-footer__links">
+          <a href="../../index.html" data-i18n="footer.home">Home</a>
+          <a href="../index.html" data-i18n="footer.docs">Documentation</a>
+          <a href="../../articles/" data-i18n="footer.articles">Articles</a>
+          <a href="../../license.html" data-i18n="footer.license">Commercial license</a>
+          <a href="../../sitemap.xml" data-i18n="footer.sitemap">Sitemap</a>
+          <a
+            href="https://github.com/LightningRAG/LightningRAG"
+            rel="noopener noreferrer"
+            data-i18n="footer.githubRepo"
+            >GitHub repository</a
+          >
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="../../js/docs-i18n.js"></script>
+  </body>
+</html>

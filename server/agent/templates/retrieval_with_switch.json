@@ -1,0 +1,96 @@
+{
+  "title": "检索条件分支",
+  "description": "知识库检索后根据是否有结果分支：有结果则生成，无结果则默认回复",
+  "templateName": "retrieval_with_switch",
+  "category": "控制流",
+  "tags": ["Switch", "知识库", "分支"],
+  "dsl": {
+    "components": {
+      "begin": {
+        "obj": {
+          "component_name": "Begin",
+          "params": { "prologue": "你好！" }
+        },
+        "downstream": ["retrieval_0"],
+        "upstream": []
+      },
+      "retrieval_0": {
+        "obj": {
+          "component_name": "Retrieval",
+          "params": {
+            "query": "{sys.query}",
+            "top_n": 6,
+            "empty_response": "未找到相关知识",
+            "kb_ids": []
+          }
+        },
+        "downstream": ["switch_0"],
+        "upstream": ["begin"]
+      },
+      "switch_0": {
+        "obj": {
+          "component_name": "Switch",
+          "params": {
+            "cases": [
+              {
+                "conditions": [
+                  { "ref": "{retrieval_0@formalized_content}", "op": "not_equal", "value": "未找到相关知识" }
+                ],
+                "logic": "AND",
+                "downstream": "generate_0"
+              },
+              {
+                "conditions": [
+                  { "ref": "{retrieval_0@formalized_content}", "op": "equals", "value": "未找到相关知识" }
+                ],
+                "logic": "AND",
+                "downstream": "fallback_0"
+              }
+            ]
+          }
+        },
+        "downstream": ["generate_0", "fallback_0"],
+        "upstream": ["retrieval_0"]
+      },
+      "generate_0": {
+        "obj": {
+          "component_name": "LLM",
+          "params": {
+            "llm_id": "ollama@llama3.2",
+            "sys_prompt": "根据知识库内容回答。\n\n知识库：\n{retrieval_0@formalized_content}",
+            "prompts": [{ "role": "user", "content": "{sys.query}" }]
+          }
+        },
+        "downstream": ["message_0"],
+        "upstream": ["switch_0"]
+      },
+      "fallback_0": {
+        "obj": {
+          "component_name": "Message",
+          "params": { "content": ["未在知识库中找到相关内容，请换个方式提问。"] }
+        },
+        "downstream": [],
+        "upstream": ["switch_0"]
+      },
+      "message_0": {
+        "obj": {
+          "component_name": "Message",
+          "params": { "content": ["{generate_0@content}"] }
+        },
+        "downstream": [],
+        "upstream": ["generate_0"]
+      }
+    },
+    "path": ["begin", "retrieval_0", "switch_0", "generate_0", "message_0", "fallback_0"],
+    "globals": {
+      "sys.query": "",
+      "sys.user_id": "",
+      "sys.conversation_turns": 0,
+      "sys.files": [],
+      "sys.await_reply": "",
+      "env.tavily_api_key": ""
+    },
+    "history": [],
+    "retrieval": []
+  }
+}

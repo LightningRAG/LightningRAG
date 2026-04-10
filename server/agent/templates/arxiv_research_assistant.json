@@ -1,0 +1,53 @@
+{
+  "title": "arXiv 文献助手",
+  "description": "检索 arXiv 论文摘要并生成解读，适合科研文献场景",
+  "templateName": "arxiv_research_assistant",
+  "category": "网络",
+  "tags": ["ArXiv", "论文"],
+  "dsl": {
+    "components": {
+      "begin": {
+        "obj": { "component_name": "Begin", "params": { "prologue": "你好！我可以根据 arXiv 上的论文摘要帮你梳理要点。" } },
+        "downstream": ["arxiv_0"],
+        "upstream": []
+      },
+      "arxiv_0": {
+        "obj": {
+          "component_name": "ArXiv",
+          "params": { "query": "{sys.query}", "top_n": 8, "sort_by": "relevance", "timeout": 25 }
+        },
+        "downstream": ["generate_0"],
+        "upstream": ["begin"]
+      },
+      "generate_0": {
+        "obj": {
+          "component_name": "LLM",
+          "params": {
+            "llm_id": "ollama@llama3.2",
+            "creativity": "balance",
+            "sys_prompt": "你是科研助手。根据下列 arXiv 检索结果，用中文概括相关论文主题、方法与结论；若结果为空请说明。请提醒用户摘要非全文。\n\n检索结果：\n{arxiv_0@formalized_content}",
+            "prompts": [{ "role": "user", "content": "用户需求：{sys.query}" }]
+          }
+        },
+        "downstream": ["message_0"],
+        "upstream": ["arxiv_0"]
+      },
+      "message_0": {
+        "obj": { "component_name": "Message", "params": { "content": ["{generate_0@content}"] } },
+        "downstream": [],
+        "upstream": ["generate_0"]
+      }
+    },
+    "path": ["begin", "arxiv_0", "generate_0", "message_0"],
+    "globals": {
+      "sys.query": "",
+      "sys.user_id": "",
+      "sys.conversation_turns": 0,
+      "sys.files": [],
+      "sys.await_reply": "",
+      "env.tavily_api_key": ""
+    },
+    "history": [],
+    "retrieval": []
+  }
+}

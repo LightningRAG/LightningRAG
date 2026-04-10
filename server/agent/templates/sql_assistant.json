@@ -1,0 +1,45 @@
+{
+  "title": "SQL 助手（自然语言→SQL）",
+  "description": "仅生成 SQL 与安全提示，不自动连库执行（完整执行请另加 ExecuteSQL 节点并自担风险）。",
+  "templateName": "sql_assistant",
+  "category": "工具",
+  "tags": ["SQL", "LLM"],
+  "dsl": {
+    "components": {
+      "begin": {
+        "obj": { "component_name": "Begin", "params": { "prologue": "描述你的表结构与查询需求，我会给出 SQL 草案与注意事项。" } },
+        "downstream": ["sql_llm_0"],
+        "upstream": []
+      },
+      "sql_llm_0": {
+        "obj": {
+          "component_name": "LLM",
+          "params": {
+            "llm_id": "ollama@llama3.2",
+            "creativity": "precise",
+            "sys_prompt": "你是 DBA 助手。输出：1）推荐 SQL（MySQL 方言）2）参数化建议 3）禁止 DELETE/UPDATE 无 WHERE 的警告。若信息不足先列假设。",
+            "prompts": [{ "role": "user", "content": "{sys.query}" }]
+          }
+        },
+        "downstream": ["message_0"],
+        "upstream": ["begin"]
+      },
+      "message_0": {
+        "obj": { "component_name": "Message", "params": { "content": ["{sql_llm_0@content}"] } },
+        "downstream": [],
+        "upstream": ["sql_llm_0"]
+      }
+    },
+    "path": ["begin", "sql_llm_0", "message_0"],
+    "globals": {
+      "sys.query": "",
+      "sys.user_id": "",
+      "sys.conversation_turns": 0,
+      "sys.files": [],
+      "sys.await_reply": "",
+      "env.tavily_api_key": ""
+    },
+    "history": [],
+    "retrieval": []
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "title": "深度检索（简化版）",
+  "description": "搜索 → 要点提炼 → 综合成文。本模板为简化版（非完整多智能体 Deep Research），但覆盖「搜-抽-写」主链路。",
+  "templateName": "deep_research",
+  "category": "网络",
+  "tags": ["深度", "DuckDuckGo", "Transformer"],
+  "dsl": {
+    "components": {
+      "begin": {
+        "obj": { "component_name": "Begin", "params": { "prologue": "提出研究问题，我会分步检索并综合。" } },
+        "downstream": ["duckduckgo_0"],
+        "upstream": []
+      },
+      "duckduckgo_0": {
+        "obj": {
+          "component_name": "DuckDuckGo",
+          "params": { "query": "{sys.query}", "channel": "general", "top_n": 10, "timeout": 20 }
+        },
+        "downstream": ["transformer_0"],
+        "upstream": ["begin"]
+      },
+      "transformer_0": {
+        "obj": {
+          "component_name": "Transformer",
+          "params": {
+            "input": "{duckduckgo_0@formalized_content}",
+            "llm_id": "ollama@llama3.2",
+            "creativity": "precise",
+            "instruction": "将检索摘要转为结构化要点：事实、争议点、缺失信息；不要添加摘要中不存在的内容。"
+          }
+        },
+        "downstream": ["synth_0"],
+        "upstream": ["duckduckgo_0"]
+      },
+      "synth_0": {
+        "obj": {
+          "component_name": "LLM",
+          "params": {
+            "llm_id": "ollama@llama3.2",
+            "creativity": "balance",
+            "sys_prompt": "根据下列要点写一份简短研究报告（引言、分析、结论与局限）。\n\n要点：\n{transformer_0@formalized_content}",
+            "prompts": [{ "role": "user", "content": "研究问题：{sys.query}" }]
+          }
+        },
+        "downstream": ["message_0"],
+        "upstream": ["transformer_0"]
+      },
+      "message_0": {
+        "obj": { "component_name": "Message", "params": { "content": ["{synth_0@content}"] } },
+        "downstream": [],
+        "upstream": ["synth_0"]
+      }
+    },
+    "path": ["begin", "duckduckgo_0", "transformer_0", "synth_0", "message_0"],
+    "globals": {
+      "sys.query": "",
+      "sys.user_id": "",
+      "sys.conversation_turns": 0,
+      "sys.files": [],
+      "sys.await_reply": "",
+      "env.tavily_api_key": ""
+    },
+    "history": [],
+    "retrieval": []
+  }
+}

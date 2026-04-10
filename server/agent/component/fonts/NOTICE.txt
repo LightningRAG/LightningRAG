@@ -1,0 +1,4 @@
+DroidSansFallback.ttf
+Source: Android Open Source Project (AOSP) data/fonts
+License: Apache License 2.0
+https://source.android.com/docs/setup/about/licenses

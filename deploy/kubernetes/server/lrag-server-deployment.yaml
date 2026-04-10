@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lightningrag-server
+  annotations:
+    app.kubernetes.io/name: lightningrag-backend
+    github: "https://github.com/LightningRAG/LightningRAG.git"
+    app.kubernetes.io/version: 0.0.1
+  labels:
+    app: lightningrag-server
+    version: lightningrag-vue3
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lightningrag-server
+      version: lightningrag-vue3
+  template:
+    metadata:
+      labels:
+        app: lightningrag-server
+        version: lightningrag-vue3
+    spec:
+      containers:
+        - name: lightningrag-container
+          image: registry.cn-hangzhou.aliyuncs.com/lightningrag/server:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8888
+              name: http
+          volumeMounts:
+            - mountPath: /go/src/github.com/LightningRAG/LightningRAG/server/config.docker.yaml
+              name: config
+              subPath: config.yaml
+            - mountPath: /etc/localtime
+              name: localtime
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 2000Mi
+            requests:
+              cpu: 100m
+              memory: 200Mi
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            failureThreshold: 3
+            periodSeconds: 15
+            successThreshold: 1
+            timeoutSeconds: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            failureThreshold: 6
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 3
+          startupProbe:
+            httpGet:
+              path: /health
+              port: http
+            failureThreshold: 60
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 3
+      #imagePullSecrets:
+      #  - name: docker-registry
+      volumes:
+        - name: localtime
+          hostPath:
+            path: /etc/localtime
+        - name: config
+          configMap:
+            name: config.yaml

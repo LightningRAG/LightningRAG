@@ -1,0 +1,67 @@
+{
+  "title": "检索与生成",
+  "description": "知识库检索 + LLM 生成，适用于 RAG 问答场景",
+  "templateName": "retrieval_and_generate",
+  "category": "检索",
+  "tags": ["RAG", "知识库", "LLM"],
+  "dsl": {
+  "components": {
+    "begin": {
+      "obj": {
+        "component_name": "Begin",
+        "params": {
+          "prologue": "你好！我是智能助手，有什么可以帮你的？"
+        }
+      },
+      "downstream": ["retrieval_0"],
+      "upstream": []
+    },
+    "retrieval_0": {
+      "obj": {
+        "component_name": "Retrieval",
+        "params": {
+          "query": "{sys.query}",
+          "top_n": 6,
+          "empty_response": "未在知识库中找到相关内容",
+          "kb_ids": []
+        }
+      },
+      "downstream": ["generate_0"],
+      "upstream": ["begin"]
+    },
+    "generate_0": {
+      "obj": {
+        "component_name": "LLM",
+        "params": {
+          "llm_id": "ollama@llama3.2",
+          "sys_prompt": "你是一个智能助手。请根据以下知识库内容回答用户问题。若知识库内容与问题无关，请回答「未在知识库中找到相关内容」。\n\n知识库内容：\n{retrieval_0@formalized_content}",
+          "prompts": [{"role": "user", "content": "用户问题：{sys.query}\n\n请根据上述知识库内容回答。"}]
+        }
+      },
+      "downstream": ["message_0"],
+      "upstream": ["retrieval_0"]
+    },
+    "message_0": {
+      "obj": {
+        "component_name": "Message",
+        "params": {
+          "content": ["{generate_0@content}"]
+        }
+      },
+      "downstream": [],
+      "upstream": ["generate_0"]
+    }
+  },
+  "path": ["begin", "retrieval_0", "generate_0", "message_0"],
+  "globals": {
+    "sys.query": "",
+    "sys.user_id": "",
+    "sys.conversation_turns": 0,
+    "sys.files": [],
+    "sys.await_reply": "",
+    "env.tavily_api_key": ""
+  },
+  "history": [],
+  "retrieval": []
+  }
+}
