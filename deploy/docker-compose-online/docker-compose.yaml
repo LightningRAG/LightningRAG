@@ -23,7 +23,8 @@ services:
     env_file:
       - .env
     volumes:
-      - ./config/config.compose-online.yaml:/go/src/github.com/LightningRAG/LightningRAG/server/config.docker.yaml:ro
+      # 不可 :ro：InitDB 向导成功后会 WriteConfig 回写 mysql/jwt 等到该文件，只读挂载会报 read-only file system
+      - ./config/config.compose-online.yaml:/go/src/github.com/LightningRAG/LightningRAG/server/config.docker.yaml
     ports:
       - "${LRAG_SERVER_PORT}:8888"
     depends_on:
