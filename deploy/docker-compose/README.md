@@ -156,8 +156,9 @@ If the official `mysql:8.0.x` image misbehaves, switch the `mysql` `image` in `c
 
 | | `deploy/docker-compose` (this doc) | `deploy/docker-compose-online` |
 |--|-----------------------------------|--------------------------------|
-| App images | Local `build` of server/web | Prebuilt or local override compose files |
-| Config | Repo default server workflow | `config/` + `.env` must match |
+| App | Local `build` of **web** + **server** | **GoReleaser all-in-one** image (service `lrag-server`, no separate web container) |
+| Middleware | Subnet **177.7.0.0/16**, fixed IPs, default creds/ports | **Aligned** — same subnet, accounts, host ports; Postgres service **`postgres`** |
+| Config | Repo default server workflow | `config/config.compose-online.yaml` + `.env` must match |
 | Typical use | Local dev | Staging/prod-like stacks |
 
 See [docker-compose-online/README.md](../docker-compose-online/README.md).

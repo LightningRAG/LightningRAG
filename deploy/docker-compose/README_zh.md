@@ -156,8 +156,9 @@ docker compose -f deploy/docker-compose/docker-compose.yaml down -v
 
 | 项目 | `deploy/docker-compose`（本文） | `deploy/docker-compose-online` |
 |------|--------------------------------|--------------------------------|
-| 应用镜像 | 本地 `build` server/web | 预构建镜像或本地叠加文件 |
-| 配置 | 使用仓库内 server 默认配置流程 | `config/` + `.env` 强一致 |
+| 应用 | 本地 `build` **web** + **server** 分离容器 | **GoReleaser 一体化镜像**（服务 `lrag-server`，无独立 web 容器） |
+| 网络与中间件 | 子网 **177.7.0.0/16**、固定 IP、默认密码/宿主机端口 | **与上文中间件对齐**（同一子网、账号、端口约定；PostgreSQL 服务名 **postgres**） |
+| 配置 | 使用仓库内 server 默认配置流程 | `config/config.compose-online.yaml` + `.env` 强一致 |
 | 典型用途 | 本机开发、联调 | 预发/生产形态演练 |
 
 在线栈说明见 [docker-compose-online/README_zh.md](../docker-compose-online/README_zh.md)。

@@ -45,6 +45,7 @@ Forks only need CI to pass; publishing images requires `packages: write` or a PA
 - Uses [GoReleaser](https://goreleaser.com/) v2 with repo-root `.goreleaser.yaml`.
 - **Hooks:** build `web/` with npm, run `scripts/sync-web-dist.sh`, then cross-compile from `server/` with embedded UI (`go:embed` in `server/webui/`).
 - **Artifacts:** per-platform archives on GitHub Releases — `lightningrag` binary, `config.yaml` (from `server/config.docker.yaml`), and `resource/` from `server/resource`.
-- **Runner:** Ubuntu latest; **Node 20** + **Go** from `server/go.mod`; `GITHUB_TOKEN` with `contents: write`.
+- **Docker:** multi-arch images **`docker.io/lightningrag/lightningrag`** and **`ghcr.io/lightningrag/lightningrag`** via **`Dockerfile.goreleaser`** (same as **`LRAG_IMAGE`** in **`deploy/docker-compose-online`**).
+- **Runner:** Ubuntu latest; **Node 20** + **Go** from `server/go.mod`; `GITHUB_TOKEN` with `contents: write`; registry push needs write access to the configured registries.
 
 Local snapshot (no publish): `goreleaser release --snapshot --clean --skip=publish` from the repo root.

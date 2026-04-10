@@ -1,5 +1,7 @@
 package system
 
+import "github.com/LightningRAG/LightningRAG/server/utils"
+
 // postInitDBCallbacks 在 InitDB 成功提交后执行（例如补全 RAG Casbin，见 initialize 包注册）。
 var postInitDBCallbacks []func()
 
@@ -13,6 +15,7 @@ func RegisterPostInitDBCallback(fn func()) {
 
 // RunPostInitDBCallbacks 执行已注册的 InitDB 后回调。
 func RunPostInitDBCallbacks() {
+	utils.ResetCasbinEnforcer()
 	for _, fn := range postInitDBCallbacks {
 		fn()
 	}

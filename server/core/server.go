@@ -40,17 +40,14 @@ func RunServer() {
 	欢迎使用 LightningRAG
 	当前版本:%s
 	项目地址：https://github.com/LightningRAG/LightningRAG
-	官网：https://lightningrag.com
-	插件市场:https://plugin.LightningRAG.com
+	官网：https://lightningrag.com (云亿连旗下)
 	LightningRAG 讨论社区:https://support.qq.com/products/9999999999
 	默认自动化文档地址:http://127.0.0.1%s/swagger/index.html
 	默认MCP SSE地址:http://127.0.0.1%s%s
 	默认MCP Message地址:http://127.0.0.1%s%s
-	默认前端文件运行地址:http://127.0.0.1:8080
 	--------------------------------------版权声明--------------------------------------
 	** 版权所有方：LightningRAG 开源团队 **
-	** 剔除授权标识需购买商用授权：https://LightningRAG.com/license.html **
-	** 本项目基于 LightningRAG 框架开发 **
+	** 剔除授权标识需购买商用授权：https://LightningRAG.com/license **
 `, global.Version, address, address, global.LRAG_CONFIG.MCP.SSEPath, address, global.LRAG_CONFIG.MCP.MessagePath)
 	initServer(address, Router, 10*time.Minute, 10*time.Minute)
 }

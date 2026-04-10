@@ -1,4 +1,4 @@
-# 与 deploy/docker-compose-online/.env 中 MySQL/Redis/MinIO 默认值保持一致；修改密码时请同步更新本文件
+# 与 deploy/docker-compose-online/.env 及 deploy/docker-compose 默认中间件账号保持一致；修改密码时请同步更新本文件
 # 由 docker-compose.yaml 挂载覆盖镜像内 config.docker.yaml
 
 jwt:
@@ -42,17 +42,17 @@ mongo:
     coll: ''
     options: ''
     database: ''
-    username: ''
-    password: ''
-    auth-source: ''
+    username: lrag
+    password: rag@lightningrag
+    auth-source: admin
     min-pool-size: 0
     max-pool-size: 100
     socket-timeout-ms: 0
     connect-timeout-ms: 0
     is-zap: false
     hosts:
-        - host: ''
-          port: ''
+        - host: mongo
+          port: '27017'
 
 email:
     to: xxx@qq.com
@@ -75,6 +75,8 @@ system:
     iplimit-time: 3600
     router-prefix: ""
     use-strict-auth: false
+    # 与 GoReleaser 单镜像一致：内置 web/dist，无需独立 lrag-web / Nginx
+    embed-web-ui: true
 
 captcha:
     key-long: 6
@@ -84,15 +86,15 @@ captcha:
     open-captcha-timeout: 3600
 
 mysql:
-    path: mysql
-    port: "3306"
-    config: charset=utf8mb4&parseTime=True&loc=Local
-    db-name: qmPlus
-    username: lrag
-    password: lrag_pass_change_me
+    path: ""
+    port: ""
+    config: ""
+    db-name: ""
+    username: ""
+    password: ""
     max-idle-conns: 10
     max-open-conns: 100
-    log-mode: error
+    log-mode: ""
     log-zap: false
 
 pgsql:
@@ -177,8 +179,8 @@ qiniu:
 # 启用 compose profile minio 且 system.oss-type 为 minio 时可使用（需自行创建 bucket）
 minio:
     endpoint: minio:9000
-    access-key-id: lrag_minio
-    access-key-secret: lrag_minio_change_me
+    access-key-id: minioadmin
+    access-key-secret: minioadmin
     bucket-name: lrag
     use-ssl: false
     base-path: ""

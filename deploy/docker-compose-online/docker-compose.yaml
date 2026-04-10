@@ -1,4 +1,5 @@
-# LightningRAG 前后端（在线镜像）+ 中间件
+# LightningRAG 一体化应用（GoReleaser 镜像，内置前端）+ 中间件
+# 镜像与 .goreleaser.yaml 一致：docker.io/lightningrag/lightningrag、ghcr.io/lightningrag/lightningrag
 # 在 deploy/docker-compose-online 目录执行:
 #   docker compose up -d
 # 启用更多中间件时先编辑 .env 中 COMPOSE_PROFILES，例如:
@@ -15,8 +16,9 @@ x-logging: &lrag-app-logging
 
 services:
   lrag-server:
-    image: ${LRAG_SERVER_IMAGE}
-    container_name: lrag-server
+    # 未提供 .env 时与 .env.example / GoReleaser 默认仓库一致
+    image: ${LRAG_IMAGE:-ghcr.io/lightningrag/lightningrag:latest}
+    container_name: lightningrag-server
     restart: unless-stopped
     env_file:
       - .env
@@ -30,36 +32,14 @@ services:
       redis:
         condition: service_healthy
     networks:
-      - lrag
+      network:
+        ipv4_address: 177.7.0.12
     extra_hosts:
       - "host.docker.internal:host-gateway"
     healthcheck:
       test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:8888/health || exit 1"]
       interval: 15s
       timeout: 5s
-      retries: 5
+      retries: 10
       start_period: 90s
-    logging: *lrag-app-logging
-
-  lrag-web:
-    image: ${LRAG_WEB_IMAGE}
-    container_name: lrag-web
-    restart: unless-stopped
-    env_file:
-      - .env
-    ports:
-      - "${LRAG_WEB_PORT}:8080"
-    depends_on:
-      lrag-server:
-        condition: service_healthy
-    volumes:
-      - ./nginx/my.conf:/etc/nginx/conf.d/my.conf:ro
-    networks:
-      - lrag
-    healthcheck:
-      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:8080/ || exit 1"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 30s
     logging: *lrag-app-logging

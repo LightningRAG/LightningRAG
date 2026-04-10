@@ -9,12 +9,11 @@ This document describes the `deploy/` layout, recommended paths, environment var
 | Path | Purpose |
 |------|---------|
 | `docker-compose/` | Dev-oriented multi-container stack: build images from repo `server/` and `web/`; fixed subnet `177.7.0.0/16`. Split files, profiles, and env vars: **[docker-compose/README.md](./docker-compose/README.md)**. |
-| `docker-compose-online/` | Typical prod/staging: middleware + prebuilt or **local** app images; see [README.md](./docker-compose-online/README.md) in that folder. |
-| `docker-compose-online/config/` | Mounted as server `config.docker.yaml` (must match DB passwords etc. in `.env`). |
-| `docker-compose-online/nginx/` | Front Nginx: `/api` → `lrag-server:8888`, long timeouts, `proxy_buffering off` (helps SSE/long requests). |
+| `docker-compose-online/` | Typical prod/staging: middleware + **GoReleaser all-in-one image** (embedded web + API); see [README.md](./docker-compose-online/README.md). |
+| `docker-compose-online/config/` | Mounted as server `config.docker.yaml` (must match `.env`; include `system.embed-web-ui: true`). |
 | `kubernetes/` | Example Deployment / Service / ConfigMap / Ingress; apply with `kubectl apply -k deploy/kubernetes`. |
 | `docker/` | Legacy all-in-one image (CentOS 7 + MySQL + Redis + Nginx + app); **not recommended** for new setups. |
-| `scripts/verify-deployment.sh` | HTTP checks: `/health`, web root, `/api/health`; `--api-only`, `--wait`. |
+| `scripts/verify-deployment.sh` | HTTP checks on one port: `/health`, web root, `/api/health`; `--api-only`, `--wait`; reads `docker-compose-online/.env` for `LRAG_SERVER_PORT` when unset. |
 | `../scripts/sync-web-dist.sh` | At **repo root**: copy `web/dist` → `server/webui/webdist` for `go:embed` (`make build-server-embed-local`). |
 | `../scripts/build-server-with-embed.sh` | At **repo root**: web build → sync → `go build` in `server/` (see root README). |
 | `scripts/check-deploy-config.sh` | Offline: compose merge, script syntax, optional `kubectl kustomize`. |
@@ -24,11 +23,10 @@ This document describes the `deploy/` layout, recommended paths, environment var
 
 | Scenario | Command (from `deploy/docker-compose-online`) |
 |----------|-----------------------------------------------|
-| Use registry images for app | `docker compose up -d` |
-| Build server + web locally | `DOCKER_BUILDKIT=1 docker compose -f docker-compose-base.yaml -f docker-compose.local.yaml up -d --build` |
-| Middleware + backend only (smoke / save resources) | `docker compose -f docker-compose-base.yaml -f docker-compose.local.yaml up -d mysql redis lrag-server` |
+| Use GoReleaser-published all-in-one image | `docker compose up -d --wait` (Compose v2.20+, waits for healthchecks) |
+| Build server + web locally (split containers) | From repo root: `docker compose -f deploy/docker-compose/docker-compose.yaml up -d --build` |
 
-`lrag-server` starts after MySQL and Redis are healthy; `lrag-web` starts after `lrag-server` passes **`GET /health`**, reducing 502s from Nginx starting too early.
+Compose service **`lrag-server`** (container **`lightningrag-server`**) starts after MySQL and Redis are healthy; port **8888** serves both API and embedded UI. Middleware subnet and defaults match **`deploy/docker-compose`** (**`177.7.0.0/16`**).
 
 ### Optional middleware (profiles)
 
@@ -48,8 +46,8 @@ After enabling MinIO / PostgreSQL / Elasticsearch / Mongo, configure connections
 
 ### Ports and overrides
 
-- Host ports come from `.env`: `LRAG_SERVER_PORT`, `LRAG_WEB_PORT`, `EXPOSE_*`.  
-- If **8888 / 8080** are taken, change `.env` and export the same values when running verify scripts.  
+- Host ports come from `.env`: `LRAG_SERVER_PORT`, `EXPOSE_*` (online stack exposes the app on **8888** only).  
+- If **8888** is taken, change `.env` and export the same values when running verify scripts.  
 - Copy `docker-compose-online/compose.override.example.yaml` to **`compose.override.yaml`** in the same directory; `docker compose up -d` merges it automatically. Root **`.gitignore`** ignores `deploy/docker-compose-online/compose.override.yaml`.
 
 ### Container logs
@@ -108,10 +106,10 @@ chmod +x deploy/scripts/verify-deployment.sh
 ./deploy/scripts/verify-deployment.sh
 ./deploy/scripts/verify-deployment.sh --api-only
 ./deploy/scripts/verify-deployment.sh --wait 120
-LRAG_SERVER_PORT=18888 ./deploy/scripts/verify-deployment.sh --api-only
+LRAG_SERVER_PORT=18888 ./deploy/scripts/verify-deployment.sh
 ```
 
-`--wait` polls until the backend (and web unless `--api-only`) responds, useful right after `docker compose up -d`.
+`--wait` polls until `/health` (and embedded web unless `--api-only`) responds after `docker compose up -d` (or use Compose `up -d --wait` first). If `LRAG_SERVER_PORT` is not exported, the script parses it from `deploy/docker-compose-online/.env`.
 
 ### Offline check (no containers)
 
@@ -125,18 +123,18 @@ Use in CI or before push to validate compose merge, Kustomize render, and script
 
 - **Volumes:** online stack volumes look like `docker-compose-online_lrag_mysql_data` (name may vary). `docker compose down -v` **deletes data** — backup in production.  
 - **Config upgrades:** after changing `config.compose-online.yaml` or images, `docker compose up -d` rolls affected containers.  
-- **Upload size:** front Nginx sets **`client_max_body_size 100m`** (aligned with Ingress `proxy-body-size`); raise Nginx/Ingress and backend limits for larger files.
+- **Upload size:** if you terminate TLS or proxy in front, set **`proxy-body-size`** (or equivalent) and backend limits; the all-in-one container has no separate Nginx.
 
 ## Images and builds
 
-- **GitHub Actions:** pushing a **`v*`** tag or publishing a Release runs **`.github/workflows/docker-publish.yml`**, pushing to **GHCR** (`ghcr.io/<owner>/<repo>/server|web`). Optional Aliyun secrets also push `lrag/server` and `lrag/web`. See [`.github/workflows/README.md`](../.github/workflows/README.md).  
-- **Prebuilt images:** `registry.cn-hangzhou.aliyuncs.com/lrag/*` may be private; you can switch `.env` to GHCR or build locally.  
-- **Web image:** `vite build` is memory-heavy; if Docker exits **137** / `Killed`, give Docker **≥ 8 GiB** RAM or run `cd web && pnpm install && pnpm run build` locally and adjust Dockerfile to copy `dist` only.  
-- **BuildKit:** prefer `DOCKER_BUILDKIT=1` for front-end image builds.
+- **GoReleaser all-in-one image (recommended for online compose):** a **`v*`** tag runs **`.github/workflows/goreleaser.yml`**, which builds the web app, syncs `webdist`, compiles, and pushes **`docker.io/lightningrag/lightningrag`** and **`ghcr.io/lightningrag/lightningrag`** per **`.goreleaser.yaml`**. `docker-compose-online` defaults `LRAG_IMAGE` to that registry. See [`.github/workflows/README.md`](../.github/workflows/README.md).  
+- **Legacy split images:** **`.github/workflows/docker-publish.yml`** may still publish separate `server` / `web` images; prefer the GoReleaser image for new setups.  
+- **Local dev stack:** `deploy/docker-compose/` builds from `server/` and `web/`; `vite build` is memory-heavy (Docker **137** → more RAM or build web on the host).  
+- **BuildKit:** prefer `DOCKER_BUILDKIT=1` when building images.
 
 ## Troubleshooting
 
-- **Web OK but API 502:** `docker compose logs lrag-server`; confirm Nginx `proxy_pass` targets `lrag-server:8888`.  
+- **UI loads but API fails:** `docker compose logs lightningrag-server` (service `lrag-server`); use `/api/...` on the same port and ensure `system.embed-web-ui: true` in config.  
 - **Slow first API start:** wait for MySQL init and healthchecks; increase server `healthcheck.start_period` if needed.  
 - **Front build fails:** check network and `pnpm`; ensure production Dockerfile stages use `--ignore-scripts` if `patch-package` is dev-only.  
 - **CORS:** set `cors.whitelist` on the server for production (see `config.compose-online.yaml`) to match the browser origin.

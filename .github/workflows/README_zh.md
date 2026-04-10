@@ -45,6 +45,7 @@
 - 使用 [GoReleaser](https://goreleaser.com/) v2，配置文件为仓库根目录 **`.goreleaser.yaml`**。
 - **发布前步骤：** 在 `web/` 用 npm 构建前端，再执行 **`scripts/sync-web-dist.sh`**，将静态资源同步到 **`server/webui/webdist`**，与根目录 README「单二进制嵌入前端」一致，最后交叉编译 **`server/`** 下的 `lightningrag`。
 - **发布产物：** GitHub Releases 上各平台压缩包内含 **`lightningrag`** 可执行文件、根目录 **`config.yaml`**（由 **`server/config.docker.yaml`** 复制）、以及 **`resource/`**（来自 **`server/resource`**）。
-- **运行环境：** `ubuntu-latest`，**Node 20** + **`server/go.mod` 指定的 Go**；`GITHUB_TOKEN` 需具备 **`contents: write`** 以创建 Release。
+- **Docker 镜像：** 同一流水线按 **`Dockerfile.goreleaser`** 推送多架构镜像 **`docker.io/lightningrag/lightningrag`** 与 **`ghcr.io/lightningrag/lightningrag`**（与 **`deploy/docker-compose-online`** 中 **`LRAG_IMAGE`** 一致）。
+- **运行环境：** `ubuntu-latest`，**Node 20** + **`server/go.mod` 指定的 Go**；`GITHUB_TOKEN` 需具备 **`contents: write`** 以创建 Release；推送镜像需对已登录的 registry 具备写权限（见工作流内 Docker login 步骤）。
 
 本地试跑（不上传）：在仓库根目录执行 `goreleaser release --snapshot --clean --skip=publish`。详细平台列表与忽略规则见 **`.goreleaser.yaml`** 注释与配置。

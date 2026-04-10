@@ -66,6 +66,9 @@ func (casbinService *CasbinService) UpdateCasbin(adminAuthorityID, AuthorityID u
 		return nil
 	} // 设置空权限无需调用 AddPolicies 方法
 	e := utils.GetCasbin()
+	if e == nil {
+		return errors.New("casbin 未初始化")
+	}
 	success, _ := e.AddPolicies(rules)
 	if !success {
 		return errors.New("存在相同api,添加失败,请联系管理员")
@@ -89,6 +92,9 @@ func (casbinService *CasbinService) UpdateCasbinApi(oldPath string, newPath stri
 	}
 
 	e := utils.GetCasbin()
+	if e == nil {
+		return errors.New("casbin 未初始化")
+	}
 	return e.LoadPolicy()
 }
 
@@ -100,6 +106,9 @@ func (casbinService *CasbinService) UpdateCasbinApi(oldPath string, newPath stri
 
 func (casbinService *CasbinService) GetPolicyPathByAuthorityId(AuthorityID uint) (pathMaps []request.CasbinInfo) {
 	e := utils.GetCasbin()
+	if e == nil {
+		return nil
+	}
 	authorityId := strconv.Itoa(int(AuthorityID))
 	list, _ := e.GetFilteredPolicy(0, authorityId)
 	for _, v := range list {
@@ -119,6 +128,9 @@ func (casbinService *CasbinService) GetPolicyPathByAuthorityId(AuthorityID uint)
 
 func (casbinService *CasbinService) ClearCasbin(v int, p ...string) bool {
 	e := utils.GetCasbin()
+	if e == nil {
+		return false
+	}
 	success, _ := e.RemoveFilteredPolicy(v, p...)
 	return success
 }
@@ -168,8 +180,10 @@ func (casbinService *CasbinService) AddPolicies(db *gorm.DB, rules [][]string) e
 
 func (casbinService *CasbinService) FreshCasbin() (err error) {
 	e := utils.GetCasbin()
-	err = e.LoadPolicy()
-	return err
+	if e == nil {
+		return errors.New("casbin: enforcer not initialized (database not ready)")
+	}
+	return e.LoadPolicy()
 }
 
 // GetAuthoritiesByApi 获取拥有指定API权限的所有角色ID

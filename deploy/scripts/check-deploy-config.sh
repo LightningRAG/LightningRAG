@@ -19,8 +19,8 @@ run() {
 echo "==> docker-compose-online（预构建镜像 + 中间件）"
 run docker compose -f "$DCO/docker-compose-base.yaml" -f "$DCO/docker-compose.yaml" config >/dev/null
 
-echo "==> docker-compose-online（本地构建）"
-run docker compose -f "$DCO/docker-compose-base.yaml" -f "$DCO/docker-compose.local.yaml" config >/dev/null
+echo "==> docker-compose-online（未设置 LRAG_IMAGE，使用 compose 内默认镜像）"
+run env -u LRAG_IMAGE docker compose -f "$DCO/docker-compose-base.yaml" -f "$DCO/docker-compose.yaml" config >/dev/null
 
 echo "==> docker-compose-online（示例 profile）"
 run env COMPOSE_PROFILES=elasticsearch,minio docker compose -f "$DCO/docker-compose-base.yaml" -f "$DCO/docker-compose.yaml" config >/dev/null

@@ -4,6 +4,7 @@ import (
 	"github.com/LightningRAG/LightningRAG/server/global"
 	ragservice "github.com/LightningRAG/LightningRAG/server/service/rag"
 	"github.com/LightningRAG/LightningRAG/server/service/system"
+	"github.com/LightningRAG/LightningRAG/server/utils"
 	"go.uber.org/zap"
 )
 
@@ -38,6 +39,7 @@ func Reload() error {
 		RegisterTables()
 		EnsureBuiltinRBACDataInDB()
 		LoadOAuthGlobalFromDB()
+		utils.ResetCasbinEnforcer()
 		_ = system.CasbinServiceApp.FreshCasbin()
 		ragservice.ResumeIncompleteDocumentJobs()
 	}

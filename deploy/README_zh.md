@@ -9,12 +9,11 @@
 | 路径 | 说明 |
 |------|------|
 | `docker-compose/` | 开发向多容器编排：从本仓库 `server/`、`web/` 构建镜像，固定子网 `177.7.0.0/16`；**文件拆分、Profile、环境变量**见 [docker-compose/README_zh.md](./docker-compose/README_zh.md)。 |
-| `docker-compose-online/` | 生产/预发常用：中间件 + 预构建镜像或**本地构建**；详见该目录 [README_zh.md](./docker-compose-online/README_zh.md)。 |
-| `docker-compose-online/config/` | 挂载为服务端 `config.docker.yaml`（与 `.env` 中数据库密码等**必须一致**）。 |
-| `docker-compose-online/nginx/` | 前端 Nginx：`/api` → `lrag-server:8888`，已配置长超时与 `proxy_buffering off`（利于 SSE/长请求）。 |
+| `docker-compose-online/` | 生产/预发常用：中间件与 **`deploy/docker-compose` 同子网（177.7.0.0/16）、默认账号与宿主机端口**；应用为 **GoReleaser 一体化镜像**；详见 [README_zh.md](./docker-compose-online/README_zh.md)。 |
+| `docker-compose-online/config/` | 挂载为服务端 `config.docker.yaml`（与 `.env` 中数据库密码等**必须一致**；需含 `system.embed-web-ui: true`）。 |
 | `kubernetes/` | 示例 Deployment / Service / ConfigMap / Ingress；可用 `kubectl apply -k deploy/kubernetes` 一次性应用。 |
 | `docker/` | 一体化旧版镜像（CentOS 7 + MySQL + Redis + Nginx + 应用），**不推荐**新环境使用。 |
-| `scripts/verify-deployment.sh` | HTTP 探测：`/health`、Web 根路径、`/api/health`；支持 `--api-only` 与 `--wait`。 |
+| `scripts/verify-deployment.sh` | HTTP 探测：同一端口下 `/health`、Web 根路径、`/api/health`；支持 `--api-only` 与 `--wait`；未设置 `LRAG_SERVER_PORT` 时读取 `docker-compose-online/.env`。 |
 | `../scripts/sync-web-dist.sh` | （仓库根目录）将 `web/dist` 同步到 `server/webui/webdist`，供 `go:embed` 单二进制发布，与 `make build-server-embed-local` 配套。 |
 | `../scripts/build-server-with-embed.sh` | （仓库根目录）前端构建 → 同步 webdist → 编译 `server`（详见根目录 README 2.6）。 |
 | `scripts/check-deploy-config.sh` | 离线校验：各 Compose `config`、验证脚本语法、可选 `kubectl kustomize`。 |
@@ -24,11 +23,10 @@
 
 | 场景 | 命令（在 `deploy/docker-compose-online` 下） |
 |------|-----------------------------------------------|
-| 使用镜像仓库中的前后端镜像 | `docker compose up -d` |
-| 本地构建前后端 | `DOCKER_BUILDKIT=1 docker compose -f docker-compose-base.yaml -f docker-compose.local.yaml up -d --build` |
-| 仅中间件 + 后端（冒烟 / 节省资源） | `docker compose -f docker-compose-base.yaml -f docker-compose.local.yaml up -d mysql redis lrag-server` |
+| 使用 GoReleaser 发布的一体化镜像 | `docker compose up -d --wait`（Compose v2.20+，等待 healthcheck） |
+| 本地从源码构建前后端（分离容器） | 在仓库根目录：`docker compose -f deploy/docker-compose/docker-compose.yaml up -d --build` |
 
-`lrag-server` 在 MySQL、Redis 健康后启动；`lrag-web` 在 `lrag-server` **通过 HTTP `/health` 健康检查**后再启动，避免 Nginx 先起而后端未就绪导致批量 502。
+服务 **`lrag-server`**（容器 **`lightningrag-server`**）在 MySQL、Redis 健康后启动；**8888** 端口同时提供 API 与内置 Web（`/api/*` 由服务端剥离前缀）。中间件子网与默认账号与 **`deploy/docker-compose`** 一致（**`177.7.0.0/16`**）。
 
 ### 可选中间件（Profiles）
 
@@ -48,8 +46,8 @@ docker compose --profile minio --profile elasticsearch up -d
 
 ### 端口与覆盖文件
 
-- 默认映射由 `.env` 中 `LRAG_SERVER_PORT`、`LRAG_WEB_PORT`、`EXPOSE_*` 控制。  
-- 宿主机 **8888 / 8080 已被占用**时，修改 `.env` 中上述变量，并在运行验证脚本时导出相同端口。  
+- 默认映射由 `.env` 中 `LRAG_SERVER_PORT`、`EXPOSE_*` 控制（一体化部署仅暴露应用 **8888**）。  
+- 宿主机 **8888 已被占用**时，修改 `.env` 中 `LRAG_SERVER_PORT`，并在运行验证脚本时导出相同端口。  
 - 可将 `docker-compose-online/compose.override.example.yaml` 复制为 **`compose.override.yaml`**，在同目录执行 `docker compose up -d` 时会自动合并（用于本机端口或卷挂载）。仓库根目录 **`.gitignore` 已忽略** `deploy/docker-compose-online/compose.override.yaml`，避免误提交本机路径。
 
 ### 容器日志
@@ -108,10 +106,10 @@ chmod +x deploy/scripts/verify-deployment.sh
 ./deploy/scripts/verify-deployment.sh
 ./deploy/scripts/verify-deployment.sh --api-only
 ./deploy/scripts/verify-deployment.sh --wait 120
-LRAG_SERVER_PORT=18888 ./deploy/scripts/verify-deployment.sh --api-only
+LRAG_SERVER_PORT=18888 ./deploy/scripts/verify-deployment.sh
 ```
 
-`--wait`：在总等待时间内轮询后端（及非 `--api-only` 时的 Web），适合 `docker compose up -d` 后立即执行脚本。
+`--wait`：在总等待时间内轮询 `/health`（及非 `--api-only` 时的内置 Web），适合在 `docker compose up -d` 之后立即探测（也可在 Compose 侧使用 `up -d --wait` 先等 healthcheck）。未导出 `LRAG_SERVER_PORT` 时，脚本会读取 `deploy/docker-compose-online/.env` 中的端口。
 
 ### 离线校验（不启动容器）
 
@@ -123,20 +121,20 @@ LRAG_SERVER_PORT=18888 ./deploy/scripts/verify-deployment.sh --api-only
 
 ## 数据与升级
 
-- **数据卷**：在线栈默认命名形如 `docker-compose-online_lrag_mysql_data`（视项目目录名略有不同），`docker compose down -v` 会删除卷内数据，生产请谨慎并做好 **备份**。  
+- **数据卷**：在线栈卷名随项目目录变化，例如 `docker-compose-online_mysql`、`docker-compose-online_redis`（与开发 compose 的卷名风格一致，均为短名）；`docker compose down -v` 会删除卷内数据，生产请谨慎并做好 **备份**。  
 - **配置升级**：更新 `config.compose-online.yaml` 或镜像后，执行 `docker compose up -d` 即可滚动重建依赖变更的容器。  
-- **上传大小**：前端 Nginx 已设置 **`client_max_body_size 100m`**（与 Ingress 示例中的 `proxy-body-size` 对齐），更大文件请同步改 Nginx / Ingress 与后端限制。
+- **上传大小**：若经 Ingress / 反向代理暴露服务，请配置 **`proxy-body-size`**（或等价）与后端限制；一体化容器内无独立 Nginx。
 
 ## 镜像与构建说明
 
-- **GitHub Actions 自动构建**：推送 **`v*`** 标签或发布 Release 后，工作流 **`.github/workflows/docker-publish.yml`** 会将镜像推送到 **GHCR**（`ghcr.io/<owner>/<repo>/server|web`）。可选配置阿里云 Secrets 后同步推送至 `lrag/server`、`lrag/web`。详见 [`.github/workflows/README_zh.md`](../.github/workflows/README_zh.md)。  
-- **预构建镜像**：`registry.cn-hangzhou.aliyuncs.com/lrag/*` 可能为私有仓库；也可在 `.env` 中改为上述 GHCR 地址。拉取失败时请改用 GHCR、自有镜像或「本地构建」编排。  
-- **Web 镜像构建**：`vite build` 内存占用高；Docker 构建出现 `Killed` / exit **137** 时，请为 Docker 分配 **≥ 8 GiB** 内存，或在本机执行 `cd web && pnpm install && pnpm run build` 后自定义 Dockerfile 仅拷贝 `dist`。  
-- **BuildKit**：推荐 `DOCKER_BUILDKIT=1` 构建前端镜像。
+- **GoReleaser 一体化镜像**（推荐在线部署）：推送 **`v*`** 标签触发 **`.github/workflows/goreleaser.yml`**，按 **`.goreleaser.yaml`** 构建前端、同步 `webdist`、编译后推送 **`docker.io/lightningrag/lightningrag`** 与 **`ghcr.io/lightningrag/lightningrag`**（多架构 manifest）。`docker-compose-online` 默认 `LRAG_IMAGE` 指向上述仓库。详见 [`.github/workflows/README_zh.md`](../.github/workflows/README_zh.md)。  
+- **旧版分离镜像**：**`.github/workflows/docker-publish.yml`** 仍可能推送 `server` / `web` 独立镜像；新环境请优先使用 GoReleaser 一体化镜像。  
+- **本地多容器开发**：`deploy/docker-compose/` 从本仓库构建 `server` 与 `web` 镜像；`vite build` 内存占用高，Docker 出现 **137** 时可加大 Docker 内存或在本机构建前端。  
+- **BuildKit**：推荐 `DOCKER_BUILDKIT=1` 构建镜像。
 
 ## 常见问题
 
-- **Web 正常但接口 502**：`docker compose logs lrag-server`；确认 Nginx `proxy_pass` 上游为 `lrag-server:8888`。  
+- **页面可开但接口失败**：`docker compose logs lightningrag-server`（服务名为 `lrag-server`）；确认访问的是一体化端口上的 `/api/...`，且 `config` 中 `system.embed-web-ui: true`。  
 - **首次启动 API 较慢**：等待 MySQL 初始化与健康检查通过；可适当增大 server 的 `healthcheck.start_period`。  
 - **前端构建失败**：检查网络与 `pnpm` 拉包；确认 `web/Dockerfile` 中生产依赖阶段使用 `--ignore-scripts` 避免仅 dev 存在的 `patch-package` 报错。  
 - **CORS**：生产环境请在服务端配置 `cors.whitelist`（参见 `config.compose-online.yaml`），与浏览器访问域名一致。

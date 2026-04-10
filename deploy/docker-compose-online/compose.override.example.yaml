@@ -9,6 +9,3 @@ services:
   lrag-server:
     ports:
       - "18888:8888"
-  lrag-web:
-    ports:
-      - "18080:8080"
