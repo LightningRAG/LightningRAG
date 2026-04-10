@@ -45,13 +45,30 @@ jobs:
           pnpm run locale:check
           pnpm run build
 
+      - name: Upload web dist for Go embed
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-dist
+          path: web/dist
+          retention-days: 2
+
   backend:
     if: github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'release'
     name: Backend (Go)
+    needs: [frontend]
     runs-on: ubuntu-latest
     steps:
       - name: Check out
         uses: actions/checkout@v4
+
+      - name: Download web dist for go:embed
+        uses: actions/download-artifact@v4
+        with:
+          name: web-dist
+          path: web/dist
+
+      - name: Sync web dist to server/webui/webdist
+        run: bash scripts/sync-web-dist.sh
 
       - name: Set up Go
         uses: actions/setup-go@v5
