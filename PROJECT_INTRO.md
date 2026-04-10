@@ -1,6 +1,8 @@
 # LightningRAG — Project overview
 
-**LightningRAG** is a full-stack **Vue + Gin** starter with a decoupled frontend and backend, plus built-in, extensible **RAG (retrieval-augmented generation)**: knowledge bases, vector search, and integrations with many LLM and vector-store providers—suited for Q&A and document-centric features behind one admin surface.
+**LightningRAG** centers on **RAG**, **knowledge bases**, and **Agent orchestration**: document ingestion → chunking → vector search, conversational retrieval augmented by many **LLM / embedding / rerank / vector-store** providers, and canvas-style **Agent** flows (retrieval, LLM, tools). Optional **webhook channels** bind those agents to Feishu, DingTalk, Slack, and similar apps. The stack remains a **Vue + Gin** full-stack starter with JWT, Casbin, and admin scaffolding.
+
+**More detail:** root [README.md](./README.md) / [README_zh.md](./README_zh.md) (RAG section), [server/rag/README.md](./server/rag/README.md), and `docs/THIRD_PARTY_CHANNEL_CONNECTORS.md` (channels) / `docs/THIRD_PARTY_OAUTH_QUICK_LOGIN.md` (OAuth login).
 
 ## Tech stack (summary)
 
@@ -16,11 +18,11 @@
 - English: [README.md](./README.md)
 - 简体中文: [README_zh.md](./README_zh.md)
 
-**Demo:** <https://demo.LightningRAG.com> (test credentials in the main README)
+**Demo (planned):** ~~<https://demo.LightningRAG.com>~~ — *Preview server not online yet; the main README will restore the link and guest credentials when it is available.*
 
 ## License and commercial use
 
-**Apache 2.0.** Commercial use and attribution requirements are described in the “Important notices” section of the main README.
+**Apache 2.0.** Commercial use and attribution requirements are described in the **Notices** section at the end of the main README.
 
 ---
 

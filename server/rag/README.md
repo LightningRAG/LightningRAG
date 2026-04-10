@@ -88,4 +88,5 @@ listProviders, listUserModels, addUserModel, deleteUserModel.
 
 - Enable **pgvector** on PostgreSQL when used.  
 - Admins configure `rag_llm_providers`, `rag_embedding_providers`, `rag_vector_store_configs`.  
-- Users can add models under “user models” with their own API keys.
+- Users can add models under “user models” with their own API keys.  
+- **Global defaults & ops**: the **`rag:`** block in **`server/config.yaml`** (or environment-specific YAML) centralizes conversation/KB top-k and candidate pools, hybrid fusion weights and score floors, cosine threshold, knowledge-graph tuning, and public **channel webhook** rate limits / outbound retry queues; **`0` usually means built-in defaults**. High-level overview: root **[README.md](../../README.md)** §6.

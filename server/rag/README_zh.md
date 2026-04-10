@@ -133,3 +133,4 @@
 - 使用 PostgreSQL 时需安装 pgvector 扩展
 - 管理员在 `rag_llm_providers`、`rag_embedding_providers`、`rag_vector_store_configs` 中配置
 - 用户可在「添加用户模型」中配置自己的 API Key
+- **全局 RAG 默认值与运维**：根配置 **`server/config.yaml`（或各环境对应文件）中的 `rag:` 段** 可统一调整对话/知识库检索的 TopK 与候选池、混合检索权重与分数阈值、向量相似度下限、知识图谱抽取与检索参数、以及 **公开 Webhook 渠道** 的限流与出站重试队列等；多数数值为 **`0` 表示使用代码内置默认**。项目级中文总览见仓库根目录 **[README_zh.md](../../README_zh.md)** 第六节。
