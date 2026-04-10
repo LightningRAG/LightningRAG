@@ -8,9 +8,12 @@ ARG TARGETPLATFORM
 LABEL org.opencontainers.image.title="lightningrag"
 
 ENV TZ=Asia/Shanghai
-RUN apk add --no-cache tzdata ca-certificates wget \
+# PDF 默认解析优先 pypdf：Alpine community 的 py3-pypdf（见 deploy/DOCKER_PYTHON_PYPDF_zh.md）
+RUN apk add --no-cache tzdata ca-certificates wget python3 py3-pypdf \
     && ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime \
-    && echo ${TZ} > /etc/timezone
+    && echo ${TZ} > /etc/timezone \
+    && PYPDF_SRC="$(python3 -c 'import site; print(site.getsitepackages()[0])')" \
+    && printf 'LIGHTNINGRAG_PYTHON=/usr/bin/python3\nLIGHTNINGRAG_PYPDF_SRC=%s\n' "$PYPDF_SRC" > /etc/lightningrag-pypdf.env
 
 WORKDIR /go/src/github.com/LightningRAG/LightningRAG/server
 
@@ -19,4 +22,4 @@ COPY server/resource ./resource/
 COPY server/config.docker.yaml ./config.docker.yaml
 
 EXPOSE 8888
-ENTRYPOINT ["./server", "-c", "config.docker.yaml"]
+ENTRYPOINT ["/bin/sh", "-c", "set -a && [ -f /etc/lightningrag-pypdf.env ] && . /etc/lightningrag-pypdf.env; set +a && exec ./server -c config.docker.yaml"]

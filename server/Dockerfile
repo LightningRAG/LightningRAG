@@ -10,13 +10,15 @@ RUN go env -w GO111MODULE=on \
     && go mod tidy \
     && go build -o server .
 
-FROM alpine:latest
+FROM alpine:3.21
 
 LABEL MAINTAINER="newfarry@126.com"
-# 设置时区
+# 设置时区；PDF 默认解析链优先 pypdf（需 Python + pypdf，见 deploy/DOCKER_PYTHON_PYPDF_zh.md）
 ENV TZ=Asia/Shanghai
-RUN apk update && apk add --no-cache tzdata openntpd wget \
-    && ln -sf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+RUN apk update && apk add --no-cache tzdata openntpd wget python3 py3-pypdf \
+    && ln -sf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
+    && PYPDF_SRC="$(python3 -c 'import site; print(site.getsitepackages()[0])')" \
+    && printf 'LIGHTNINGRAG_PYTHON=/usr/bin/python3\nLIGHTNINGRAG_PYPDF_SRC=%s\n' "$PYPDF_SRC" > /etc/lightningrag-pypdf.env
 
 WORKDIR /go/src/github.com/LightningRAG/LightningRAG/server
 
@@ -28,4 +30,4 @@ COPY --from=0 /go/src/github.com/LightningRAG/LightningRAG/server/config.docker.
 # VOLUME ["/go/src/github.com/LightningRAG/LightningRAG/server"]
 
 EXPOSE 8888
-ENTRYPOINT ./server -c config.docker.yaml
+ENTRYPOINT ["/bin/sh", "-c", "set -a && [ -f /etc/lightningrag-pypdf.env ] && . /etc/lightningrag-pypdf.env; set +a && exec ./server -c config.docker.yaml"]
