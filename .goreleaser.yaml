@@ -8,7 +8,13 @@
 # go.mod 位于 server/，必须配置 gomod.dir，否则在仓库根目录执行 go list -m 会失败。
 #
 # 本地试跑（不上传）：goreleaser release --snapshot --clean --skip=publish
+# 若本机未配置 Docker 登录或无需镜像：加 --skip=docker
 # 正式发版：推送 v* 标签（见 .github/workflows/goreleaser.yml）
+#
+# Docker（dockers_v2，多架构 manifest）：
+# - 同时推送 Docker Hub 与 GHCR，镜像名为 lightningrag/lightningrag（owner: lightningrag）
+# - 推送前须对已登录的 registry 有写权限；GoReleaser 不执行 login（见 .github/workflows/goreleaser.yml）
+# - CI 需 Docker Buildx + QEMU
 version: 2
 
 project_name: lightningrag
@@ -90,3 +96,28 @@ changelog:
 
 release:
   draft: false
+
+dockers_v2:
+  - id: lightningrag
+    dockerfile: Dockerfile.goreleaser
+    ids:
+      - lightningrag
+    images:
+      - docker.io/lightningrag/lightningrag
+      - ghcr.io/lightningrag/lightningrag
+    tags:
+      - "{{ .Tag }}"
+      - latest
+    platforms:
+      - linux/amd64
+      - linux/arm64
+    extra_files:
+      - server/resource
+      - server/config.docker.yaml
+    labels:
+      org.opencontainers.image.description: "LightningRAG server"
+      org.opencontainers.image.created: "{{ .Date }}"
+      org.opencontainers.image.title: "{{ .ProjectName }}"
+      org.opencontainers.image.revision: "{{ .FullCommit }}"
+      org.opencontainers.image.version: "{{ .Version }}"
+      org.opencontainers.image.source: "{{ .GitURL }}"

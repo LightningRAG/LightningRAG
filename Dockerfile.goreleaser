@@ -1,0 +1,22 @@
+# syntax=docker/dockerfile:1
+# 供 GoReleaser dockers_v2 使用：从已编译的多架构二进制组装镜像，不在镜像内执行 go build。
+# 构建上下文中的二进制路径为 ${TARGETPLATFORM}/lightningrag（与 project_name / builds.binary 一致）。
+FROM alpine:3.21
+
+ARG TARGETPLATFORM
+
+LABEL org.opencontainers.image.title="lightningrag"
+
+ENV TZ=Asia/Shanghai
+RUN apk add --no-cache tzdata ca-certificates wget \
+    && ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime \
+    && echo ${TZ} > /etc/timezone
+
+WORKDIR /go/src/github.com/LightningRAG/LightningRAG/server
+
+COPY ${TARGETPLATFORM}/lightningrag ./server
+COPY server/resource ./resource/
+COPY server/config.docker.yaml ./config.docker.yaml
+
+EXPOSE 8888
+ENTRYPOINT ["./server", "-c", "config.docker.yaml"]
