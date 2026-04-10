@@ -62,10 +62,10 @@ builds:
       - goos: windows
         goarch: arm
 
-# UPX 压缩（暂时关闭；恢复时改 enabled: true，并在 CI 中安装 upx）
+# UPX 压缩（需 PATH 中有 upx；CI 见 .github/workflows/goreleaser.yml）
 # 排除 darwin：UPX 打包的 Mach-O 在较新 macOS 上存在兼容性问题（见 goreleaser.com/customization/upx）
 upx:
-  - enabled: false
+  - enabled: true
     ids:
       - lightningrag
     goos:
