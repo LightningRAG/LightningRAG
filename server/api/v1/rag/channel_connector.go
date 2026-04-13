@@ -150,6 +150,8 @@ func (a *ChannelConnectorApi) ListChannelOutboundQueue(c *gin.Context) {
 	}
 	if req.PageSize < 1 {
 		req.PageSize = 10
+	} else if req.PageSize > 100 {
+		req.PageSize = 100
 	}
 	uid := utils.GetUserID(c)
 	list, total, err := channelConnectorService.ListChannelOutboundQueue(c.Request.Context(), uid, req)
@@ -214,8 +216,8 @@ func (a *ChannelConnectorApi) OpenChannelWebhook(c *gin.Context) {
 		case errors.Is(err, ragservice.ErrConnectorDisabled):
 			c.JSON(http.StatusForbidden, gin.H{"error": "connector disabled"})
 		default:
-			global.LRAG_LOG.Debug("OpenChannelWebhook failed", zap.Error(err))
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			global.LRAG_LOG.Warn("OpenChannelWebhook failed", zap.Error(err))
+			c.JSON(http.StatusBadRequest, gin.H{"error": "bad request"})
 		}
 		return
 	}
@@ -273,8 +275,8 @@ func (a *ChannelConnectorApi) OpenChannelWebhookGet(c *gin.Context) {
 		case errors.Is(err, ragservice.ErrChannelGETVerifyNotSupported):
 			c.String(http.StatusBadRequest, "GET verify not supported for this connector")
 		default:
-			global.LRAG_LOG.Debug("OpenChannelWebhookGet failed", zap.Error(err))
-			c.String(http.StatusBadRequest, err.Error())
+			global.LRAG_LOG.Warn("OpenChannelWebhookGet failed", zap.Error(err))
+			c.String(http.StatusBadRequest, "bad request")
 		}
 		return
 	}

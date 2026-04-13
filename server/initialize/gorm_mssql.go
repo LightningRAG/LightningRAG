@@ -10,6 +10,8 @@ package initialize
  */
 
 import (
+	"time"
+
 	"github.com/LightningRAG/LightningRAG/server/config"
 	"github.com/LightningRAG/LightningRAG/server/global"
 	"github.com/LightningRAG/LightningRAG/server/initialize/internal"
@@ -37,6 +39,8 @@ func GormMssql() *gorm.DB {
 		sqlDB, _ := db.DB()
 		sqlDB.SetMaxIdleConns(m.MaxIdleConns)
 		sqlDB.SetMaxOpenConns(m.MaxOpenConns)
+		sqlDB.SetConnMaxLifetime(time.Hour)
+		sqlDB.SetConnMaxIdleTime(10 * time.Minute)
 		return db
 	}
 }
@@ -59,6 +63,8 @@ func GormMssqlByConfig(m config.Mssql) *gorm.DB {
 		sqlDB, _ := db.DB()
 		sqlDB.SetMaxIdleConns(m.MaxIdleConns)
 		sqlDB.SetMaxOpenConns(m.MaxOpenConns)
+		sqlDB.SetConnMaxLifetime(time.Hour)
+		sqlDB.SetConnMaxIdleTime(10 * time.Minute)
 		return db
 	}
 }

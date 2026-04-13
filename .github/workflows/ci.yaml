@@ -15,6 +15,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'push' }}
+
 jobs:
   frontend:
     if: github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'release'
@@ -38,10 +42,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: pnpm
+          cache-dependency-path: web/pnpm-lock.yaml
 
       - name: Install and build
         run: |
-          pnpm install
+          pnpm install --frozen-lockfile
           pnpm run locale:check
           pnpm run build
 
@@ -90,10 +96,6 @@ jobs:
     name: devops-test
     needs: [backend, frontend]
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [20.x]
-        go-version: ["1.24.2"]
     steps:
       - name: Check out
         uses: actions/checkout@v4
@@ -103,14 +105,12 @@ jobs:
           TESTING: ${{ secrets.TESTING }}
         shell: bash
         run: |
-          git branch
-          ls -l
           sed -i "s/${PROD}/${TESTING}/g" web/.env.production
           sed -i 's/${basePath}:${basePort}/${basePath}/g' web/src/view/systemTools/formCreate/index.vue
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: "20"
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
@@ -118,13 +118,14 @@ jobs:
       - name: Build web
         run: |
           cd web && pnpm install && pnpm run build
-      - name: Use Go ${{ matrix.go-version }}
+      - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: ${{ matrix.go-version }}
+          go-version-file: server/go.mod
+          cache-dependency-path: server/go.sum
       - name: Build server
         run: |
-          cd server && go mod tidy && CGO_ENABLED=0 go build && mkdir -p ../web/ser && mv server ../web/ser/ && ls -la ../web/ser/
+          cd server && go mod tidy && CGO_ENABLED=0 go build && mkdir -p ../web/ser && mv server ../web/ser/
       - name: Deploy over SSH
         env:
           KEY: ${{ secrets.KEY }}
@@ -207,25 +208,18 @@ jobs:
     runs-on: ubuntu-latest
     needs: [release-please]
     name: devops-prod
-    strategy:
-      matrix:
-        node-version: [20.x]
-        go-version: ["1.24.2"]
     steps:
       - uses: actions/checkout@v4
       - name: Show release tag
-        run: |
-          echo "tag_name=${{ needs.release-please.outputs.tag_name }}"
+        run: echo "tag_name=${{ needs.release-please.outputs.tag_name }}"
       - name: Sed Config
         shell: bash
         run: |
-          git branch
-          ls -l
           sed -i 's/${basePath}:${basePort}/${basePath}/g' web/src/view/systemTools/formCreate/index.vue
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: "20"
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
@@ -233,10 +227,11 @@ jobs:
       - name: Build web
         run: |
           cd web && pnpm install && pnpm run build
-      - name: Use Go ${{ matrix.go-version }}
+      - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: ${{ matrix.go-version }}
+          go-version-file: server/go.mod
+          cache-dependency-path: server/go.sum
       - name: Build server
         run: |
           cd server && go mod tidy && CGO_ENABLED=0 go build && mkdir -p ../web/ser && mv server ../web/ser/

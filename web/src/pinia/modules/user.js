@@ -87,12 +87,11 @@ export const useUserStore = defineStore('user', () => {
     return true
   }
 
-  /* 登录*/
   const LoginIn = async (loginInfo) => {
     try {
       loadingInstance.value = ElLoading.service({
         fullscreen: true,
-        text: '登录中，请稍候...'
+        text: i18n.global.t('common.user.loggingIn')
       })
 
       const res = await login(loginInfo)
@@ -112,12 +111,11 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
-  /** OAuth 换票成功后 payload 与 /base/login 返回的 data 结构一致，可含 redirect（站内 path） */
   const LoginInWithOAuthPayload = async (payload) => {
     try {
       loadingInstance.value = ElLoading.service({
         fullscreen: true,
-        text: '登录中，请稍候...'
+        text: i18n.global.t('common.user.loggingIn')
       })
       if (!payload?.user || !payload?.token) {
         return false

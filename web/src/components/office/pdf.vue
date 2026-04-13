@@ -17,7 +17,6 @@
   import VueOfficePdf from '@vue-office/pdf'
   //引入相关样式
   import '@vue-office/docx/lib/index.css'
-  console.log('pdf===>')
   const props = defineProps({
     modelValue: {
       type: String,
@@ -30,10 +29,6 @@
     (val) => (pdf.value = val),
     { immediate: true }
   )
-  const renderedHandler = () => {
-    console.log('pdf 加载成功')
-  }
-  const errorHandler = () => {
-    console.log('pdf 错误')
-  }
+  const renderedHandler = () => {}
+  const errorHandler = () => {}
 </script>

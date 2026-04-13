@@ -68,8 +68,6 @@
       pass = false
     }
 
-    console.log('upload file check result: ', pass)
-
     return pass
   }
 

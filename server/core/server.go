@@ -32,6 +32,11 @@ func RunServer() {
 		ragservice.ResumeIncompleteDocumentJobs()
 	}
 
+	jwtKey := global.LRAG_CONFIG.JWT.SigningKey
+	if jwtKey == "" || jwtKey == "change-me-before-deploy" || jwtKey == "qmPlus" || len(jwtKey) < 16 {
+		global.LRAG_LOG.Warn("JWT signing-key is weak or unchanged — please set a strong random key in config before deploying to production")
+	}
+
 	Router := initialize.Routers()
 
 	address := fmt.Sprintf(":%d", global.LRAG_CONFIG.System.Addr)

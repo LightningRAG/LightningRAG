@@ -1,10 +1,11 @@
 import { formatTimeToStr } from '@/utils/date'
 import { getDict } from '@/utils/dictionary'
 import { ref } from 'vue'
+import { i18n } from '@/locale'
 
 export const formatBoolean = (bool) => {
   if (bool !== null) {
-    return bool ? '是' : '否'
+    return bool ? i18n.global.t('common.yes') : i18n.global.t('common.no')
   } else {
     return ''
   }

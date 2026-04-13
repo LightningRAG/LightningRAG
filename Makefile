@@ -1,9 +1,9 @@
 SHELL = /bin/bash
 
 #SCRIPT_DIR         = $(shell pwd)/etc/script
-#请选择golang版本
-BUILD_IMAGE_SERVER  = golang:1.22
-#请选择node版本
+# Go version should match go.mod (currently 1.24)
+BUILD_IMAGE_SERVER  = golang:1.24
+# Node version should match CI (currently 20)
 BUILD_IMAGE_WEB     = node:20
 #项目名称
 PROJECT_NAME        = github.com/LightningRAG/LightningRAG/server
@@ -43,17 +43,16 @@ build-local:
 	&& if [ -f "/.dockerenv" ];then echo "OK!"; else  make build-web-local && make build-server-local; fi \
 	&& mkdir build && cp -r web/dist build/ && cp server/server build/ && cp -r server/resource build/resource
 
-#本地环境打包前端
+# Build frontend locally (uses npm; CI uses pnpm — both read package-lock.json / pnpm-lock.yaml)
 build-web-local:
 	@cd web/ && if [ -d "dist" ];then rm -rf dist; else echo "OK!"; fi \
-	&& yarn config set registry http://mirrors.cloud.tencent.com/npm/ && yarn install && yarn build
+	&& npm install --no-audit --no-fund && npm run build
 
-#本地环境打包后端
+# Build backend locally; set GOPROXY env var to override the default proxy if needed
 build-server-local:
 	@cd server/ && if [ -f "server" ];then rm -rf server; else echo "OK!"; fi \
-	&& go env -w GO111MODULE=on && go env -w GOPROXY=https://goproxy.cn,direct \
-	&& go env -w CGO_ENABLED=0 && go env  && go mod tidy \
-	&& go build -ldflags "-B 0x$(shell head -c8 /dev/urandom|od -An -tx1|tr -d ' \n') -X main.Version=${TAGS_OPT}" -v
+	&& CGO_ENABLED=0 go mod tidy \
+	&& CGO_ENABLED=0 go build -trimpath -ldflags "-s -w -B 0x$(shell head -c8 /dev/urandom|od -An -tx1|tr -d ' \n') -X main.Version=${TAGS_OPT}" -v
 
 # 将 web/dist 同步到 server/webui/webdist（供 go:embed，需在 yarn build 之后执行）
 sync-web-dist:
@@ -62,9 +61,8 @@ sync-web-dist:
 # 构建前端并同步后编译后端（单二进制内含前端静态资源）
 build-server-embed-local: build-web-local sync-web-dist
 	@cd server/ && if [ -f "server" ];then rm -rf server; else echo "OK!"; fi \
-	&& go env -w GO111MODULE=on && go env -w GOPROXY=https://goproxy.cn,direct \
-	&& go env -w CGO_ENABLED=0 && go mod tidy \
-	&& go build -ldflags "-B 0x$(shell head -c8 /dev/urandom|od -An -tx1|tr -d ' \n') -X main.Version=${TAGS_OPT}" -v
+	&& CGO_ENABLED=0 go mod tidy \
+	&& CGO_ENABLED=0 go build -trimpath -ldflags "-s -w -B 0x$(shell head -c8 /dev/urandom|od -An -tx1|tr -d ' \n') -X main.Version=${TAGS_OPT}" -v
 
 #打包前后端二合一镜像
 image: build

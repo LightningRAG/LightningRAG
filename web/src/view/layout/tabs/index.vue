@@ -55,7 +55,7 @@
 
 <script setup>
   import { emitter } from '@/utils/bus.js'
-  import { computed, onUnmounted, ref, watch, nextTick } from 'vue'
+  import { computed, onBeforeUnmount, onUnmounted, ref, watch, nextTick } from 'vue'
   import { useI18n } from 'vue-i18n'
   import { useRoute, useRouter } from 'vue-router'
   import { useUserStore } from '@/pinia/modules/user'
@@ -242,20 +242,24 @@
     historys.value.splice(index, 1)
   }
 
+  const closeContextMenu = () => {
+    contextMenuVisible.value = false
+  }
+
   watch(
     () => contextMenuVisible.value,
-    () => {
-      if (contextMenuVisible.value) {
-        document.body.addEventListener('click', () => {
-          contextMenuVisible.value = false
-        })
+    (visible) => {
+      if (visible) {
+        document.body.addEventListener('click', closeContextMenu)
       } else {
-        document.body.removeEventListener('click', () => {
-          contextMenuVisible.value = false
-        })
+        document.body.removeEventListener('click', closeContextMenu)
       }
     }
   )
+
+  onBeforeUnmount(() => {
+    document.body.removeEventListener('click', closeContextMenu)
+  })
 
   watch(
     () => route,

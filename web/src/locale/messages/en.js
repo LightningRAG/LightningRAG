@@ -2,6 +2,7 @@ import { ragFlowEditorEn } from './fragments/ragFlowEditor.js'
 import { toolsCodegenEn } from './fragments/toolsCodegen.js'
 import { examplePagesEn } from './fragments/examplePages.js'
 import { aiPictureEn } from './fragments/aiPicture.js'
+import apiSummaryEn from './fragments/apiAdminSummaries.en.js'
 
 export default {
   login: {
@@ -305,8 +306,15 @@ export default {
     },
     user: {
       noHomeConfigured:
-        'No landing page is available. Please ask an administrator to configure menus.'
+        'No landing page is available. Please ask an administrator to configure menus.',
+      loggingIn: 'Signing in, please wait…'
     },
+    yes: 'Yes',
+    no: 'No',
+    addNew: '+ New',
+    uploadFile: 'Upload file',
+    uploadFailed: 'Upload failed',
+    pleaseEnterContent: 'Enter content…',
     edit: 'Edit',
     delete: 'Delete',
     add: 'Add',
@@ -360,6 +368,9 @@ export default {
     pickRowsToDelete: 'Select rows to delete.',
     ruleWhitespaceOnly: 'Cannot be whitespace only.',
     createUpdateOk: 'Saved.',
+    create_success: 'Created successfully.',
+    update_success: 'Updated successfully.',
+    delete_success: 'Deleted successfully.',
     dateNeedEnd: 'End date is required.',
     dateNeedStart: 'Start date is required.',
     dateStartBeforeEnd: 'Start must be before end.',
@@ -607,7 +618,13 @@ export default {
       drawerAddMenu: 'Add menu',
       drawerEditMenu: 'Edit menu',
       assignOk: 'Roles updated.',
-      assignFailRetry: 'Assignment failed. Try again.'
+      assignFailRetry: 'Assignment failed. Try again.',
+      componentCascader: {
+        phSelectPath: 'Select file path',
+        phManualPath: 'Page: view/xxx/xx.vue  Plugin: plugin/xx/xx.vue',
+        manualInput: 'Manual input',
+        quickSelect: 'Quick select'
+      }
     },
     roleDatas: {
       warningBar:
@@ -1501,6 +1518,27 @@ In SQL mode, keys match SELECT aliases. JOINs: {t1.c1:"A",t2.c2:"B"}. Import is 
     assignFailRetry: 'Assignment failed. Try again.',
     aiAutofillFail: 'AI autofill failed. Try again.'
   },
+  errorPreview: {
+    labelErrorType: 'Error type',
+    labelDetails: 'Details',
+    labelTips: 'Tips',
+    ok: 'OK',
+    title500: 'API Error Detected',
+    type500: 'Internal Server Error',
+    tips500: 'This usually indicates a server panic. Check the server logs first. If it blocks normal use, force-logout to clear the cache.',
+    title404: 'Resource Not Found',
+    tips404: 'The endpoint is not registered (or the server hasn\'t been restarted), or the request path/method doesn\'t match. For auto-generated code, check for extra spaces.',
+    title401: 'Authentication Failed',
+    type401: 'Invalid credential',
+    tips401: 'Your authentication has expired or is invalid. Please sign in again.',
+    titleNetwork: 'Network Error',
+    tipsNetwork: 'Unable to connect to the server. Please check your network.',
+    titleUnknown: 'Unknown Error',
+    typeUnknown: 'Request error detected',
+    msgDefault: 'No additional information provided.',
+    msgUnknown: 'An unknown error occurred.',
+    tipsUnknown: 'Check the browser console for more details.'
+  },
   sysError: {
     rangeTo: 'to',
     startTime: 'Start',
@@ -1778,6 +1816,7 @@ In SQL mode, keys match SELECT aliases. JOINs: {t1.c1:"A",t2.c2:"B"}. Import is 
       concurrentTasksHint:
         'Documents chunked/embed in parallel for this KB; default 1. Restarts resume unfinished jobs.',
       delimiter: 'Delimiter',
+      delimiterPlaceholder: '\\n!?。；！？',
       delimiterTooltip:
         'Separator characters; supports \\n and \\t. Text splits at these then merges into chunks.',
       sectionRerank: 'Rerank',
@@ -2485,5 +2524,73 @@ In SQL mode, keys match SELECT aliases. JOINs: {t1.c1:"A",t2.c2:"B"}. Import is 
       typeOcr: 'OCR',
       typeCv: 'Computer vision'
     }
+  },
+  apiSummary: apiSummaryEn,
+  comp: {
+    upload: 'Upload',
+    richtext: {
+      placeholder: 'Enter content…'
+    },
+    mediaLib: {
+      drawerTitle: 'Media library | Click filename to edit; the selected category is the upload target',
+      addCategory: 'Add category',
+      editCategory: 'Edit category',
+      deleteCategory: 'Delete category',
+      phSearchFile: 'Search by filename or remark',
+      btnSelect: 'Select',
+      videoNotSupported: 'Your browser does not support video playback',
+      parentCategory: 'Parent category',
+      categoryName: 'Category name',
+      phEditFileName: 'Enter filename or remark',
+      ruleNotEmpty: 'Cannot be empty',
+      editOk: 'Updated successfully',
+      editCancelled: 'Edit cancelled',
+      unsupportedType: 'This file type is not supported',
+      confirmDeleteFile: 'Delete this file?',
+      deleteCancelled: 'Deletion cancelled',
+      allCategories: 'All categories',
+      ruleCategoryName: 'Please enter a category name',
+      ruleCategoryMax20: 'Max 20 characters',
+      opOk: 'Operation succeeded'
+    }
+  },
+  apiGroup: {
+    jwt: 'JWT',
+    'Login log': 'Login log',
+    'API Token': 'API Token',
+    'System user': 'System user',
+    api: 'API',
+    Role: 'Role',
+    casbin: 'Casbin',
+    Menu: 'Menu',
+    'Chunked upload': 'Chunked upload',
+    'File upload & download': 'File upload & download',
+    'System service': 'System service',
+    skills: 'Skills',
+    Customer: 'Customer',
+    'Code generator': 'Code generator',
+    'Template config': 'Template config',
+    'Code generator history': 'Code generator history',
+    'Dictionary detail': 'Dictionary detail',
+    Dictionary: 'Dictionary',
+    'Operation record': 'Operation record',
+    'Simple uploader': 'Simple uploader',
+    email: 'Email',
+    'Authority button': 'Authority button',
+    'Export template': 'Export template',
+    'Error log': 'Error log',
+    Announcement: 'Announcement',
+    'System params': 'System params',
+    'OAuth provider': 'OAuth provider',
+    'OAuth setting': 'OAuth setting',
+    'Attachment category': 'Attachment category',
+    'Version control': 'Version control',
+    'RAG knowledge base': 'RAG Knowledge base',
+    'RAG conversation': 'RAG Conversation',
+    'RAG LLM': 'RAG LLM',
+    'RAG Agent': 'RAG Agent',
+    'RAG system model': 'RAG System model',
+    'RAG settings': 'RAG Settings',
+    'RAG channel': 'RAG Channel connector'
   }
 }

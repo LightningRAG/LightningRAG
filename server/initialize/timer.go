@@ -6,28 +6,27 @@ import (
 	"github.com/LightningRAG/LightningRAG/server/global"
 	"github.com/LightningRAG/LightningRAG/server/task"
 	"github.com/robfig/cron/v3"
+	"go.uber.org/zap"
 )
 
 func Timer() {
 	go func() {
 		var option []cron.Option
 		option = append(option, cron.WithSeconds())
-		// 清理DB定时任务
 		_, err := global.LRAG_Timer.AddTaskByFunc("ClearDB", "@daily", func() {
-			err := task.ClearTable(global.LRAG_DB) // 定时任务方法定在task文件包中
-			if err != nil {
-				fmt.Println("timer error:", err)
+			if err := task.ClearTable(global.LRAG_DB); err != nil {
+				global.LRAG_LOG.Error("ClearDB task failed", zap.Error(err))
 			}
 		}, "定时清理数据库【日志，黑名单】内容", option...)
 		if err != nil {
-			fmt.Println("add timer error:", err)
+			global.LRAG_LOG.Error("failed to register ClearDB timer", zap.Error(err))
 		}
 
 		_, err = global.LRAG_Timer.AddTaskByFunc("RagChannelWebhookEventsPrune", "@daily", func() {
 			task.PruneRagChannelWebhookEvents()
 		}, "RAG 第三方渠道 Webhook 幂等表按天清理", option...)
 		if err != nil {
-			fmt.Println("add rag channel webhook events prune timer error:", err)
+			global.LRAG_LOG.Error("failed to register webhook events prune timer", zap.Error(err))
 		}
 
 		poll := global.LRAG_CONFIG.Rag.ChannelOutboundPollSeconds
@@ -46,7 +45,7 @@ func Timer() {
 				task.ProcessRagChannelOutbound()
 			}, "RAG 第三方渠道出站重试队列", option...)
 			if err != nil {
-				fmt.Println("add rag channel outbound timer error:", err)
+				global.LRAG_LOG.Error("failed to register channel outbound timer", zap.Error(err))
 			}
 		}
 

@@ -27,7 +27,7 @@
             :style="{ left: contextMenuLeft + 'px', top: contextMenuTop + 'px' }"
             class="flow-contextmenu"
           >
-            <li @click="onContextMenuDelete">删除</li>
+            <li @click="onContextMenuDelete">{{ $t('rag.flowEditor.contextMenuDelete') }}</li>
           </ul>
         </Teleport>
         <Background pattern-color="#e5e7eb" :gap="16" />
@@ -59,6 +59,7 @@
 
 <script setup>
 import { ref, watch, onMounted, onUnmounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { VueFlow } from '@vue-flow/core'
 import { Background, Controls, MiniMap } from '@vue-flow/additional-components'
 import ComponentPalette from './componentPalette.vue'
@@ -70,6 +71,8 @@ import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'
 
 defineOptions({ name: 'FlowEditor' })
+
+const { t } = useI18n()
 
 const props = defineProps({
   modelValue: { type: Object, default: null },
@@ -194,7 +197,7 @@ const onNodeParamsUpdate = (newParams) => {
 // 从 DSL 初始化
 const initFromDsl = (dsl) => {
   if (!dsl?.components) return
-  const { nodes: n, edges: e } = dslToFlow(dsl)
+  const { nodes: n, edges: e } = dslToFlow(dsl, t)
   nodes.value = n
   edges.value = e
 }

@@ -16,20 +16,20 @@ export const viteLogo = (env) => {
   if (config.showViteLogo) {
     console.log(
       greenText(
-        `> 欢迎使用 LightningRAG，开源地址：https://github.com/LightningRAG`
+        `> Welcome to LightningRAG — https://github.com/LightningRAG`
       )
     )
-    console.log(greenText(`> 当前版本:v${packageInfo.version}`))
+    console.log(greenText(`> Version: v${packageInfo.version}`))
     console.log(
-      greenText(`> 官网：https://lightningrag.com`)
+      greenText(`> Website: https://lightningrag.com`)
     )
     console.log(
       greenText(
-        `> 默认自动化文档地址:http://127.0.0.1:${env.VITE_SERVER_PORT}/swagger/index.html`
+        `> Swagger docs: http://127.0.0.1:${env.VITE_SERVER_PORT}/swagger/index.html`
       )
     )
     console.log(
-      greenText(`> 默认前端文件运行地址:http://127.0.0.1:${env.VITE_CLI_PORT}`)
+      greenText(`> Frontend: http://127.0.0.1:${env.VITE_CLI_PORT}`)
     )
     console.log('\n')
   }

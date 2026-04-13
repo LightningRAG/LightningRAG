@@ -8,21 +8,16 @@ import (
 	"go.uber.org/zap"
 )
 
-//go:generate go env -w GO111MODULE=on
-//go:generate go env -w GOPROXY=https://goproxy.cn,direct
 //go:generate go mod tidy
 //go:generate go mod download
 
-// 这部分 @Tag 设置用于排序, 需要排序的接口请按照下面的格式添加
-// swag init 对 @Tag 只会从入口文件解析, 默认 main.go
-// 也可通过 --generalInfo flag 指定其他文件
 // @Tag.Name        Base
 // @Tag.Name        SysUser
-// @Tag.Description 用户
+// @Tag.Description Users
 
-// @title                       LightningRAG Swagger API接口文档
+// @title                       LightningRAG API
 // @version                     v2.9.0
-// @description                 使用gin+vue进行极速开发的全栈开发基础平台
+// @description                 LightningRAG full-stack platform API
 // @securityDefinitions.apikey  ApiKeyAuth
 // @in                          header
 // @name                        x-token

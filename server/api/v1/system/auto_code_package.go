@@ -25,7 +25,10 @@ type AutoCodePackageApi struct{}
 // @Router    /autoCode/createPackage [post]
 func (a *AutoCodePackageApi) Create(c *gin.Context) {
 	var info request.SysAutoCodePackageCreate
-	_ = c.ShouldBindJSON(&info)
+	if err := c.ShouldBindJSON(&info); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
 	if err := utils.Verify(info, utils.AutoPackageVerify); err != nil {
 		response.FailWithError(c, err)
 		return
@@ -54,7 +57,10 @@ func (a *AutoCodePackageApi) Create(c *gin.Context) {
 // @Router    /autoCode/delPackage [post]
 func (a *AutoCodePackageApi) Delete(c *gin.Context) {
 	var info common.GetById
-	_ = c.ShouldBindJSON(&info)
+	if err := c.ShouldBindJSON(&info); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
 	err := autoCodePackageService.Delete(c.Request.Context(), info)
 	if err != nil {
 		global.LRAG_LOG.Error("删除失败!", zap.Error(err))

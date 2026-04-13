@@ -259,4 +259,26 @@ export default {
   'put_user_setSelfInfo': '設置自身信息(必選)',
   'put_user_setSelfSetting': '用戶界面配置',
   'put_user_setUserInfo': '設置用戶信息',
+
+  'post_rag_conversation_queryData': '結構化檢索（無 LLM）',
+
+  'post_rag_channelConnector_create': '建立渠道連接器',
+  'post_rag_channelConnector_update': '更新渠道連接器',
+  'post_rag_channelConnector_list': '渠道連接器列表',
+  'post_rag_channelConnector_channelTypes': '已註冊的渠道適配器類型',
+  'post_rag_channelConnector_get': '取得渠道連接器',
+  'post_rag_channelConnector_delete': '刪除渠道連接器',
+  'post_rag_channelConnector_outbound_list': '外發重試佇列列表',
+  'post_rag_channelConnector_outbound_delete': '刪除外發佇列行',
+  'post_rag_channelConnector_outbound_runOnce': '執行一次外發重試批次',
+
+  'post_sysOAuthProvider_createOAuthProvider': '建立 OAuth 提供商',
+  'delete_sysOAuthProvider_deleteOAuthProvider': '刪除 OAuth 提供商',
+  'delete_sysOAuthProvider_deleteOAuthProviderByIds': '批次刪除 OAuth 提供商',
+  'put_sysOAuthProvider_updateOAuthProvider': '更新 OAuth 提供商',
+  'get_sysOAuthProvider_findOAuthProvider': '透過 ID 取得 OAuth 提供商',
+  'get_sysOAuthProvider_getOAuthProviderList': 'OAuth 提供商列表',
+  'get_sysOAuthProvider_getRegisteredOAuthKinds': '已註冊的 OAuth 類型',
+  'get_sysOAuthSetting_getOAuthSetting': '取得 OAuth 全域設定',
+  'put_sysOAuthSetting_updateOAuthSetting': '更新 OAuth 全域設定',
 }

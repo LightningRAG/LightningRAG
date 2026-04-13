@@ -134,6 +134,8 @@ services:
     image: ${ES_IMAGE:-docker.elastic.co/elasticsearch/elasticsearch:${ES_STACK_VERSION:-8.15.3}}
     container_name: lightningrag-elasticsearch
     restart: always
+    # WARNING: Security is disabled for local/dev convenience.
+    # For production or shared networks, enable xpack.security and configure TLS.
     environment:
       - node.name=lrag-es01
       - discovery.type=single-node

@@ -296,7 +296,7 @@
         applySearch()
       }
     } catch (error) {
-      console.error('获取树形数据失败:', error)
+      console.error('Failed to load tree data:', error)
       ElMessage.error(t('admin.dictionaryDetail.treeLoadFail'))
     }
   }
@@ -325,7 +325,6 @@
 
   // 添加子节点
   const addChildNode = (parentNode) => {
-    console.log(parentNode)
     type.value = 'create'
     formData.value = {
       label: null,

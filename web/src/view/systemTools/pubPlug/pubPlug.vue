@@ -53,7 +53,7 @@
           :button-texts="[ $t('tools.pubPlug.transferBtnRemove'), $t('tools.pubPlug.transferBtnAdd') ]"
         >
           <template #default="{ option }">
-            {{ option.description }} {{ option.path }}
+            {{ option._displayDesc || option.description }} {{ option.path }}
           </template>
         </el-transfer>
         <div class="flex justify-end mt-2">
@@ -104,6 +104,7 @@
   import { pubPlug, initMenu, initAPI, initDictionary } from '@/api/autoCode.js'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import { getAllApis } from '@/api/api'
+  import { translateApiDescription } from '@/utils/apiI18n'
   import { getMenuList } from '@/api/menu'
   import { getSysDictionaryList } from '@/api/sysDictionary'
 
@@ -139,7 +140,10 @@
     }
     const apiRes = await getAllApis()
     if (apiRes.code === 0) {
-      apisData.value = apiRes.data.apis
+      apisData.value = apiRes.data.apis.map(api => ({
+        ...api,
+        _displayDesc: translateApiDescription(api, t) || api.description
+      }))
     }
     const dictionaryRes = await getSysDictionaryList({
       page: 1,
@@ -161,7 +165,7 @@
   }
 
   const filterApiMethod = (query, item) => {
-    return item.description.indexOf(query) > -1 || item.path.indexOf(query) > -1
+    return (item._displayDesc || item.description).indexOf(query) > -1 || item.path.indexOf(query) > -1
   }
 
   const filterDictionaryMethod = (query, item) => {

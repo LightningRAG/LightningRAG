@@ -17,7 +17,10 @@ type LLMProviderApi struct{}
 // ListAvailableProviders 列出指定场景类型可用的提供商（用于添加模型时的下拉选项）
 func (l *LLMProviderApi) ListAvailableProviders(c *gin.Context) {
 	var req request.LLMProviderListAvailableReq
-	_ = c.ShouldBindJSON(&req)
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
 	opts := registry.ListProvidersByScenario(req.ScenarioType, req.ScenarioTypes)
 	response.OkWithData(opts, c)
 }
@@ -25,7 +28,10 @@ func (l *LLMProviderApi) ListAvailableProviders(c *gin.Context) {
 // ListProviders 列出用户可用的 LLM 提供商（管理员配置+用户自己的），可按 scenarioType 过滤，并标记默认模型
 func (l *LLMProviderApi) ListProviders(c *gin.Context) {
 	var req request.LLMProviderListReq
-	_ = c.ShouldBindJSON(&req)
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
 	uid := utils.GetUserID(c)
 	authorityId := utils.GetUserAuthorityId(c)
 	list, err := llmProviderService.ListProviders(c.Request.Context(), uid, authorityId, req.ScenarioType)

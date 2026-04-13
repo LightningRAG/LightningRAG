@@ -49,7 +49,7 @@ const registerIcons = async (app) => {
   }
 
   import.meta.env.MODE == 'development' &&
-    console.log(`所有可用的本地图标: ${allKeys.join(', ')}`)
+    console.log(`All available local icons: ${allKeys.join(', ')}`)
 }
 
 export const register = (app) => {

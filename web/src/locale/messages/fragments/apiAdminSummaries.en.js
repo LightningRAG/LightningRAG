@@ -259,4 +259,26 @@ export default {
   'put_user_setSelfInfo': 'set Self Info',
   'put_user_setSelfSetting': 'set Self Setting',
   'put_user_setUserInfo': 'set User Info',
+
+  'post_rag_conversation_queryData': 'Structured retrieval without LLM',
+
+  'post_rag_channelConnector_create': 'Create channel connector',
+  'post_rag_channelConnector_update': 'Update channel connector',
+  'post_rag_channelConnector_list': 'List channel connectors',
+  'post_rag_channelConnector_channelTypes': 'List registered channel adapter kinds',
+  'post_rag_channelConnector_get': 'Get channel connector',
+  'post_rag_channelConnector_delete': 'Delete channel connector',
+  'post_rag_channelConnector_outbound_list': 'List channel outbound retry queue',
+  'post_rag_channelConnector_outbound_delete': 'Delete channel outbound queue row',
+  'post_rag_channelConnector_outbound_runOnce': 'Run one channel outbound retry batch',
+
+  'post_sysOAuthProvider_createOAuthProvider': 'Create OAuth provider',
+  'delete_sysOAuthProvider_deleteOAuthProvider': 'Delete OAuth provider',
+  'delete_sysOAuthProvider_deleteOAuthProviderByIds': 'Batch delete OAuth providers',
+  'put_sysOAuthProvider_updateOAuthProvider': 'Update OAuth provider',
+  'get_sysOAuthProvider_findOAuthProvider': 'Get OAuth provider by ID',
+  'get_sysOAuthProvider_getOAuthProviderList': 'OAuth provider list',
+  'get_sysOAuthProvider_getRegisteredOAuthKinds': 'Registered OAuth kinds',
+  'get_sysOAuthSetting_getOAuthSetting': 'Get OAuth global settings',
+  'put_sysOAuthSetting_updateOAuthSetting': 'Update OAuth global settings',
 }

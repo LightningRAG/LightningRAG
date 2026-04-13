@@ -32,7 +32,7 @@ export default class ImageCompress {
           const newImgSize = this.fileSizeKB(newImgData)
 
           if (newImgSize > this.fileSize) {
-            console.log('图片尺寸太大!' + fileSize + ' >> ' + newImgSize)
+            console.warn('Image too large! ' + fileSize + ' >> ' + newImgSize)
           }
 
           const blob = this.dataURLtoBlob(newImgData, fileType)

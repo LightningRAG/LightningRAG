@@ -17,6 +17,7 @@ import (
 	"github.com/LightningRAG/LightningRAG/server/model/rag"
 	"github.com/LightningRAG/LightningRAG/server/model/rag/request"
 	"github.com/google/uuid"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
@@ -234,18 +235,22 @@ func extractContent(out map[string]any) string {
 }
 
 func (s *AgentService) saveAgentMessages(ctx context.Context, conversationID uint, userContent, assistantContent string) {
-	_ = global.LRAG_DB.WithContext(ctx).Create(&rag.RagMessage{
+	if err := global.LRAG_DB.WithContext(ctx).Create(&rag.RagMessage{
 		UUID:           uuid.New(),
 		ConversationID: conversationID,
 		Role:           "user",
 		Content:        userContent,
-	}).Error
-	_ = global.LRAG_DB.WithContext(ctx).Create(&rag.RagMessage{
+	}).Error; err != nil {
+		global.LRAG_LOG.Warn("failed to save user message", zap.Uint("conversationId", conversationID), zap.Error(err))
+	}
+	if err := global.LRAG_DB.WithContext(ctx).Create(&rag.RagMessage{
 		UUID:           uuid.New(),
 		ConversationID: conversationID,
 		Role:           "assistant",
 		Content:        assistantContent,
-	}).Error
+	}).Error; err != nil {
+		global.LRAG_LOG.Warn("failed to save assistant message", zap.Uint("conversationId", conversationID), zap.Error(err))
+	}
 }
 
 // Create 创建 Agent
@@ -282,6 +287,8 @@ func (s *AgentService) List(ctx context.Context, uid uint, req request.AgentList
 	pageSize := req.PageSize
 	if pageSize < 1 {
 		pageSize = 10
+	} else if pageSize > 100 {
+		pageSize = 100
 	}
 	offset := (page - 1) * pageSize
 	if err = db.Order("id DESC").Offset(offset).Limit(pageSize).Find(&list).Error; err != nil {

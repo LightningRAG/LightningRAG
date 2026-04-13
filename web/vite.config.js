@@ -60,7 +60,19 @@ export default ({ mode }) => {
     output: {
       entryFileNames: 'assets/087AC4D233B64EB0[name].[hash].js',
       chunkFileNames: 'assets/087AC4D233B64EB0[name].[hash].js',
-      assetFileNames: 'assets/087AC4D233B64EB0[name].[hash].[ext]'
+      assetFileNames: 'assets/087AC4D233B64EB0[name].[hash].[ext]',
+      manualChunks(id) {
+        if (id.includes('node_modules')) {
+          if (id.includes('element-plus')) return 'vendor-element-plus'
+          if (id.includes('echarts') || id.includes('zrender')) return 'vendor-echarts'
+          if (id.includes('@vue-flow')) return 'vendor-vue-flow'
+          if (id.includes('@wangeditor')) return 'vendor-wangeditor'
+          if (id.includes('ace-builds')) return 'vendor-ace'
+          if (id.includes('@vue-office')) return 'vendor-vue-office'
+          if (id.includes('marked')) return 'vendor-marked'
+          if (id.includes('vue-i18n') || id.includes('@intlify')) return 'vendor-i18n'
+        }
+      }
     }
   }
 

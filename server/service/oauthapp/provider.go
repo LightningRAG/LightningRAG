@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/LightningRAG/LightningRAG/server/global"
+	"github.com/LightningRAG/LightningRAG/server/i18n"
 	"github.com/LightningRAG/LightningRAG/server/model/common/request"
 	"github.com/LightningRAG/LightningRAG/server/model/system"
 	systemReq "github.com/LightningRAG/LightningRAG/server/model/system/request"
@@ -53,18 +54,18 @@ func (s *SysOAuthProviderService) toAdmin(m system.SysOAuthProvider) systemRes.S
 
 func (s *SysOAuthProviderService) Create(req systemReq.SysOAuthProviderCreate) error {
 	if global.LRAG_DB == nil {
-		return errors.New("数据库未初始化")
+		return i18n.NewError("svc.oauth.db_not_initialized")
 	}
 	kindNorm := strings.ToLower(strings.TrimSpace(req.Kind))
 	if kindNorm == "" {
-		return errors.New("kind 不能为空")
+		return i18n.NewError("svc.oauth.kind_required")
 	}
 	if _, err := idpoauth.Lookup(kindNorm); err != nil {
 		return err
 	}
 	var existing system.SysOAuthProvider
 	if err := global.LRAG_DB.Where("LOWER(kind) = ?", kindNorm).First(&existing).Error; err == nil {
-		return errors.New("该登录方式已存在配置，请使用更新")
+		return i18n.NewError("svc.oauth.provider_exists")
 	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
 		return err
 	}
@@ -96,7 +97,7 @@ func (s *SysOAuthProviderService) Create(req systemReq.SysOAuthProviderCreate) e
 
 func (s *SysOAuthProviderService) Update(req systemReq.SysOAuthProviderUpdate) error {
 	if global.LRAG_DB == nil {
-		return errors.New("数据库未初始化")
+		return i18n.NewError("svc.oauth.db_not_initialized")
 	}
 	var row system.SysOAuthProvider
 	if err := global.LRAG_DB.Where("id = ?", req.ID).First(&row).Error; err != nil {
@@ -143,21 +144,21 @@ func (s *SysOAuthProviderService) Update(req systemReq.SysOAuthProviderUpdate) e
 
 func (s *SysOAuthProviderService) Delete(id uint) error {
 	if global.LRAG_DB == nil {
-		return errors.New("数据库未初始化")
+		return i18n.NewError("svc.oauth.db_not_initialized")
 	}
 	return global.LRAG_DB.Delete(&system.SysOAuthProvider{}, "id = ?", id).Error
 }
 
 func (s *SysOAuthProviderService) DeleteByIds(ids request.IdsReq) error {
 	if global.LRAG_DB == nil {
-		return errors.New("数据库未初始化")
+		return i18n.NewError("svc.oauth.db_not_initialized")
 	}
 	return global.LRAG_DB.Delete(&[]system.SysOAuthProvider{}, "id in ?", ids.Ids).Error
 }
 
 func (s *SysOAuthProviderService) Find(id uint) (systemRes.SysOAuthProviderAdmin, error) {
 	if global.LRAG_DB == nil {
-		return systemRes.SysOAuthProviderAdmin{}, errors.New("数据库未初始化")
+		return systemRes.SysOAuthProviderAdmin{}, i18n.NewError("svc.oauth.db_not_initialized")
 	}
 	var row system.SysOAuthProvider
 	if err := global.LRAG_DB.Where("id = ?", id).First(&row).Error; err != nil {
@@ -168,7 +169,7 @@ func (s *SysOAuthProviderService) Find(id uint) (systemRes.SysOAuthProviderAdmin
 
 func (s *SysOAuthProviderService) List(info systemReq.SysOAuthProviderSearch) (list []systemRes.SysOAuthProviderAdmin, total int64, err error) {
 	if global.LRAG_DB == nil {
-		return nil, 0, errors.New("数据库未初始化")
+		return nil, 0, i18n.NewError("svc.oauth.db_not_initialized")
 	}
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
@@ -204,7 +205,7 @@ func (s *SysOAuthProviderService) GetByKindForFlow(kind string) (system.SysOAuth
 		return row, "", gorm.ErrRecordNotFound
 	}
 	if global.LRAG_DB == nil {
-		return row, "", errors.New("数据库未初始化")
+		return row, "", i18n.NewError("svc.oauth.db_not_initialized")
 	}
 	if err := global.LRAG_DB.Where("LOWER(kind) = ? AND enabled = ?", norm, true).First(&row).Error; err != nil {
 		return row, "", err

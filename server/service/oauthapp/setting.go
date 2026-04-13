@@ -1,10 +1,10 @@
 package oauthapp
 
 import (
-	"errors"
 	"strings"
 
 	"github.com/LightningRAG/LightningRAG/server/global"
+	"github.com/LightningRAG/LightningRAG/server/i18n"
 	"github.com/LightningRAG/LightningRAG/server/model/system"
 	systemReq "github.com/LightningRAG/LightningRAG/server/model/system/request"
 	systemRes "github.com/LightningRAG/LightningRAG/server/model/system/response"
@@ -91,7 +91,7 @@ func (s *SysOAuthSettingService) GetAdmin() (systemRes.SysOAuthSettingAdmin, err
 
 func (s *SysOAuthSettingService) Update(req systemReq.SysOAuthSettingUpdate) error {
 	if global.LRAG_DB == nil {
-		return errors.New("数据库未初始化")
+		return i18n.NewError("svc.oauth.db_not_initialized")
 	}
 	if err := s.EnsureSingleton(); err != nil {
 		return err

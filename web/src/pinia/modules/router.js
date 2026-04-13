@@ -156,14 +156,13 @@ export const useRouterStore = defineStore('router', () => {
   const routeMap = {}
   // 从后台获取动态路由
   const SetAsyncRouter = async () => {
-    asyncRouterFlag.value++
     const baseRouter = [
       {
         path: '/layout',
         name: 'layout',
         component: 'view/layout/index.vue',
         meta: {
-          title: '底层layout'
+          title: 'Root layout'
         },
         children: []
       }
@@ -189,6 +188,7 @@ export const useRouterStore = defineStore('router', () => {
     asyncRouterHandle(baseRouter)
     KeepAliveFilter(asyncRouter)
     asyncRouters.value = baseRouter
+    asyncRouterFlag.value++
     return true
   }
 

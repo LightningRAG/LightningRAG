@@ -157,7 +157,7 @@
                   :filter-node-method="filterApiNode" @check="onApiCheck" class="api-tree">
                   <template #default="{ data }">
                     <div class="flex items-center justify-between w-full pr-1">
-                      <span>{{ data.description }}</span>
+                      <span>{{ data._displayDesc || data.description }}</span>
                       <el-tooltip :content="data.path">
                         <span
                           class="max-w-[240px] break-all overflow-ellipsis overflow-hidden text-gray-500 dark:text-gray-400">
@@ -265,7 +265,7 @@
                       default-expand-all>
                       <template #default="{ data }">
                         <div class="flex-1 flex items-center justify-between text-sm pr-2">
-                          <span>{{ data.description }}</span>
+                          <span>{{ data._displayDesc || data.description }}</span>
                           <span class="text-gray-500 dark:text-gray-400 text-xs ml-2">{{ data.path }} [{{ data.method
                             }}]</span>
                         </div>
@@ -327,6 +327,7 @@ import { UploadFilled, QuestionFilled, InfoFilled } from '@element-plus/icons-vu
 import { ref, watch, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAppStore } from "@/pinia"
+import { translateApiDescription, translateApiGroup } from '@/utils/apiI18n'
 
 defineOptions({
   name: 'SysVersion'
@@ -564,12 +565,11 @@ const getMenuAndApiList = async () => {
     // 获取API列表
     const apiRes = await getApiList({ page: 1, pageSize: 9999 })
     if (apiRes.code === 0) {
-      console.log('原始API数据:', apiRes.data)
       const apis = apiRes.data.list || []
       apiTreeData.value = buildApiTree(apis, t)
     }
   } catch (error) {
-    console.error('获取数据失败:', error)
+    console.error('Failed to load data:', error)
     ElMessage.error(t('tools.release.loadMenuApiFail'))
   }
 }
@@ -582,7 +582,7 @@ const getDictList = async () => {
       dictTreeData.value = dictRes.data || []
     }
   } catch (error) {
-    console.error('获取字典数据失败:', error)
+    console.error('Failed to load dict data:', error)
     ElMessage.error(t('tools.release.loadDictFail'))
   }
 }
@@ -592,6 +592,7 @@ const buildApiTree = (apis, translate) => {
   const apiObj = {}
   apis.forEach((item) => {
     item.onlyId = 'p:' + item.path + 'm:' + item.method
+    item._displayDesc = translateApiDescription(item, translate) || item.description
     if (Object.prototype.hasOwnProperty.call(apiObj, item.apiGroup)) {
       apiObj[item.apiGroup].push(item)
     } else {
@@ -600,9 +601,10 @@ const buildApiTree = (apis, translate) => {
   })
   const apiTree = []
   for (const key in apiObj) {
+    const groupLabel = translateApiGroup(key, translate)
     const treeNode = {
       ID: key,
-      description: translate('tools.release.apiGroupNode', { name: key }),
+      description: translate('tools.release.apiGroupNode', { name: groupLabel }),
       children: apiObj[key]
     }
     apiTree.push(treeNode)
@@ -623,7 +625,7 @@ const filterApiNode = (value, data) => {
   if (!apiFilterTextName.value) {
     matchesName = true
   } else {
-    matchesName = data.description && data.description.includes(apiFilterTextName.value)
+    matchesName = (data._displayDesc || data.description || '').includes(apiFilterTextName.value)
   }
   if (!apiFilterTextPath.value) {
     matchesPath = true
@@ -741,7 +743,7 @@ const handleExport = async () => {
     closeExportDialog()
     getTableData() // 刷新表格数据
   } catch (error) {
-    console.error('创建发版失败:', error)
+    console.error('Failed to create release:', error)
     ElMessage.error(t('tools.release.exportFail'))
   } finally {
     exportLoading.value = false
@@ -852,10 +854,11 @@ const handleJsonContentChange = () => {
       const apiGroups = {}
       data.apis.forEach(api => {
         const group = api.apiGroup || t('tools.release.ungrouped')
+        api._displayDesc = translateApiDescription(api, t) || api.description
         if (!apiGroups[group]) {
           apiGroups[group] = {
             ID: `group_${group}`,
-            description: group,
+            description: translateApiGroup(group, t),
             path: '',
             method: '',
             children: []
@@ -875,7 +878,7 @@ const handleJsonContentChange = () => {
       previewDictTreeData.value = []
     }
   } catch (error) {
-    console.error('JSON解析失败:', error)
+    console.error('JSON parse failed:', error)
     importPreviewData.value = null
     previewMenuTreeData.value = []
     previewApiTreeData.value = []
@@ -908,7 +911,7 @@ const handleImport = async () => {
       ElMessage.error(res.msg || t('tools.release.importFail'))
     }
   } catch (error) {
-    console.error('导入失败:', error)
+    console.error('Import failed:', error)
     ElMessage.error(t('tools.release.importFail'))
   } finally {
     importLoading.value = false
@@ -942,7 +945,7 @@ const downloadJson = async (row) => {
 
     ElMessage.success(t('tools.release.downloadOk'))
   } catch (error) {
-    console.error('下载失败:', error)
+    console.error('Download failed:', error)
     ElMessage.error(t('tools.release.downloadFail'))
   }
 }

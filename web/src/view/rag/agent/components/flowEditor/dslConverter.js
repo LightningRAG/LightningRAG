@@ -8,7 +8,7 @@
  * @param {Object} dsl - { components, path, globals, ... }
  * @returns {{ nodes: Array, edges: Array }}
  */
-export function dslToFlow(dsl) {
+export function dslToFlow(dsl, t) {
   if (!dsl?.components) {
     return { nodes: [], edges: [] }
   }
@@ -24,6 +24,13 @@ export function dslToFlow(dsl) {
   const edges = []
   const posMap = {}
 
+  const resolveLabel = (name) => {
+    if (!t) return name
+    const key = `rag.flowEditor.comp.${name}`
+    const val = t(key)
+    return val !== key ? val : name
+  }
+
   path.forEach((id, idx) => {
     const comp = components[id]
     if (!comp) return
@@ -38,33 +45,6 @@ export function dslToFlow(dsl) {
     const params = obj.params || {}
     const componentName = obj.component_name || ''
 
-    const labelMap = {
-      Begin: '开始',
-      Retrieval: '检索',
-      LLM: '生成',
-      Agent: '智能体',
-      Message: '输出',
-      Switch: '条件分支',
-      Categorize: '意图分类',
-      HTTPRequest: 'HTTP 请求',
-      Iteration: '迭代',
-      TextProcessing: '文本处理',
-      ExecuteSQL: '执行 SQL',
-      DocsGenerator: '文档生成',
-      MCP: 'MCP 工具',
-      SetVariable: '设置变量',
-      Transformer: 'LLM 转换',
-      AwaitResponse: '等待回复',
-      DuckDuckGo: 'DuckDuckGo',
-      Wikipedia: '维基百科',
-      ArXiv: 'arXiv',
-      TavilySearch: 'Tavily 搜索',
-      VariableAssigner: '变量赋值',
-      VariableAggregator: '变量聚合',
-      ListOperations: '列表操作',
-      StringTransform: '字符串变换',
-      Invoke: 'Invoke 请求'
-    }
     const colorMap = {
       Begin: '#22c55e',
       Retrieval: '#3b82f6',
@@ -99,7 +79,7 @@ export function dslToFlow(dsl) {
       position: { x, y },
       data: {
         componentName,
-        label: labelMap[componentName] || componentName,
+        label: resolveLabel(componentName),
         color: colorMap[componentName] || '#6366f1',
         params: { ...params }
       }

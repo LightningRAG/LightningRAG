@@ -1,6 +1,8 @@
 package initialize
 
 import (
+	"time"
+
 	"github.com/LightningRAG/LightningRAG/server/config"
 	"github.com/LightningRAG/LightningRAG/server/global"
 	"github.com/LightningRAG/LightningRAG/server/initialize/internal"
@@ -38,6 +40,8 @@ func initPgSqlDatabase(p config.Pgsql) *gorm.DB {
 		sqlDB, _ := db.DB()
 		sqlDB.SetMaxIdleConns(p.MaxIdleConns)
 		sqlDB.SetMaxOpenConns(p.MaxOpenConns)
+		sqlDB.SetConnMaxLifetime(time.Hour)
+		sqlDB.SetConnMaxIdleTime(10 * time.Minute)
 		return db
 	}
 }

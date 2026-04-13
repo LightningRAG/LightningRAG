@@ -31,7 +31,7 @@
         >
           <template #default="{ _, data }">
             <div class="flex items-center justify-between w-full pr-1">
-              <span>{{ data.description }} </span>
+              <span>{{ data._translatedDesc || data.description }} </span>
               <el-tooltip :content="data.path">
                 <span
                   class="max-w-[240px] break-all overflow-ellipsis overflow-hidden"
@@ -52,6 +52,7 @@
   import { ref, watch } from 'vue'
   import { useI18n } from 'vue-i18n'
   import { ElMessage } from 'element-plus'
+  import { translateApiDescription, translateApiGroup } from '@/utils/apiI18n'
 
   defineOptions({
     name: 'Apis'
@@ -110,6 +111,7 @@
     apis &&
       apis.forEach((item) => {
         item.onlyId = 'p:' + item.path + 'm:' + item.method
+        item._translatedDesc = translateApiDescription(item, translate)
         if (Object.prototype.hasOwnProperty.call(apiObj, item.apiGroup)) {
           apiObj[item.apiGroup].push(item)
         } else {
@@ -118,9 +120,10 @@
       })
     const apiTree = []
     for (const key in apiObj) {
+      const groupLabel = translateApiGroup(key, translate)
       const treeNode = {
         ID: key,
-        description: translate('admin.roleApis.apiGroupNode', { name: key }),
+        description: translate('admin.roleApis.apiGroupNode', { name: groupLabel }),
         children: apiObj[key]
       }
       apiTree.push(treeNode)

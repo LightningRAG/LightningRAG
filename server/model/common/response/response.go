@@ -50,7 +50,8 @@ func FailWithMessage(message string, c *gin.Context) {
 	Result(ERROR, map[string]interface{}{}, message, c)
 }
 
-// FailWithError returns a locale-aware message (response.failed_detail) with err.Error() as detail.
+// FailWithError returns a locale-aware message. If err is an i18n.LocaleError the
+// key is translated directly; otherwise falls back to response.failed_detail wrapping err.Error().
 func FailWithError(c *gin.Context, err error) {
 	if err == nil {
 		return
@@ -59,7 +60,13 @@ func FailWithError(c *gin.Context, err error) {
 		Result(ERROR, map[string]interface{}{}, i18n.Msg(c, "rag.error.model_api_key_rejected"), c)
 		return
 	}
-	Result(ERROR, map[string]interface{}{}, i18n.Msgf(c, "response.failed_detail", err.Error()), c)
+	locale := i18n.GetLocale(c)
+	detail := i18n.TranslateError(locale, err)
+	if _, ok := err.(*i18n.LocaleError); ok {
+		Result(ERROR, map[string]interface{}{}, detail, c)
+		return
+	}
+	Result(ERROR, map[string]interface{}{}, i18n.Msgf(c, "response.failed_detail", detail), c)
 }
 
 func NoAuth(message string, c *gin.Context) {

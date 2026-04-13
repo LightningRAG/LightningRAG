@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/LightningRAG/LightningRAG/server/i18n"
 	"github.com/LightningRAG/LightningRAG/server/model/common"
 	systemReq "github.com/LightningRAG/LightningRAG/server/model/system/request"
 
@@ -28,7 +29,7 @@ var UserServiceApp = new(UserService)
 func (userService *UserService) Register(u system.SysUser) (userInter system.SysUser, err error) {
 	var user system.SysUser
 	if !errors.Is(global.LRAG_DB.Where("username = ?", u.Username).First(&user).Error, gorm.ErrRecordNotFound) { // 判断用户名是否注册
-		return userInter, errors.New("用户名已注册")
+		return userInter, i18n.NewError("svc.user.username_taken")
 	}
 	// 否则 附加uuid 密码hash加密 注册
 	u.Password = utils.BcryptHash(u.Password)
@@ -53,7 +54,7 @@ func (userService *UserService) Login(u *system.SysUser) (userInter *system.SysU
 	err = global.LRAG_DB.Where("username = ?", u.Username).Preload("Authorities").Preload("Authority").First(&user).Error
 	if err == nil {
 		if ok := utils.BcryptCheck(u.Password, user.Password); !ok {
-			return nil, errors.New("密码错误")
+			return nil, i18n.NewError("svc.user.wrong_password")
 		}
 		MenuServiceApp.UserAuthorityDefaultRouter(&user)
 	}
@@ -73,7 +74,7 @@ func (userService *UserService) ChangePassword(u *system.SysUser, newPassword st
 		return err
 	}
 	if ok := utils.BcryptCheck(u.Password, user.Password); !ok {
-		return errors.New("原密码错误")
+		return i18n.NewError("svc.user.wrong_current_password")
 	}
 	pwd := utils.BcryptHash(newPassword)
 	err = global.LRAG_DB.Model(&user).Update("password", pwd).Error
@@ -141,7 +142,7 @@ func (userService *UserService) SetUserAuthority(id uint, authorityId uint) (err
 
 	assignErr := global.LRAG_DB.Where("sys_user_id = ? AND sys_authority_authority_id = ?", id, authorityId).First(&system.SysUserAuthority{}).Error
 	if errors.Is(assignErr, gorm.ErrRecordNotFound) {
-		return errors.New("该用户无此角色")
+		return i18n.NewError("svc.user.role_not_assigned")
 	}
 
 	var authority system.SysAuthority
@@ -173,7 +174,7 @@ func (userService *UserService) SetUserAuthority(id uint, authorityId uint) (err
 		}
 	}
 	if !hasMenu {
-		return errors.New("找不到默认路由,无法切换本角色")
+		return i18n.NewError("svc.user.no_default_route_for_role")
 	}
 
 	err = global.LRAG_DB.Model(&system.SysUser{}).Where("id = ?", id).Update("authority_id", authorityId).Error
@@ -192,7 +193,7 @@ func (userService *UserService) SetUserAuthorities(adminAuthorityID, id uint, au
 		TxErr := tx.Where("id = ?", id).First(&user).Error
 		if TxErr != nil {
 			global.LRAG_LOG.Debug(TxErr.Error())
-			return errors.New("查询用户数据失败")
+			return i18n.NewError("svc.user.query_failed")
 		}
 		TxErr = tx.Delete(&[]system.SysUserAuthority{}, "sys_user_id = ?", id).Error
 		if TxErr != nil {
@@ -319,7 +320,7 @@ func (userService *UserService) FindUserById(id int) (user *system.SysUser, err 
 func (userService *UserService) FindUserByUuid(uuid string) (user *system.SysUser, err error) {
 	var u system.SysUser
 	if err = global.LRAG_DB.Where("uuid = ?", uuid).First(&u).Error; err != nil {
-		return &u, errors.New("用户不存在")
+		return &u, i18n.NewError("svc.user.not_found")
 	}
 	return &u, nil
 }

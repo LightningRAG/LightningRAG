@@ -2,6 +2,7 @@ import { ragFlowEditorZhCN } from './fragments/ragFlowEditor.js'
 import { toolsCodegenZhCN } from './fragments/toolsCodegen.js'
 import { examplePagesZhCN } from './fragments/examplePages.js'
 import { aiPictureZhCN } from './fragments/aiPicture.js'
+import apiSummaryZhCN from './fragments/apiAdminSummaries.zh-CN.js'
 
 export default {
   login: {
@@ -288,8 +289,15 @@ export default {
       loadForceCloseWarn: 'Loading 强制关闭：超时 30 秒'
     },
     user: {
-      noHomeConfigured: '不存在可以登陆的首页，请联系管理员进行配置'
+      noHomeConfigured: '不存在可以登陆的首页，请联系管理员进行配置',
+      loggingIn: '登录中，请稍候...'
     },
+    yes: '是',
+    no: '否',
+    addNew: '+ 新增',
+    uploadFile: '上传文件',
+    uploadFailed: '上传失败',
+    pleaseEnterContent: '请输入内容...',
     edit: '编辑',
     delete: '删除',
     add: '添加',
@@ -342,6 +350,9 @@ export default {
     pickRowsToDelete: '请选择要删除的数据',
     ruleWhitespaceOnly: '不能只输入空格',
     createUpdateOk: '创建/更改成功',
+    create_success: '创建成功',
+    update_success: '更新成功',
+    delete_success: '删除成功',
     dateNeedEnd: '请填写结束日期',
     dateNeedStart: '请填写开始日期',
     dateStartBeforeEnd: '开始日期应当早于结束日期',
@@ -585,7 +596,13 @@ export default {
       drawerAddMenu: '新增菜单',
       drawerEditMenu: '编辑菜单',
       assignOk: '分配成功！',
-      assignFailRetry: '分配失败，请重试'
+      assignFailRetry: '分配失败，请重试',
+      componentCascader: {
+        phSelectPath: '请选择文件路径',
+        phManualPath: '页面:view/xxx/xx.vue 插件:plugin/xx/xx.vue',
+        manualInput: '手动输入',
+        quickSelect: '快捷选择'
+      }
     },
     roleDatas: {
       warningBar:
@@ -1487,6 +1504,27 @@ JOIN 模式不支持导入。`,
     assignFailRetry: '分配失败，请重试',
     aiAutofillFail: 'AI 自动填充失败，请重试'
   },
+  errorPreview: {
+    labelErrorType: '错误类型',
+    labelDetails: '具体错误',
+    labelTips: '提示',
+    ok: '确定',
+    title500: '检测到接口错误',
+    type500: '服务器发生内部错误',
+    tips500: '此类错误内容常见于后台panic，请先查看后台日志，如果影响您正常使用可强制登出清理缓存',
+    title404: '资源未找到',
+    tips404: '此类错误多为接口未注册（或未重启）或者请求路径（方法）与api路径（方法）不符--如果为自动化代码请检查是否存在空格',
+    title401: '身份认证失败',
+    type401: '身份令牌无效',
+    tips401: '您的身份认证已过期或无效，请重新登录。',
+    titleNetwork: '网络错误',
+    tipsNetwork: '无法连接到服务器，请检查您的网络连接。',
+    titleUnknown: '未知错误',
+    typeUnknown: '检测到请求错误',
+    msgDefault: '没有提供额外信息。',
+    msgUnknown: '发生了一个未知错误。',
+    tipsUnknown: '请检查控制台获取更多信息。'
+  },
   sysError: {
     rangeTo: '至',
     startTime: '开始时间',
@@ -1758,6 +1796,7 @@ JOIN 模式不支持导入。`,
       concurrentTasksHint:
         '同一知识库内同时进行切片与向量化的文档数，默认 1；服务重启后会自动继续未完成的切片任务',
       delimiter: '分段标识符',
+      delimiterPlaceholder: '\\n!?。；！？',
       delimiterTooltip:
         '输入分隔符字符。支持 \\n(换行) \\t(制表符)。文本会在这些字符处断开后合并为切片。',
       sectionRerank: 'Rerank 重排序',
@@ -2456,5 +2495,73 @@ JOIN 模式不支持导入。`,
       typeOcr: '光学字符识别 (ocr)',
       typeCv: '计算机视觉 (cv)'
     }
+  },
+  apiSummary: apiSummaryZhCN,
+  comp: {
+    upload: '上传',
+    richtext: {
+      placeholder: '请输入内容…'
+    },
+    mediaLib: {
+      drawerTitle: '媒体库 | 点击文件名可编辑，选择的类别即是上传目标',
+      addCategory: '添加分类',
+      editCategory: '编辑分类',
+      deleteCategory: '删除分类',
+      phSearchFile: '请输入文件名或备注',
+      btnSelect: '选定',
+      videoNotSupported: '您的浏览器不支持视频播放',
+      parentCategory: '上级分类',
+      categoryName: '分类名称',
+      phEditFileName: '请输入文件名或者备注',
+      ruleNotEmpty: '不能为空',
+      editOk: '编辑成功',
+      editCancelled: '取消修改',
+      unsupportedType: '当前类型不支持使用',
+      confirmDeleteFile: '是否删除该文件',
+      deleteCancelled: '已取消删除',
+      allCategories: '全部分类',
+      ruleCategoryName: '请输入分类名称',
+      ruleCategoryMax20: '最多20位字符',
+      opOk: '操作成功'
+    }
+  },
+  apiGroup: {
+    jwt: 'JWT 令牌',
+    'Login log': '登录日志',
+    'API Token': 'API Token',
+    'System user': '系统用户',
+    api: 'API 接口',
+    Role: '角色',
+    casbin: '权限策略',
+    Menu: '菜单',
+    'Chunked upload': '分片上传',
+    'File upload & download': '文件上传下载',
+    'System service': '系统服务',
+    skills: '技能',
+    Customer: '客户',
+    'Code generator': '代码生成器',
+    'Template config': '模板配置',
+    'Code generator history': '代码生成历史',
+    'Dictionary detail': '字典详情',
+    Dictionary: '字典',
+    'Operation record': '操作记录',
+    'Simple uploader': '简易上传',
+    email: '邮件',
+    'Authority button': '按钮权限',
+    'Export template': '导出模板',
+    'Error log': '错误日志',
+    Announcement: '公告',
+    'System params': '系统参数',
+    'OAuth provider': 'OAuth 提供商',
+    'OAuth setting': 'OAuth 设置',
+    'Attachment category': '附件分类',
+    'Version control': '版本管理',
+    'RAG knowledge base': 'RAG 知识库',
+    'RAG conversation': 'RAG 对话',
+    'RAG LLM': 'RAG 模型',
+    'RAG Agent': 'RAG 智能体',
+    'RAG system model': 'RAG 系统模型',
+    'RAG settings': 'RAG 设置',
+    'RAG channel': 'RAG 渠道连接器'
   }
 }

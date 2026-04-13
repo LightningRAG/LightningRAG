@@ -5,6 +5,7 @@ import (
 
 	"github.com/LightningRAG/LightningRAG/server/global"
 	"github.com/LightningRAG/LightningRAG/server/model/rag"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
@@ -107,7 +108,9 @@ func kgTrimEntityChunkLinksIfNeeded(db *gorm.DB, entityID uint) {
 	if len(del) == 0 {
 		return
 	}
-	_ = db.Where("entity_id = ? AND chunk_id IN ?", entityID, del).Delete(&rag.RagKgEntityChunk{}).Error
+	if err := db.Where("entity_id = ? AND chunk_id IN ?", entityID, del).Delete(&rag.RagKgEntityChunk{}).Error; err != nil {
+		global.LRAG_LOG.Warn("failed to trim entity chunk links", zap.Uint("entityId", entityID), zap.Error(err))
+	}
 }
 
 func kgTrimRelationshipChunkLinksIfNeeded(db *gorm.DB, relID uint) {
@@ -123,5 +126,7 @@ func kgTrimRelationshipChunkLinksIfNeeded(db *gorm.DB, relID uint) {
 	if len(del) == 0 {
 		return
 	}
-	_ = db.Where("relationship_id = ? AND chunk_id IN ?", relID, del).Delete(&rag.RagKgRelationshipChunk{}).Error
+	if err := db.Where("relationship_id = ? AND chunk_id IN ?", relID, del).Delete(&rag.RagKgRelationshipChunk{}).Error; err != nil {
+		global.LRAG_LOG.Warn("failed to trim relationship chunk links", zap.Uint("relationshipId", relID), zap.Error(err))
+	}
 }

@@ -26,8 +26,16 @@
                     <el-table :data="props.row.apis" border>
                         <el-table-column prop="path" :label="$t('common.colPath')" />
                         <el-table-column prop="method" :label="$t('common.colMethod')" />
-                        <el-table-column prop="description" :label="$t('common.colDescription')" />
-                        <el-table-column prop="apiGroup" :label="$t('common.colApiGroup')" />
+                        <el-table-column :label="$t('common.colDescription')">
+                          <template #default="{ row }">
+                            {{ translateApiDescription(row, t) || row.description }}
+                          </template>
+                        </el-table-column>
+                        <el-table-column :label="$t('common.colApiGroup')">
+                          <template #default="{ row }">
+                            {{ translateApiGroup(row.apiGroup, t) }}
+                          </template>
+                        </el-table-column>
                     </el-table>
                     <h3>{{ $t('tools.installPlugin.menuListTitle') }}</h3>
                     <el-table :data="props.row.menus" row-key="name" :tree-props="{children: 'children', hasChildren: 'hasChildren'}" border>
@@ -74,6 +82,7 @@
   import { useUserStore } from "@/pinia";
   import { getPluginList, removePlugin } from '@/api/autoCode'
   import { ElMessageBox } from 'element-plus'
+  import { translateApiDescription, translateApiGroup } from '@/utils/apiI18n'
 
   const route = useRoute()
   const { t } = useI18n()

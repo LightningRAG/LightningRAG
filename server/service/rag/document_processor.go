@@ -571,7 +571,9 @@ func processDocumentPageIndex(ctx context.Context, doc *rag.RagDocument, content
 				if mErr != nil {
 					continue
 				}
-				_ = global.LRAG_DB.WithContext(ctx).Model(&ragChunks[i]).Update("metadata", string(b)).Error
+				if err := global.LRAG_DB.WithContext(ctx).Model(&ragChunks[i]).Update("metadata", string(b)).Error; err != nil {
+					global.LRAG_LOG.Warn("failed to update chunk metadata", zap.Uint("docID", doc.ID), zap.Uint("chunkID", ragChunks[i].ID), zap.Error(err))
+				}
 			}
 			indexPageIndexChunksToVectorStore(ctx, doc, kb, userID, nodeList)
 		}
@@ -677,6 +679,8 @@ func indexPageIndexChunksToVectorStore(ctx context.Context, doc *rag.RagDocument
 		if i < len(vectorIDs) {
 			vid = vectorIDs[i]
 		}
-		_ = global.LRAG_DB.WithContext(ctx).Model(&persisted[i]).Update("vector_store_id", vid).Error
+		if err := global.LRAG_DB.WithContext(ctx).Model(&persisted[i]).Update("vector_store_id", vid).Error; err != nil {
+			global.LRAG_LOG.Warn("failed to update vector_store_id", zap.Uint("docID", doc.ID), zap.Uint("chunkID", persisted[i].ID), zap.Error(err))
+		}
 	}
 }

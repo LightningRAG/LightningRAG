@@ -4,7 +4,7 @@
       v-model="value"
       clearable
       filterable
-      placeholder="请选择"
+      :placeholder="$t('common.phSelect')"
       class="w-full"
     >
       <template #prefix>

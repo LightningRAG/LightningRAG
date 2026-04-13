@@ -120,7 +120,10 @@ func (initDBService *InitDBService) InitDB(conf request.InitDB) (err error) {
 		return err
 	}
 
-	db := ctx.Value("db").(*gorm.DB)
+	db, ok := ctx.Value("db").(*gorm.DB)
+	if !ok || db == nil {
+		return errors.New("failed to retrieve database connection from context")
+	}
 	global.LRAG_DB = db
 
 	if err = initHandler.InitTables(ctx, initializers); err != nil {

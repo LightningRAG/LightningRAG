@@ -25,7 +25,10 @@ func (s *SkillsApi) GetTools(c *gin.Context) {
 
 func (s *SkillsApi) GetSkillList(c *gin.Context) {
 	var req request.SkillToolRequest
-	_ = c.ShouldBindJSON(&req)
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
 	data, err := skillsService.List(c.Request.Context(), req.Tool)
 	if err != nil {
 		global.LRAG_LOG.Error("获取技能列表失败", zap.Error(err))
@@ -37,7 +40,10 @@ func (s *SkillsApi) GetSkillList(c *gin.Context) {
 
 func (s *SkillsApi) GetSkillDetail(c *gin.Context) {
 	var req request.SkillDetailRequest
-	_ = c.ShouldBindJSON(&req)
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
 	data, err := skillsService.Detail(c.Request.Context(), req.Tool, req.Skill)
 	if err != nil {
 		global.LRAG_LOG.Error("获取技能详情失败", zap.Error(err))
@@ -49,7 +55,10 @@ func (s *SkillsApi) GetSkillDetail(c *gin.Context) {
 
 func (s *SkillsApi) SaveSkill(c *gin.Context) {
 	var req request.SkillSaveRequest
-	_ = c.ShouldBindJSON(&req)
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
 	if err := skillsService.Save(c.Request.Context(), req); err != nil {
 		global.LRAG_LOG.Error("保存技能失败", zap.Error(err))
 		response.FailWithMessage(i18n.Msg(c, "sys.skills.save_failed"), c)
@@ -60,7 +69,10 @@ func (s *SkillsApi) SaveSkill(c *gin.Context) {
 
 func (s *SkillsApi) DeleteSkill(c *gin.Context) {
 	var req request.SkillDeleteRequest
-	_ = c.ShouldBindJSON(&req)
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
 	if err := skillsService.Delete(c.Request.Context(), req); err != nil {
 		global.LRAG_LOG.Error("删除技能失败", zap.Error(err))
 		response.FailWithMessage(i18n.Msgf(c, "sys.skills.delete_failed", err.Error()), c)
@@ -71,7 +83,10 @@ func (s *SkillsApi) DeleteSkill(c *gin.Context) {
 
 func (s *SkillsApi) CreateScript(c *gin.Context) {
 	var req request.SkillScriptCreateRequest
-	_ = c.ShouldBindJSON(&req)
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
 	fileName, content, err := skillsService.CreateScript(c.Request.Context(), req)
 	if err != nil {
 		global.LRAG_LOG.Error("创建脚本失败", zap.Error(err))
@@ -83,7 +98,10 @@ func (s *SkillsApi) CreateScript(c *gin.Context) {
 
 func (s *SkillsApi) GetScript(c *gin.Context) {
 	var req request.SkillFileRequest
-	_ = c.ShouldBindJSON(&req)
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
 	content, err := skillsService.GetScript(c.Request.Context(), req)
 	if err != nil {
 		global.LRAG_LOG.Error("读取脚本失败", zap.Error(err))
@@ -95,7 +113,10 @@ func (s *SkillsApi) GetScript(c *gin.Context) {
 
 func (s *SkillsApi) SaveScript(c *gin.Context) {
 	var req request.SkillFileSaveRequest
-	_ = c.ShouldBindJSON(&req)
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
 	if err := skillsService.SaveScript(c.Request.Context(), req); err != nil {
 		global.LRAG_LOG.Error("保存脚本失败", zap.Error(err))
 		response.FailWithMessage(i18n.Msg(c, "sys.skills.script_save_failed"), c)
@@ -106,7 +127,10 @@ func (s *SkillsApi) SaveScript(c *gin.Context) {
 
 func (s *SkillsApi) CreateResource(c *gin.Context) {
 	var req request.SkillResourceCreateRequest
-	_ = c.ShouldBindJSON(&req)
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
 	fileName, content, err := skillsService.CreateResource(c.Request.Context(), req)
 	if err != nil {
 		global.LRAG_LOG.Error("创建资源失败", zap.Error(err))
@@ -118,7 +142,10 @@ func (s *SkillsApi) CreateResource(c *gin.Context) {
 
 func (s *SkillsApi) GetResource(c *gin.Context) {
 	var req request.SkillFileRequest
-	_ = c.ShouldBindJSON(&req)
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
 	content, err := skillsService.GetResource(c.Request.Context(), req)
 	if err != nil {
 		global.LRAG_LOG.Error("读取资源失败", zap.Error(err))
@@ -130,7 +157,10 @@ func (s *SkillsApi) GetResource(c *gin.Context) {
 
 func (s *SkillsApi) SaveResource(c *gin.Context) {
 	var req request.SkillFileSaveRequest
-	_ = c.ShouldBindJSON(&req)
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
 	if err := skillsService.SaveResource(c.Request.Context(), req); err != nil {
 		global.LRAG_LOG.Error("保存资源失败", zap.Error(err))
 		response.FailWithMessage(i18n.Msg(c, "sys.skills.resource_save_failed"), c)
@@ -141,7 +171,10 @@ func (s *SkillsApi) SaveResource(c *gin.Context) {
 
 func (s *SkillsApi) CreateReference(c *gin.Context) {
 	var req request.SkillReferenceCreateRequest
-	_ = c.ShouldBindJSON(&req)
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
 	fileName, content, err := skillsService.CreateReference(c.Request.Context(), req)
 	if err != nil {
 		global.LRAG_LOG.Error("创建参考失败", zap.Error(err))
@@ -153,7 +186,10 @@ func (s *SkillsApi) CreateReference(c *gin.Context) {
 
 func (s *SkillsApi) GetReference(c *gin.Context) {
 	var req request.SkillFileRequest
-	_ = c.ShouldBindJSON(&req)
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
 	content, err := skillsService.GetReference(c.Request.Context(), req)
 	if err != nil {
 		global.LRAG_LOG.Error("读取参考失败", zap.Error(err))
@@ -165,7 +201,10 @@ func (s *SkillsApi) GetReference(c *gin.Context) {
 
 func (s *SkillsApi) SaveReference(c *gin.Context) {
 	var req request.SkillFileSaveRequest
-	_ = c.ShouldBindJSON(&req)
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
 	if err := skillsService.SaveReference(c.Request.Context(), req); err != nil {
 		global.LRAG_LOG.Error("保存参考失败", zap.Error(err))
 		response.FailWithMessage(i18n.Msg(c, "sys.skills.ref_save_failed"), c)
@@ -176,7 +215,10 @@ func (s *SkillsApi) SaveReference(c *gin.Context) {
 
 func (s *SkillsApi) CreateTemplate(c *gin.Context) {
 	var req request.SkillTemplateCreateRequest
-	_ = c.ShouldBindJSON(&req)
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
 	fileName, content, err := skillsService.CreateTemplate(c.Request.Context(), req)
 	if err != nil {
 		global.LRAG_LOG.Error("创建模板失败", zap.Error(err))
@@ -188,7 +230,10 @@ func (s *SkillsApi) CreateTemplate(c *gin.Context) {
 
 func (s *SkillsApi) GetTemplate(c *gin.Context) {
 	var req request.SkillFileRequest
-	_ = c.ShouldBindJSON(&req)
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
 	content, err := skillsService.GetTemplate(c.Request.Context(), req)
 	if err != nil {
 		global.LRAG_LOG.Error("读取模板失败", zap.Error(err))
@@ -200,7 +245,10 @@ func (s *SkillsApi) GetTemplate(c *gin.Context) {
 
 func (s *SkillsApi) SaveTemplate(c *gin.Context) {
 	var req request.SkillFileSaveRequest
-	_ = c.ShouldBindJSON(&req)
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
 	if err := skillsService.SaveTemplate(c.Request.Context(), req); err != nil {
 		global.LRAG_LOG.Error("保存模板失败", zap.Error(err))
 		response.FailWithMessage(i18n.Msg(c, "sys.skills.template_save_failed"), c)
@@ -211,7 +259,10 @@ func (s *SkillsApi) SaveTemplate(c *gin.Context) {
 
 func (s *SkillsApi) GetGlobalConstraint(c *gin.Context) {
 	var req request.SkillToolRequest
-	_ = c.ShouldBindJSON(&req)
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
 	content, exists, err := skillsService.GetGlobalConstraint(c.Request.Context(), req.Tool)
 	if err != nil {
 		global.LRAG_LOG.Error("读取全局约束失败", zap.Error(err))
@@ -223,7 +274,10 @@ func (s *SkillsApi) GetGlobalConstraint(c *gin.Context) {
 
 func (s *SkillsApi) SaveGlobalConstraint(c *gin.Context) {
 	var req request.SkillGlobalConstraintSaveRequest
-	_ = c.ShouldBindJSON(&req)
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
 	if err := skillsService.SaveGlobalConstraint(c.Request.Context(), req); err != nil {
 		global.LRAG_LOG.Error("保存全局约束失败", zap.Error(err))
 		response.FailWithMessage(i18n.Msg(c, "sys.skills.global_save_failed"), c)
@@ -234,7 +288,10 @@ func (s *SkillsApi) SaveGlobalConstraint(c *gin.Context) {
 
 func (s *SkillsApi) PackageSkill(c *gin.Context) {
 	var req request.SkillPackageRequest
-	_ = c.ShouldBindJSON(&req)
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
 
 	fileName, data, err := skillsService.Package(c.Request.Context(), req)
 	if err != nil {

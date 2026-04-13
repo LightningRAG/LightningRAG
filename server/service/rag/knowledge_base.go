@@ -16,6 +16,7 @@ import (
 	"strings"
 
 	"github.com/LightningRAG/LightningRAG/server/global"
+	"github.com/LightningRAG/LightningRAG/server/i18n"
 	"github.com/LightningRAG/LightningRAG/server/model/rag"
 	"github.com/LightningRAG/LightningRAG/server/model/rag/request"
 	"github.com/LightningRAG/LightningRAG/server/rag/interfaces"
@@ -71,7 +72,7 @@ func dedupeDocumentNameInKnowledgeBase(ctx context.Context, kbID uint, original 
 		}
 		current = fmt.Sprintf("%s(%d)%s", mainPart, next, ext)
 	}
-	return "", fmt.Errorf("无法在 %d 次尝试内生成唯一文件名: %s", maxRetries, original)
+	return "", i18n.NewErrorf("svc.kb.unique_filename_failed", maxRetries, original)
 }
 
 // Create 创建知识库
@@ -350,7 +351,7 @@ func (s *KnowledgeBaseService) UploadDocument(ctx context.Context, uid uint, kbI
 	if uploadErr != nil {
 		global.LRAG_DB.WithContext(ctx).Model(doc).Updates(map[string]any{
 			"status":    "failed",
-			"error_msg": "文件存储失败: " + uploadErr.Error(),
+			"error_msg": i18n.Tf(i18n.DefaultLocale, "svc.kb.file_storage_failed", uploadErr.Error()),
 		})
 		return doc, nil
 	}
@@ -363,7 +364,7 @@ func (s *KnowledgeBaseService) UploadDocument(ctx context.Context, uid uint, kbI
 	if openErr != nil {
 		global.LRAG_DB.WithContext(ctx).Model(doc).Updates(map[string]any{
 			"status":    "failed",
-			"error_msg": "读取文件失败: " + openErr.Error(),
+			"error_msg": i18n.Tf(i18n.DefaultLocale, "svc.kb.file_read_failed", openErr.Error()),
 		})
 		return doc, nil
 	}
@@ -374,7 +375,7 @@ func (s *KnowledgeBaseService) UploadDocument(ctx context.Context, uid uint, kbI
 	if readErr != nil {
 		global.LRAG_DB.WithContext(ctx).Model(doc).Updates(map[string]any{
 			"status":    "failed",
-			"error_msg": "读取文件失败: " + readErr.Error(),
+			"error_msg": i18n.Tf(i18n.DefaultLocale, "svc.kb.file_read_failed", readErr.Error()),
 		})
 		return doc, nil
 	}
@@ -615,60 +616,60 @@ func parseDocumentContent(ctx context.Context, data []byte, fileType, filename s
 		return docparse.ParseMSGText(data)
 	case "gz":
 		if len(data) < 2 || data[0] != 0x1f || data[1] != 0x8b {
-			return "", fmt.Errorf("不是有效的 gzip 流")
+			return "", i18n.NewError("svc.kb.gzip_invalid")
 		}
 		gr, err := gzip.NewReader(bytes.NewReader(data))
 		if err != nil {
-			return "", fmt.Errorf("gzip 解压失败: %w", err)
+			return "", fmt.Errorf("%s: %w", i18n.T(i18n.DefaultLocale, "svc.kb.gzip_decompress_failed"), err)
 		}
 		inner, err := io.ReadAll(gr)
 		_ = gr.Close()
 		if err != nil {
-			return "", fmt.Errorf("读取 gzip 内容失败: %w", err)
+			return "", fmt.Errorf("%s: %w", i18n.T(i18n.DefaultLocale, "svc.kb.gzip_read_failed"), err)
 		}
 		base := stripGzipFilename(filename)
 		if strings.HasSuffix(strings.ToLower(base), ".tar") {
-			return "", fmt.Errorf("暂不支持 tar/tar.gz（.tgz）归档，请解压后上传单文件")
+			return "", i18n.NewError("svc.kb.tar_unsupported")
 		}
 		innerFT := inferFileType(base)
 		innerFT = docparse.RefineFileTypeByContent(base, innerFT, inner)
 		if innerFT == "gz" {
-			return "", fmt.Errorf("gzip 内层仍为压缩流，请解压为单文件后再上传")
+			return "", i18n.NewError("svc.kb.gzip_inner_still_compressed")
 		}
 		return parseDocumentContent(ctx, inner, innerFT, base, uid, kb)
 	case "bz2":
 		if !docparse.IsBzip2Magic(data) {
-			return "", fmt.Errorf("不是有效的 bzip2 流")
+			return "", i18n.NewError("svc.kb.bzip2_invalid")
 		}
 		br := bzip2.NewReader(bytes.NewReader(data))
 		inner, err := io.ReadAll(br)
 		if err != nil {
-			return "", fmt.Errorf("bzip2 解压失败: %w", err)
+			return "", fmt.Errorf("%s: %w", i18n.T(i18n.DefaultLocale, "svc.kb.bz2_decompress_failed"), err)
 		}
 		base := stripBzip2Filename(filename)
 		if strings.HasSuffix(strings.ToLower(base), ".tar") {
-			return "", fmt.Errorf("暂不支持 tar.bz2（.tbz2）归档，请解压后上传单文件")
+			return "", i18n.NewError("svc.kb.tar_bz2_unsupported")
 		}
 		innerFT := inferFileType(base)
 		innerFT = docparse.RefineFileTypeByContent(base, innerFT, inner)
 		if innerFT == "bz2" {
-			return "", fmt.Errorf("bzip2 内层仍为压缩流，请解压为单文件后再上传")
+			return "", i18n.NewError("svc.kb.bz2_inner_still_compressed")
 		}
 		return parseDocumentContent(ctx, inner, innerFT, base, uid, kb)
 	case "video":
-		return "", fmt.Errorf("视频暂不支持解析为检索文本（Ragflow 需配置视频模型）；请改用字幕、文稿或转写后上传")
+		return "", i18n.NewError("svc.kb.video_unsupported")
 	case "wps":
-		return "", fmt.Errorf("WPS .wps（非 OOXML/ZIP）暂未支持；新版 ZIP 型会在解析前自动识别为 Word 文档，否则请另存为 .docx")
+		return "", i18n.NewError("svc.kb.wps_unsupported")
 	case "et":
-		return "", fmt.Errorf("WPS .et（非 OOXML/ZIP）暂未支持；新版 ZIP 型会自动按 Excel 解析，否则请另存为 .xlsx")
+		return "", i18n.NewError("svc.kb.et_unsupported")
 	case "dps":
-		return "", fmt.Errorf("WPS .dps（非 OOXML/ZIP）暂未支持；新版 ZIP 型会自动按演示文稿解析，否则请另存为 .pptx")
+		return "", i18n.NewError("svc.kb.dps_unsupported")
 	case "hlp":
-		return "", fmt.Errorf("Windows 帮助文件 .hlp 暂未支持")
+		return "", i18n.NewError("svc.kb.hlp_unsupported")
 	case "doc":
-		return "", fmt.Errorf("旧版 Word .doc 暂未支持，请另存为 .docx（Ragflow naive 依赖 Tika 解析 .doc）")
+		return "", i18n.NewError("svc.kb.doc_legacy_unsupported")
 	case "ppt":
-		return "", fmt.Errorf("旧版 PowerPoint .ppt 暂未支持，请另存为 .pptx（对齐 Ragflow presentation：pptx 由 python-pptx 解析）")
+		return "", i18n.NewError("svc.kb.ppt_legacy_unsupported")
 	case "pptx":
 		return docparse.ParsePPTXText(data)
 	case "pages", "numbers", "key":
@@ -682,11 +683,11 @@ func parseDocumentContent(ctx context.Context, data []byte, fileType, filename s
 		if err != nil {
 			// PDF 文本提取失败，尝试 OCR（图片型/扫描件 PDF）
 			if kb != nil && !kb.UseOCR {
-				return "", fmt.Errorf("PDF 解析失败且 OCR 已关闭: %v", err)
+				return "", i18n.NewErrorf("svc.kb.pdf_failed_ocr_off", err)
 			}
 			ocrContent, ocrErr := ParseImageWithOCRFromKB(ctx, data, filename, uid, kb)
 			if ocrErr != nil {
-				return "", fmt.Errorf("PDF 解析失败: %v; OCR 也失败: %v", err, ocrErr)
+				return "", i18n.NewErrorf("svc.kb.pdf_and_ocr_failed", err, ocrErr)
 			}
 			if ocrContent != "" {
 				return ocrContent, nil
@@ -697,7 +698,7 @@ func parseDocumentContent(ctx context.Context, data []byte, fileType, filename s
 	case "docx":
 		return ParseDOCXContent(bytes.NewReader(data))
 	case "xlsb":
-		return "", fmt.Errorf("Excel 二进制工作簿 .xlsb 暂未支持，请另存为 .xlsx（Ragflow spreadsheet 亦以 OOXML 为主）")
+		return "", i18n.NewError("svc.kb.xlsb_unsupported")
 	case "xlsx", "xls":
 		switch docparse.NormalizeExcelFileType(ft, data) {
 		case "xls":
@@ -718,7 +719,7 @@ func parseDocumentContent(ctx context.Context, data []byte, fileType, filename s
 	default:
 		content, err := ParseTextContent(bytes.NewReader(data))
 		if err != nil {
-			return "", fmt.Errorf("暂不支持 %s 格式", ft)
+			return "", i18n.NewErrorf("svc.kb.unsupported_format", ft)
 		}
 		return content, nil
 	}
@@ -843,7 +844,11 @@ func (s *KnowledgeBaseService) GetDocumentDownloadPath(ctx context.Context, uid 
 	if doc.StoragePath == "" {
 		return "", "", ErrDocumentNoStoragePath
 	}
-	localPath = filepath.Join(global.LRAG_CONFIG.Local.StorePath, doc.StoragePath)
+	safePath, err := safeJoinStorePath(global.LRAG_CONFIG.Local.StorePath, doc.StoragePath)
+	if err != nil {
+		return "", "", err
+	}
+	localPath = safePath
 	return localPath, doc.Name, nil
 }
 
@@ -855,7 +860,7 @@ func readFileContent(actualPath, fallbackPath string) (string, error) {
 	if b, err := os.ReadFile(fallbackPath); err == nil {
 		return strings.TrimSpace(string(b)), nil
 	}
-	return "", fmt.Errorf("无法读取文件: %s", actualPath)
+	return "", i18n.NewErrorf("svc.kb.file_read_failed", actualPath)
 }
 
 // ListDocuments 获取知识库下的文档列表
@@ -1011,13 +1016,13 @@ func resolveEmbeddingConfig(ctx context.Context, kb *rag.RagKnowledgeBase, userI
 	case "admin":
 		var m rag.RagLLMProvider
 		if err := global.LRAG_DB.WithContext(ctx).Where("id = ? AND enabled = ?", kb.EmbeddingID, true).First(&m).Error; err != nil {
-			return nil, fmt.Errorf("管理员嵌入模型不存在(ID=%d): %w", kb.EmbeddingID, err)
+			return nil, fmt.Errorf("%s: %w", i18n.Tf(i18n.DefaultLocale, "svc.kb.embedding_admin_not_found", kb.EmbeddingID), err)
 		}
 		return &embeddingResolved{Name: m.Name, ModelName: m.ModelName, BaseURL: m.BaseURL, APIKey: m.APIKey}, nil
 	case "user":
 		var m rag.RagUserLLM
 		if err := global.LRAG_DB.WithContext(ctx).Where("id = ? AND user_id = ?", kb.EmbeddingID, userID).First(&m).Error; err != nil {
-			return nil, fmt.Errorf("用户嵌入模型不存在(ID=%d): %w", kb.EmbeddingID, err)
+			return nil, fmt.Errorf("%s: %w", i18n.Tf(i18n.DefaultLocale, "svc.kb.embedding_user_not_found", kb.EmbeddingID), err)
 		}
 		return &embeddingResolved{Name: m.Provider, ModelName: m.ModelName, BaseURL: m.BaseURL, APIKey: m.APIKey}, nil
 	default:
@@ -1028,7 +1033,7 @@ func resolveEmbeddingConfig(ctx context.Context, kb *rag.RagKnowledgeBase, userI
 			err = global.LRAG_DB.WithContext(ctx).Where("enabled = ?", true).First(&emb).Error
 		}
 		if err != nil {
-			return nil, fmt.Errorf("嵌入模型不存在(ID=%d): %w", kb.EmbeddingID, err)
+			return nil, fmt.Errorf("%s: %w", i18n.Tf(i18n.DefaultLocale, "svc.kb.embedding_not_found", kb.EmbeddingID), err)
 		}
 		return &embeddingResolved{Name: emb.Name, ModelName: emb.ModelName, BaseURL: emb.BaseURL, APIKey: emb.APIKey, Dimensions: emb.Dimensions}, nil
 	}
@@ -1081,7 +1086,7 @@ func (s *KnowledgeBaseService) ListVectorStoreConfigs(ctx context.Context, autho
 func (s *KnowledgeBaseService) Retrieve(ctx context.Context, uid uint, req request.KnowledgeBaseRetrieve) ([]map[string]any, error) {
 	q := strings.TrimSpace(req.Query)
 	if q == "" {
-		return nil, fmt.Errorf("查询内容不能为空")
+		return nil, i18n.NewError("svc.kb.query_empty")
 	}
 	seen := make(map[uint]struct{})
 	var kbIDs []uint
@@ -1101,7 +1106,7 @@ func (s *KnowledgeBaseService) Retrieve(ctx context.Context, uid uint, req reque
 		}
 	}
 	if len(kbIDs) == 0 {
-		return nil, fmt.Errorf("请选择至少一个知识库")
+		return nil, i18n.NewError("svc.kb.select_at_least_one")
 	}
 	topN := req.TopN
 	if topN <= 0 && req.ChunkTopK > 0 {
@@ -1186,7 +1191,7 @@ func (s *KnowledgeBaseService) recoverChunksFromVectorStore(ctx context.Context,
 		Dimensions: emb.Dimensions,
 	})
 	if err != nil || embedder == nil {
-		return nil, fmt.Errorf("创建嵌入模型失败: %v", err)
+		return nil, i18n.NewErrorf("svc.kb.create_embedder_failed", err)
 	}
 
 	ns := "kb_" + strconv.FormatUint(uint64(kb.ID), 10)

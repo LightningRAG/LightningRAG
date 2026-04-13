@@ -35,7 +35,7 @@
         <el-icon>
           <plus />
         </el-icon>
-        上传
+        {{ t('comp.upload') }}
       </div>
     </div>
     <!-- 删除按钮在外层容器中 -->
@@ -54,6 +54,9 @@
   import { getUrl, isVideoExt } from '@/utils/image'
   import { CircleCloseFilled, Plus } from '@element-plus/icons-vue'
   import { computed } from 'vue'
+  import { useI18n } from 'vue-i18n'
+
+  const { t } = useI18n()
 
   const props = defineProps({
     model: {

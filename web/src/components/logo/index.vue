@@ -47,10 +47,10 @@ watchEffect(async () => {
   // 到这里就包没有提供两种 logo 了
   showTextPlaceholder.value = true;
   console.error(
-    '错误: 在公共目录中找不到logo.png（或logo-dark.png）。'
+    'Error: logo.png (or logo-dark.png) not found in the public directory.'
   );
   console.warn(
-    '解决方案: 请在您的公共目录(/public)中放置logo.png和/或logo-dark.png文件，或确保路径正确。'
+    'Fix: Place logo.png and/or logo-dark.png in your public directory (/public), or verify the path.'
   );
 });
 

@@ -346,6 +346,8 @@ func (s *ChannelConnectorService) ListChannelOutboundQueue(ctx context.Context, 
 	pageSize := req.PageSize
 	if pageSize < 1 {
 		pageSize = 10
+	} else if pageSize > 100 {
+		pageSize = 100
 	}
 	var rows []rag.RagChannelOutbound
 	if err := db.Order("id DESC").Offset((page - 1) * pageSize).Limit(pageSize).Find(&rows).Error; err != nil {

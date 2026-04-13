@@ -78,7 +78,7 @@
 </template>
 
 <script setup>
-import { ref, getCurrentInstance, onMounted } from 'vue'
+import { ref, getCurrentInstance, onMounted, onBeforeUnmount } from 'vue'
 import { ElLoading, ElMessage } from 'element-plus'
 import { RefreshLeft, RefreshRight, Plus, Minus } from '@element-plus/icons-vue'
 import 'vue-cropper/dist/index.css'
@@ -109,6 +109,10 @@ onMounted(() => {
   window.addEventListener('resize', getWindowResize)
 })
 
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', getWindowResize)
+})
+
 const router = useRouter()
 router.isReady().then(() => {
   let query = router.currentRoute.value.query
@@ -116,7 +120,7 @@ router.isReady().then(() => {
   classId.value = query.id
   token.value = query.token
 }).catch((err) => {
-  console.log(err)
+  console.error(err)
 })
 
 const uploadRef = ref(null)

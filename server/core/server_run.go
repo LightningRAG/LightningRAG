@@ -2,13 +2,13 @@ package core
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
+	"github.com/LightningRAG/LightningRAG/server/global"
 	"github.com/LightningRAG/LightningRAG/server/middleware"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -24,39 +24,63 @@ func initServer(address string, router *gin.Engine, readTimeout, writeTimeout ti
 	h := middleware.WrapStripLeadingAPIPrefixBeforeRouting(router)
 	// 创建服务
 	srv := &http.Server{
-		Addr:           address,
-		Handler:        h,
-		ReadTimeout:    readTimeout,
-		WriteTimeout:   writeTimeout,
-		MaxHeaderBytes: 1 << 20,
+		Addr:              address,
+		Handler:           h,
+		ReadTimeout:       readTimeout,
+		ReadHeaderTimeout: 10 * time.Second,
+		WriteTimeout:      writeTimeout,
+		IdleTimeout:       120 * time.Second,
+		MaxHeaderBytes:    1 << 20,
 	}
 
-	// 在goroutine中启动服务
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			fmt.Printf("listen: %s\n", err)
-			zap.L().Error("server启动失败", zap.Error(err))
+			zap.L().Error("server listen failed", zap.Error(err))
 			os.Exit(1)
 		}
 	}()
 
-	// 等待中断信号以优雅地关闭服务器
 	quit := make(chan os.Signal, 1)
-	// kill (无参数) 默认发送 syscall.SIGTERM
-	// kill -2 发送 syscall.SIGINT
-	// kill -9 发送 syscall.SIGKILL，但是无法被捕获，所以不需要添加
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	zap.L().Info("关闭WEB服务...")
+	zap.L().Info("shutting down server...")
 
-	// 设置5秒的超时时间
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	if err := srv.Shutdown(ctx); err != nil {
-		zap.L().Fatal("WEB服务关闭异常", zap.Error(err))
+		zap.L().Error("http server shutdown error", zap.Error(err))
 	}
 
-	zap.L().Info("WEB服务已关闭")
+	global.LRAG_Timer.Close()
+	zap.L().Info("timer tasks stopped")
+
+	if global.LRAG_DB != nil {
+		if sqlDB, err := global.LRAG_DB.DB(); err == nil {
+			_ = sqlDB.Close()
+		}
+	}
+	for name, db := range global.LRAG_DBList {
+		if db != nil {
+			if sqlDB, err := db.DB(); err == nil {
+				_ = sqlDB.Close()
+				zap.L().Info("closed db connection", zap.String("name", name))
+			}
+		}
+	}
+
+	if global.LRAG_REDIS != nil {
+		_ = global.LRAG_REDIS.Close()
+	}
+	for _, rc := range global.LRAG_REDISList {
+		if rc != nil {
+			_ = rc.Close()
+		}
+	}
+
+	if global.LRAG_MONGO != nil {
+		_ = global.LRAG_MONGO.Close(ctx)
+	}
+
+	zap.L().Info("all resources released, server stopped")
 }

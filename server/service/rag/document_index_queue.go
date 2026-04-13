@@ -5,6 +5,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"time"
 
@@ -117,18 +118,40 @@ func (g *kbConcurrencyGate) release() {
 	g.mu.Unlock()
 }
 
-// loadDocumentFileBytes 从存储读取文档二进制（与重试逻辑一致）
+// safeJoinStorePath validates that the joined path stays within the storage root,
+// preventing path traversal via crafted StoragePath values (e.g. "../../etc/passwd").
+func safeJoinStorePath(basePath, sub string) (string, error) {
+	joined := filepath.Join(basePath, sub)
+	absBase, err := filepath.Abs(basePath)
+	if err != nil {
+		return "", err
+	}
+	absJoined, err := filepath.Abs(joined)
+	if err != nil {
+		return "", err
+	}
+	// strings.HasPrefix is more reliable than the deprecated filepath.HasPrefix
+	prefix := absBase + string(filepath.Separator)
+	if absJoined != absBase && !strings.HasPrefix(absJoined, prefix) {
+		return "", errors.New("path traversal detected")
+	}
+	return absJoined, nil
+}
+
 func loadDocumentFileBytes(doc *rag.RagDocument) ([]byte, error) {
 	path := doc.StoragePath
 	if path == "" {
 		return nil, errors.New("文档无存储路径")
 	}
-	actualPath := filepath.Join(global.LRAG_CONFIG.Local.StorePath, path)
-	fileData, err := os.ReadFile(actualPath)
+	actualPath, err := safeJoinStorePath(global.LRAG_CONFIG.Local.StorePath, path)
 	if err != nil {
+		return nil, err
+	}
+	fileData, readErr := os.ReadFile(actualPath)
+	if readErr != nil {
 		fileData2, err2 := os.ReadFile(path)
 		if err2 != nil {
-			return nil, err
+			return nil, readErr
 		}
 		fileData = fileData2
 	}

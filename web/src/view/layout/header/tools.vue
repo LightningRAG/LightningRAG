@@ -100,7 +100,7 @@
 <script setup>
   import { useAppStore } from '@/pinia'
   import LragSetting from '@/view/layout/setting/index.vue'
-  import { ref } from 'vue'
+  import { ref, onBeforeUnmount } from 'vue'
   import { emitter } from '@/utils/bus.js'
   import CommandMenu from '@/components/commandMenu/index.vue'
   import { useI18n } from 'vue-i18n'
@@ -157,18 +157,21 @@
     } else {
       first.value = '⌘'
     }
-    // 当用户同时按下ctrl和k键的时候
-    const handleKeyDown = (e) => {
-      if (e.ctrlKey && e.key === 'k') {
-        // 阻止浏览器默认事件
-        e.preventDefault()
-        handleCommand()
-      }
-    }
     window.addEventListener('keydown', handleKeyDown)
   }
 
+  const handleKeyDown = (e) => {
+    if (e.ctrlKey && e.key === 'k') {
+      e.preventDefault()
+      handleCommand()
+    }
+  }
+
   initPage()
+
+  onBeforeUnmount(() => {
+    window.removeEventListener('keydown', handleKeyDown)
+  })
 </script>
 
 <style scoped lang="scss"></style>

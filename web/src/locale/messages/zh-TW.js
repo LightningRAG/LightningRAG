@@ -1,4 +1,5 @@
 // Auto-generated from zh-CN.js — do not edit by hand; run: npm run locale:zh-tw
+import apiSummaryZhTW from './fragments/apiAdminSummaries.zh-TW.js'
 
 export default {
   "login": {
@@ -296,7 +297,8 @@ export default {
       "loadForceCloseWarn": "Loading 強制關閉：超時 30 秒"
     },
     "user": {
-      "noHomeConfigured": "不存在可以登陸的首頁，請聯繫管理員進行配置"
+      "noHomeConfigured": "不存在可以登陸的首頁，請聯繫管理員進行配置",
+      "loggingIn": "正在登入，請稍候…"
     },
     "edit": "編輯",
     "delete": "刪除",
@@ -349,6 +351,9 @@ export default {
     "pickRowsToDelete": "請選擇要刪除的數據",
     "ruleWhitespaceOnly": "不能只輸入空格",
     "createUpdateOk": "創建/更改成功",
+    "create_success": "建立成功",
+    "update_success": "更新成功",
+    "delete_success": "刪除成功",
     "dateNeedEnd": "請填寫結束日期",
     "dateNeedStart": "請填寫開始日期",
     "dateStartBeforeEnd": "開始日期應當早於結束日期",
@@ -458,7 +463,11 @@ export default {
     "daysN": "{n}天",
     "btnCopy": "複製",
     "btnClose": "關閉",
-    "phSelectOrCreate": "請選擇或新增"
+    "phSelectOrCreate": "請選擇或新增",
+    "addNew": "+ 新增",
+    "uploadFile": "上傳文件",
+    "uploadFailed": "上傳失敗",
+    "pleaseEnterContent": "請輸入內容…"
   },
   "example": {
     "upload": {
@@ -707,7 +716,13 @@ export default {
       "drawerAddMenu": "新增菜單",
       "drawerEditMenu": "編輯菜單",
       "assignOk": "分配成功！",
-      "assignFailRetry": "分配失敗，請重試"
+      "assignFailRetry": "分配失敗，請重試",
+      "componentCascader": {
+        "phSelectPath": "請選擇檔案路徑",
+        "phManualPath": "頁面：view/xxx/xx.vue 外掛：plugin/xx/xx.vue",
+        "manualInput": "手動輸入",
+        "quickSelect": "快捷選擇"
+      }
     },
     "roleDatas": {
       "warningBar": "此功能僅用於創建角色與數據權限的關聯表；業務需自行實現。不建議依賴此通用能力，建議按業務自建組織與資源權限。",
@@ -1314,7 +1329,14 @@ export default {
       "colGray": "黑白灰",
       "colBw": "純黑白",
       "colWarm": "暖色調",
-      "colCool": "冷色調"
+      "colCool": "冷色調",
+      "val": {
+        "pageType": { "corporate": "企業官網", "ecommerce": "電商頁面", "blog": "個人部落格", "product": "產品介紹", "landing": "活動著陸頁" },
+        "block": { "banner": "Banner 輪播圖", "product_service": "產品/服務介紹", "features": "功能特色展示", "cases": "客戶案例", "team": "團隊介紹", "contact": "聯繫表單", "news": "新聞/部落格列表", "pricing": "價格表", "faq": "FAQ/常見問題", "reviews": "使用者評價", "stats": "數據統計", "product_list": "商品列表", "product_card": "商品卡片", "cart": "購物車", "checkout": "結算頁面", "order_tracking": "訂單追蹤", "category": "商品分類", "hot_picks": "熱門推薦", "flash_sale": "限時特惠" },
+        "style": { "minimal": "簡約", "tech": "科技感", "cozy": "溫馨", "professional": "專業", "creative": "創意", "vintage": "復古", "luxury": "奢華" },
+        "layout": { "single_column": "單欄佈局", "two_column": "雙欄佈局", "three_column": "三欄佈局", "grid": "網格佈局", "gallery": "畫廊佈局", "masonry": "瀑布流", "card": "卡片式", "sidebar": "側邊欄+內容佈局", "split_screen": "分屏佈局", "fullscreen_scroll": "全螢幕捲動佈局", "mixed": "混合佈局", "responsive": "響應式" },
+        "color": { "blue": "藍色系", "green": "綠色系", "red": "紅色系", "grayscale": "黑白灰", "black_white": "純黑白", "warm": "暖色調", "cool": "冷色調" }
+      }
     },
     "autoPkg": {
       "devOnlyWarn": "此功能為開發環境使用，不建議發佈到生產。",
@@ -1934,6 +1956,27 @@ export default {
     "assignFailRetry": "分配失敗，請重試",
     "aiAutofillFail": "AI 自動填充失敗，請重試"
   },
+  "errorPreview": {
+    "labelErrorType": "錯誤類型",
+    "labelDetails": "具體錯誤",
+    "labelTips": "提示",
+    "ok": "確定",
+    "title500": "偵測到介面錯誤",
+    "type500": "伺服器發生內部錯誤",
+    "tips500": "此類錯誤通常為後端 panic，請先查看後端日誌，若影響正常使用可強制登出清理快取",
+    "title404": "資源未找到",
+    "tips404": "此類錯誤多為介面未註冊（或未重啟）或請求路徑（方法）與 API 路徑（方法）不符——如為自動化程式碼請檢查是否存在空格",
+    "title401": "身份驗證失敗",
+    "type401": "身份令牌無效",
+    "tips401": "您的身份驗證已過期或無效，請重新登入。",
+    "titleNetwork": "網路錯誤",
+    "tipsNetwork": "無法連線到伺服器，請檢查您的網路連線。",
+    "titleUnknown": "未知錯誤",
+    "typeUnknown": "偵測到請求錯誤",
+    "msgDefault": "未提供額外資訊。",
+    "msgUnknown": "發生了一個未知錯誤。",
+    "tipsUnknown": "請檢查主控台以獲取更多資訊。"
+  },
   "sysError": {
     "rangeTo": "至",
     "startTime": "開始時間",
@@ -2196,6 +2239,7 @@ export default {
       "concurrentTasks": "併發切片任務數",
       "concurrentTasksHint": "同一知識庫內同時進行切片與向量化的文檔數，默認 1；服務重啟後會自動繼續未完成的切片任務",
       "delimiter": "分段標識符",
+      "delimiterPlaceholder": "\\n!?。；！？",
       "delimiterTooltip": "輸入分隔符字符。支持 \\n(換行) \\t(製表符)。文本會在這些字符處斷開後合併為切片。",
       "sectionRerank": "Rerank 重排序",
       "useRerank": "啟用 Rerank",
@@ -2516,6 +2560,7 @@ export default {
       "paletteToolsAria": "工具類組件",
       "configTitle": "配置 {name}",
       "nodeFallback": "節點",
+      "contextMenuDelete": "刪除",
       "creativityPrecise": "精確",
       "creativityBalance": "平衡",
       "creativityImprovise": "創意",
@@ -3184,5 +3229,73 @@ export default {
       "typeOcr": "光學字符識別 (ocr)",
       "typeCv": "計算機視覺 (cv)"
     }
+  },
+  "apiSummary": apiSummaryZhTW,
+  "comp": {
+    "upload": "上傳",
+    "richtext": {
+      "placeholder": "請輸入內容…"
+    },
+    "mediaLib": {
+      "drawerTitle": "媒體庫 | 點擊檔名可編輯，選擇的類別即是上傳目標",
+      "addCategory": "新增類別",
+      "editCategory": "編輯類別",
+      "deleteCategory": "刪除類別",
+      "phSearchFile": "按檔名或備註搜尋",
+      "btnSelect": "選取",
+      "videoNotSupported": "您的瀏覽器不支援影片播放",
+      "parentCategory": "父類別",
+      "categoryName": "類別名稱",
+      "phEditFileName": "輸入檔名或備註",
+      "ruleNotEmpty": "不能為空",
+      "editOk": "更新成功",
+      "editCancelled": "已取消編輯",
+      "unsupportedType": "不支援此檔案類型",
+      "confirmDeleteFile": "確定要刪除此檔案嗎？",
+      "deleteCancelled": "已取消刪除",
+      "allCategories": "所有類別",
+      "ruleCategoryName": "請輸入類別名稱",
+      "ruleCategoryMax20": "最多 20 個字",
+      "opOk": "操作成功"
+    }
+  },
+  "apiGroup": {
+    "jwt": "JWT 令牌",
+    "Login log": "登入日誌",
+    "API Token": "API Token",
+    "System user": "系統使用者",
+    "api": "API 介面",
+    "Role": "角色",
+    "casbin": "權限策略",
+    "Menu": "選單",
+    "Chunked upload": "分片上傳",
+    "File upload & download": "檔案上傳下載",
+    "System service": "系統服務",
+    "skills": "技能",
+    "Customer": "客戶",
+    "Code generator": "程式碼產生器",
+    "Template config": "模板配置",
+    "Code generator history": "程式碼產生歷史",
+    "Dictionary detail": "字典詳情",
+    "Dictionary": "字典",
+    "Operation record": "操作記錄",
+    "Simple uploader": "簡易上傳",
+    "email": "郵件",
+    "Authority button": "按鈕權限",
+    "Export template": "匯出模板",
+    "Error log": "錯誤日誌",
+    "Announcement": "公告",
+    "System params": "系統參數",
+    "OAuth provider": "OAuth 提供商",
+    "OAuth setting": "OAuth 設定",
+    "Attachment category": "附件分類",
+    "Version control": "版本管理",
+    "RAG knowledge base": "RAG 知識庫",
+    "RAG conversation": "RAG 對話",
+    "RAG LLM": "RAG 模型",
+    "RAG Agent": "RAG 智慧體",
+    "RAG system model": "RAG 系統模型",
+    "RAG settings": "RAG 設定",
+    "RAG channel": "RAG 頻道連接器"
   }
 }

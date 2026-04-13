@@ -72,14 +72,13 @@ func OperationRecord() gin.HandlerFunc {
 			UserID: userId,
 		}
 
-		// 上传文件时候 中间件日志进行裁断操作（占位符使用英文，便于审计与检索）
-		if strings.Contains(c.GetHeader("Content-Type"), "multipart/form-data") {
+			if strings.Contains(c.GetHeader("Content-Type"), "multipart/form-data") {
 			record.Body = "[file]"
 		} else {
 			if len(body) > bufferSize {
 				record.Body = "[truncated]"
 			} else {
-				record.Body = string(body)
+				record.Body = sanitizeBody(body)
 			}
 		}
 
@@ -115,6 +114,39 @@ func OperationRecord() gin.HandlerFunc {
 			global.LRAG_LOG.Error("create operation record error:", zap.Error(err))
 		}
 	}
+}
+
+var sensitiveKeys = []string{
+	"password", "passwd", "secret", "token",
+	"access_key", "secret_key", "signing_key", "signing-key",
+	"accessKey", "secretKey", "signingKey",
+	"client_secret", "clientSecret",
+	"newPassword", "oldPassword", "rePassword",
+}
+
+func sanitizeBody(body []byte) string {
+	if len(body) == 0 {
+		return ""
+	}
+	var m map[string]any
+	if err := json.Unmarshal(body, &m); err != nil {
+		return string(body)
+	}
+	changed := false
+	for _, key := range sensitiveKeys {
+		if _, ok := m[key]; ok {
+			m[key] = "***"
+			changed = true
+		}
+	}
+	if !changed {
+		return string(body)
+	}
+	b, err := json.Marshal(m)
+	if err != nil {
+		return string(body)
+	}
+	return string(b)
 }
 
 type responseBodyWriter struct {

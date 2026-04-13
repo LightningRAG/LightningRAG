@@ -4,10 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/LightningRAG/LightningRAG/server/utils/ast"
-	"github.com/pkg/errors"
 	"path"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -17,9 +16,13 @@ import (
 	model "github.com/LightningRAG/LightningRAG/server/model/system"
 	request "github.com/LightningRAG/LightningRAG/server/model/system/request"
 	"github.com/LightningRAG/LightningRAG/server/utils"
+	"github.com/LightningRAG/LightningRAG/server/utils/ast"
+	"github.com/pkg/errors"
 
 	"go.uber.org/zap"
 )
+
+var safeTableNameRe = regexp.MustCompile(`^[a-zA-Z_][a-zA-Z0-9_.]*$`)
 
 var AutocodeHistory = new(autoCodeHistory)
 
@@ -209,9 +212,11 @@ func (s *autoCodeHistory) GetList(ctx context.Context, info common.PageInfo) (li
 // DropTable 获取指定数据库和指定数据表的所有字段名,类型值等
 // @author: [piexlmax](https://github.com/piexlmax)
 func (s *autoCodeHistory) DropTable(BusinessDb, tableName string) error {
+	if !safeTableNameRe.MatchString(tableName) {
+		return fmt.Errorf("invalid table name: %q", tableName)
+	}
 	if BusinessDb != "" {
 		return global.MustGetGlobalDBByDBName(BusinessDb).Exec("DROP TABLE " + tableName).Error
-	} else {
-		return global.LRAG_DB.Exec("DROP TABLE " + tableName).Error
 	}
+	return global.LRAG_DB.Exec("DROP TABLE " + tableName).Error
 }

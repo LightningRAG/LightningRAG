@@ -1,6 +1,8 @@
 package initialize
 
 import (
+	"time"
+
 	"github.com/LightningRAG/LightningRAG/server/config"
 	"github.com/LightningRAG/LightningRAG/server/global"
 	"github.com/LightningRAG/LightningRAG/server/initialize/internal"
@@ -33,6 +35,8 @@ func initSqliteDatabase(s config.Sqlite) *gorm.DB {
 		sqlDB, _ := db.DB()
 		sqlDB.SetMaxIdleConns(s.MaxIdleConns)
 		sqlDB.SetMaxOpenConns(s.MaxOpenConns)
+		sqlDB.SetConnMaxLifetime(time.Hour)
+		sqlDB.SetConnMaxIdleTime(10 * time.Minute)
 		return db
 	}
 }

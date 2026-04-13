@@ -1,6 +1,7 @@
 import { Marked } from 'marked'
 import { markedHighlight } from 'marked-highlight'
 import hljs from 'highlight.js'
+import DOMPurify from 'dompurify'
 import { i18n } from '@/locale'
 import { splitModelThinking } from '@/utils/ragThinking'
 
@@ -48,7 +49,7 @@ export function renderAgentMarkdown(text) {
   }
   if (!main.trim()) return prefix || escapeHtml(raw)
   try {
-    return prefix + marked.parse(main)
+    return prefix + DOMPurify.sanitize(marked.parse(main))
   } catch {
     return prefix + escapeHtml(main)
   }

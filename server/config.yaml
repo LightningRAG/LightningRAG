@@ -83,11 +83,13 @@ hua-wei-obs:
     endpoint: you-endpoint
     access-key: you-access-key
     secret-key: you-secret-key
+# WARNING: Replace signing-key with a strong random string before deploying!
+# Generate one with: openssl rand -hex 32
 jwt:
-    signing-key: ee18b6a8-7575-4e8d-bae1-b33c513a6b11
+    signing-key: change-me-before-deploy
     expires-time: 7d
     buffer-time: 1d
-    issuer: qmPlus
+    issuer: LightningRAG
 local:
     path: uploads/file
     store-path: uploads/file

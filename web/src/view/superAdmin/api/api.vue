@@ -80,14 +80,22 @@
           min-width="150"
           prop="apiGroup"
           sortable="custom"
-        />
+        >
+          <template #default="scope">
+            {{ translateApiGroup(scope.row.apiGroup, t) }}
+          </template>
+        </el-table-column>
         <el-table-column
           align="left"
           :label="$t('common.colApiSummary')"
           min-width="150"
           prop="description"
           sortable="custom"
-        />
+        >
+          <template #default="scope">
+            {{ translateApiDescription(scope.row, t) }}
+          </template>
+        </el-table-column>
         <el-table-column
           align="left"
           :label="$t('common.colHttpMethod')"
@@ -274,13 +282,21 @@
           :label="$t('common.colApiGroup')"
           min-width="150"
           prop="apiGroup"
-        />
+        >
+          <template #default="scope">
+            {{ translateApiGroup(scope.row.apiGroup, t) }}
+          </template>
+        </el-table-column>
         <el-table-column
           align="left"
           :label="$t('common.colApiSummary')"
           min-width="150"
           prop="description"
-        />
+        >
+          <template #default="scope">
+            {{ translateApiDescription(scope.row, t) }}
+          </template>
+        </el-table-column>
         <el-table-column
           align="left"
           :label="$t('common.colHttpMethod')"
@@ -313,13 +329,21 @@
           :label="$t('common.colApiGroup')"
           min-width="150"
           prop="apiGroup"
-        />
+        >
+          <template #default="scope">
+            {{ translateApiGroup(scope.row.apiGroup, t) }}
+          </template>
+        </el-table-column>
         <el-table-column
           align="left"
           :label="$t('common.colApiSummary')"
           min-width="150"
           prop="description"
-        />
+        >
+          <template #default="scope">
+            {{ translateApiDescription(scope.row, t) }}
+          </template>
+        </el-table-column>
         <el-table-column
           align="left"
           :label="$t('common.colHttpMethod')"
@@ -460,6 +484,7 @@
   import { getAuthorityList } from '@/api/authority'
   import { toSQLLine } from '@/utils/stringFun'
   import { authorityDisplayName } from '@/utils/authorityI18n'
+  import { translateApiDescription, translateApiGroup } from '@/utils/apiI18n'
   import WarningBar from '@/components/warningBar/warningBar.vue'
   import { ref, nextTick, computed } from 'vue'
   import { useI18n } from 'vue-i18n'
@@ -533,7 +558,7 @@
     if (res.code === 0) {
       const groups = res.data.groups
       apiGroupOptions.value = groups.map((item) => ({
-        label: item,
+        label: translateApiGroup(item, t),
         value: item
       }))
       apiGroupMap.value = res.data.apiGroupMap

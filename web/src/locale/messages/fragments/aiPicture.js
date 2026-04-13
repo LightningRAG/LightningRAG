@@ -1,4 +1,3 @@
-/** AI 页面草图（picture.vue）— 选项 value 仍为中文以兼容提示词与后端 */
 export const aiPictureEn = {
   licenseTitle: 'Licensed users only. Click to purchase a license.',
   subtitle: 'AI front-end engineer (set autocode.ai-path in config.yaml)',
@@ -82,7 +81,14 @@ export const aiPictureEn = {
   colGray: 'Black / white / gray',
   colBw: 'Pure B&W',
   colWarm: 'Warm tones',
-  colCool: 'Cool tones'
+  colCool: 'Cool tones',
+  val: {
+    pageType: { corporate: 'Corporate website', ecommerce: 'E-commerce', blog: 'Personal blog', product: 'Product intro', landing: 'Landing page' },
+    block: { banner: 'Banner carousel', product_service: 'Product / service intro', features: 'Feature highlights', cases: 'Customer stories', team: 'Team intro', contact: 'Contact form', news: 'News / blog list', pricing: 'Pricing table', faq: 'FAQ', reviews: 'Testimonials', stats: 'Statistics', product_list: 'Product list', product_card: 'Product cards', cart: 'Shopping cart', checkout: 'Checkout', order_tracking: 'Order tracking', category: 'Categories', hot_picks: 'Hot picks', flash_sale: 'Limited offers' },
+    style: { minimal: 'Minimal', tech: 'Tech', cozy: 'Cozy', professional: 'Professional', creative: 'Creative', vintage: 'Vintage', luxury: 'Luxury' },
+    layout: { single_column: 'Single column', two_column: 'Two columns', three_column: 'Three columns', grid: 'Grid', gallery: 'Gallery', masonry: 'Masonry', card: 'Cards', sidebar: 'Sidebar + content', split_screen: 'Split screen', fullscreen_scroll: 'Full-page scroll', mixed: 'Mixed', responsive: 'Responsive' },
+    color: { blue: 'Blue tones', green: 'Green tones', red: 'Red tones', grayscale: 'Black / white / gray', black_white: 'Pure B&W', warm: 'Warm tones', cool: 'Cool tones' }
+  }
 }
 
 export const aiPictureZhCN = {
@@ -168,5 +174,12 @@ export const aiPictureZhCN = {
   colGray: '黑白灰',
   colBw: '纯黑白',
   colWarm: '暖色调',
-  colCool: '冷色调'
+  colCool: '冷色调',
+  val: {
+    pageType: { corporate: '企业官网', ecommerce: '电商页面', blog: '个人博客', product: '产品介绍', landing: '活动落地页' },
+    block: { banner: 'Banner轮播图', product_service: '产品/服务介绍', features: '功能特点展示', cases: '客户案例', team: '团队介绍', contact: '联系表单', news: '新闻/博客列表', pricing: '价格表', faq: 'FAQ/常见问题', reviews: '用户评价', stats: '数据统计', product_list: '商品列表', product_card: '商品卡片', cart: '购物车', checkout: '结算页面', order_tracking: '订单跟踪', category: '商品分类', hot_picks: '热门推荐', flash_sale: '限时特惠' },
+    style: { minimal: '简约', tech: '科技感', cozy: '温馨', professional: '专业', creative: '创意', vintage: '复古', luxury: '奢华' },
+    layout: { single_column: '单栏布局', two_column: '双栏布局', three_column: '三栏布局', grid: '网格布局', gallery: '画廊布局', masonry: '瀑布流', card: '卡片式', sidebar: '侧边栏+内容布局', split_screen: '分屏布局', fullscreen_scroll: '全屏滚动布局', mixed: '混合布局', responsive: '响应式' },
+    color: { blue: '蓝色系', green: '绿色系', red: '红色系', grayscale: '黑白灰', black_white: '纯黑白', warm: '暖色调', cool: '冷色调' }
+  }
 }

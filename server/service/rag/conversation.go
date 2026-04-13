@@ -694,7 +694,9 @@ func (s *ConversationService) Chat(ctx context.Context, uid uint, req request.Co
 			Role:           "user",
 			Content:        req.Content,
 		}
-		_ = global.LRAG_DB.WithContext(ctx).Create(userMsg).Error
+		if err := global.LRAG_DB.WithContext(ctx).Create(userMsg).Error; err != nil {
+			global.LRAG_LOG.Warn("failed to save user message", zap.Uint("conversationId", req.ConversationID), zap.Error(err))
+		}
 		refsJSON := ""
 		if len(refs) > 0 {
 			if b, err := json.Marshal(refs); err == nil {
@@ -708,7 +710,9 @@ func (s *ConversationService) Chat(ctx context.Context, uid uint, req request.Co
 			Content:        contextOnlyAssistantMessage,
 			References:     refsJSON,
 		}
-		_ = global.LRAG_DB.WithContext(ctx).Create(assistantMsg).Error
+		if err := global.LRAG_DB.WithContext(ctx).Create(assistantMsg).Error; err != nil {
+			global.LRAG_LOG.Warn("failed to save assistant message", zap.Uint("conversationId", req.ConversationID), zap.Error(err))
+		}
 		return map[string]any{
 			"content":         contextOnlyAssistantMessage,
 			"references":      apiRefs,
@@ -811,7 +815,9 @@ func (s *ConversationService) Chat(ctx context.Context, uid uint, req request.Co
 		Role:           "user",
 		Content:        req.Content,
 	}
-	_ = global.LRAG_DB.WithContext(ctx).Create(userMsg).Error
+	if err := global.LRAG_DB.WithContext(ctx).Create(userMsg).Error; err != nil {
+		global.LRAG_LOG.Warn("failed to save user message", zap.Uint("conversationId", req.ConversationID), zap.Error(err))
+	}
 	refsJSON := ""
 	if len(refs) > 0 {
 		if b, err := json.Marshal(refs); err == nil {
@@ -825,7 +831,9 @@ func (s *ConversationService) Chat(ctx context.Context, uid uint, req request.Co
 		Content:        fullContent,
 		References:     refsJSON,
 	}
-	_ = global.LRAG_DB.WithContext(ctx).Create(assistantMsg).Error
+	if err := global.LRAG_DB.WithContext(ctx).Create(assistantMsg).Error; err != nil {
+		global.LRAG_LOG.Warn("failed to save assistant message", zap.Uint("conversationId", req.ConversationID), zap.Error(err))
+	}
 	return map[string]any{
 		"content":         fullContent,
 		"references":      apiRefs,
@@ -951,7 +959,9 @@ func (s *ConversationService) ChatStream(ctx context.Context, uid uint, req requ
 			Role:           "user",
 			Content:        req.Content,
 		}
-		_ = global.LRAG_DB.WithContext(ctx).Create(userMsg).Error
+		if err := global.LRAG_DB.WithContext(ctx).Create(userMsg).Error; err != nil {
+			global.LRAG_LOG.Warn("failed to save user message", zap.Uint("conversationId", req.ConversationID), zap.Error(err))
+		}
 		streamRefsJSON := ""
 		if len(refs) > 0 {
 			if b, err := json.Marshal(refs); err == nil {
@@ -965,7 +975,9 @@ func (s *ConversationService) ChatStream(ctx context.Context, uid uint, req requ
 			Content:        contextOnlyAssistantMessage,
 			References:     streamRefsJSON,
 		}
-		_ = global.LRAG_DB.WithContext(ctx).Create(assistantMsg).Error
+		if err := global.LRAG_DB.WithContext(ctx).Create(assistantMsg).Error; err != nil {
+			global.LRAG_LOG.Warn("failed to save assistant message", zap.Uint("conversationId", req.ConversationID), zap.Error(err))
+		}
 		return &ChatStreamResult{
 			Content:         contextOnlyAssistantMessage,
 			References:      apiRefs,
@@ -1092,7 +1104,9 @@ func (s *ConversationService) ChatStream(ctx context.Context, uid uint, req requ
 		Role:           "user",
 		Content:        req.Content,
 	}
-	_ = global.LRAG_DB.WithContext(ctx).Create(userMsg).Error
+	if err := global.LRAG_DB.WithContext(ctx).Create(userMsg).Error; err != nil {
+		global.LRAG_LOG.Warn("failed to save user message", zap.Uint("conversationId", req.ConversationID), zap.Error(err))
+	}
 	streamRefsJSON := ""
 	if len(refs) > 0 {
 		if b, err := json.Marshal(refs); err == nil {
@@ -1106,7 +1120,9 @@ func (s *ConversationService) ChatStream(ctx context.Context, uid uint, req requ
 		Content:        fullContent,
 		References:     streamRefsJSON,
 	}
-	_ = global.LRAG_DB.WithContext(ctx).Create(assistantMsg).Error
+	if err := global.LRAG_DB.WithContext(ctx).Create(assistantMsg).Error; err != nil {
+		global.LRAG_LOG.Warn("failed to save assistant message", zap.Uint("conversationId", req.ConversationID), zap.Error(err))
+	}
 	return &ChatStreamResult{
 		Content:         fullContent,
 		References:      apiRefs,

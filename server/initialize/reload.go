@@ -44,7 +44,7 @@ func Reload() error {
 		ragservice.ResumeIncompleteDocumentJobs()
 	}
 
-	// 重新初始化定时任务
+	global.LRAG_Timer.Close()
 	Timer()
 
 	global.LRAG_LOG.Info("系统配置重新加载完成")

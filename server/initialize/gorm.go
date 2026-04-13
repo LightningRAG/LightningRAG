@@ -115,14 +115,14 @@ func RegisterTables() {
 	err := AutoMigrateAllSchema(db)
 	if err != nil {
 		global.LRAG_LOG.Error("register table failed", zap.Error(err))
-		os.Exit(0)
+		os.Exit(1)
 	}
 
 	err = bizModel()
 
 	if err != nil {
 		global.LRAG_LOG.Error("register biz_table failed", zap.Error(err))
-		os.Exit(0)
+		os.Exit(1)
 	}
 	global.LRAG_LOG.Info("register table success")
 }

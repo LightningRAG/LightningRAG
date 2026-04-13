@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 
+	"github.com/LightningRAG/LightningRAG/server/i18n"
 	"github.com/LightningRAG/LightningRAG/server/model/system/request"
 	"github.com/gin-gonic/gin"
 
@@ -24,7 +25,7 @@ var DictionaryServiceApp = new(DictionaryService)
 
 func (dictionaryService *DictionaryService) CreateSysDictionary(sysDictionary system.SysDictionary) (err error) {
 	if (!errors.Is(global.LRAG_DB.First(&system.SysDictionary{}, "type = ?", sysDictionary.Type).Error, gorm.ErrRecordNotFound)) {
-		return errors.New("存在相同的type，不允许创建")
+		return i18n.NewError("svc.dict.type_exists")
 	}
 	err = global.LRAG_DB.Create(&sysDictionary).Error
 	return err
@@ -39,7 +40,7 @@ func (dictionaryService *DictionaryService) CreateSysDictionary(sysDictionary sy
 func (dictionaryService *DictionaryService) DeleteSysDictionary(sysDictionary system.SysDictionary) (err error) {
 	err = global.LRAG_DB.Where("id = ?", sysDictionary.ID).Preload("SysDictionaryDetails").First(&sysDictionary).Error
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
-		return errors.New("请不要搞事")
+		return i18n.NewError("svc.dict.not_found")
 	}
 	if err != nil {
 		return err
@@ -73,11 +74,11 @@ func (dictionaryService *DictionaryService) UpdateSysDictionary(sysDictionary *s
 	err = global.LRAG_DB.Where("id = ?", sysDictionary.ID).First(&dict).Error
 	if err != nil {
 		global.LRAG_LOG.Debug(err.Error())
-		return errors.New("查询字典数据失败")
+		return i18n.NewError("svc.dict.not_found")
 	}
 	if dict.Type != sysDictionary.Type {
 		if !errors.Is(global.LRAG_DB.First(&system.SysDictionary{}, "type = ?", sysDictionary.Type).Error, gorm.ErrRecordNotFound) {
-			return errors.New("存在相同的type，不允许创建")
+			return i18n.NewError("svc.dict.type_exists")
 		}
 	}
 
@@ -133,7 +134,7 @@ func (dictionaryService *DictionaryService) GetSysDictionaryInfoList(c *gin.Cont
 // checkCircularReference 检查是否会形成循环引用
 func (dictionaryService *DictionaryService) checkCircularReference(currentID uint, parentID uint) error {
 	if currentID == parentID {
-		return errors.New("不能将字典设置为自己的父级")
+		return i18n.NewError("svc.dict.circular_ref")
 	}
 
 	// 递归检查父级链条
@@ -207,20 +208,20 @@ func (dictionaryService *DictionaryService) ImportSysDictionary(jsonStr string) 
 	// 直接解析到 SysDictionary 结构体
 	var importData system.SysDictionary
 	if err := json.Unmarshal([]byte(jsonStr), &importData); err != nil {
-		return errors.New("JSON 格式错误: " + err.Error())
+		return i18n.NewError("svc.dict.import_invalid_json")
 	}
 
 	// 验证必填字段
 	if importData.Name == "" {
-		return errors.New("字典名称不能为空")
+		return i18n.NewError("svc.dict.import_failed")
 	}
 	if importData.Type == "" {
-		return errors.New("字典类型不能为空")
+		return i18n.NewError("svc.dict.import_failed")
 	}
 
 	// 检查字典类型是否已存在
 	if !errors.Is(global.LRAG_DB.First(&system.SysDictionary{}, "type = ?", importData.Type).Error, gorm.ErrRecordNotFound) {
-		return errors.New("存在相同的type，不允许导入")
+		return i18n.NewError("svc.dict.type_exists")
 	}
 
 	// 创建字典（清空导入数据的ID和时间戳）

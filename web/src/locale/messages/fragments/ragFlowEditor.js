@@ -14,6 +14,7 @@ export const ragFlowEditorEn = {
   creativityPrecise: 'Precise',
   creativityBalance: 'Balanced',
   creativityImprovise: 'Creative',
+  contextMenuDelete: 'Delete',
   comp: {
     Begin: 'Start',
     Retrieval: 'Retrieval',
@@ -55,6 +56,7 @@ export const ragFlowEditorZhCN = {
   creativityPrecise: '精确',
   creativityBalance: '平衡',
   creativityImprovise: '创意',
+  contextMenuDelete: '删除',
   comp: {
     Begin: '开始',
     Retrieval: '检索',

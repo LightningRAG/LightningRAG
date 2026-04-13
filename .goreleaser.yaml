@@ -71,7 +71,6 @@ upx:
     goos:
       - linux
       - windows
-      - freebsd
     compress: best
 
 archives:

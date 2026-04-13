@@ -37,8 +37,9 @@ func (fs justFilesFilesystem) Open(name string) (http.File, error) {
 
 func Routers() *gin.Engine {
 	Router := gin.New()
+	Router.MaxMultipartMemory = 32 << 20 // 32 MB
 	RegisterDeferredPluginEngine(Router)
-	// 使用自定义的 Recovery 中间件，记录 panic 并入库
+	Router.Use(middleware.RequestID())
 	Router.Use(middleware.GinRecovery(true))
 	Router.Use(middleware.Locale())
 	if gin.Mode() == gin.DebugMode {
@@ -88,7 +89,7 @@ func Routers() *gin.Engine {
 	{
 		// 健康监测
 		PublicGroup.GET("/health", func(c *gin.Context) {
-			c.JSON(http.StatusOK, "ok")
+			c.JSON(http.StatusOK, gin.H{"code": 0, "msg": "ok"})
 		})
 		// 第三方对话渠道 Webhook（不经 JWT；限流见 rag.channel-webhook-ip-limit-per-minute）
 		webhookPublic := PublicGroup.Group("")

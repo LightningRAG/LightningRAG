@@ -3,6 +3,7 @@ package system
 import (
 	"errors"
 	"github.com/LightningRAG/LightningRAG/server/global"
+	"github.com/LightningRAG/LightningRAG/server/i18n"
 	"github.com/LightningRAG/LightningRAG/server/model/common/request"
 	"github.com/LightningRAG/LightningRAG/server/model/system"
 	"gorm.io/gorm"
@@ -137,7 +138,7 @@ func (menuService *MenuService) AddBaseMenu(menu system.SysBaseMenu) error {
 	return global.LRAG_DB.Transaction(func(tx *gorm.DB) error {
 		// 检查name是否重复
 		if !errors.Is(tx.Where("name = ?", menu.Name).First(&system.SysBaseMenu{}).Error, gorm.ErrRecordNotFound) {
-			return errors.New("存在重复name，请修改name")
+			return i18n.NewError("svc.menu.duplicate_name")
 		}
 
 		if menu.ParentId != 0 {
@@ -145,7 +146,7 @@ func (menuService *MenuService) AddBaseMenu(menu system.SysBaseMenu) error {
 			var parentMenu system.SysBaseMenu
 			if err := tx.First(&parentMenu, menu.ParentId).Error; err != nil {
 				if errors.Is(err, gorm.ErrRecordNotFound) {
-					return errors.New("父菜单不存在")
+					return i18n.NewError("svc.menu.parent_not_found")
 				}
 				return err
 			}
@@ -166,7 +167,7 @@ func (menuService *MenuService) AddBaseMenu(menu system.SysBaseMenu) error {
 					return err
 				}
 				if defaultRouterCount > 0 {
-					return errors.New("父菜单已被其他角色的首页占用，请先释放父菜单的首页权限")
+					return i18n.NewError("svc.menu.parent_occupied_as_home")
 				}
 
 				// 清空父菜单的所有权限分配
@@ -272,7 +273,7 @@ func (menuService *MenuService) AddMenuAuthority(menus []system.SysBaseMenu, adm
 				}
 			}
 			if !hasMenu {
-				return errors.New("添加失败,请勿跨级操作")
+				return i18n.NewError("svc.menu.no_cross_level")
 			}
 		}
 	}

@@ -6,7 +6,7 @@ import router from '@/router/index'
 import { i18n, getAcceptLanguageHeader } from '@/locale'
 
 const service = axios.create({
-  timeout: 99999
+  timeout: 30000
 })
 let activeAxios = 0
 let timer

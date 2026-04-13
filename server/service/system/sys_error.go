@@ -3,10 +3,12 @@ package system
 import (
 	"context"
 	"fmt"
+
 	"github.com/LightningRAG/LightningRAG/server/global"
 	"github.com/LightningRAG/LightningRAG/server/model/common"
 	"github.com/LightningRAG/LightningRAG/server/model/system"
 	systemReq "github.com/LightningRAG/LightningRAG/server/model/system/request"
+	"go.uber.org/zap"
 )
 
 type SysErrorService struct{}
@@ -92,11 +94,17 @@ func (sysErrorService *SysErrorService) GetSysErrorSolution(ctx context.Context,
 
 	// 异步协程在一分钟后更新为处理完成
 	go func(id string) {
-		// 查询当前错误信息用于生成方案
-		var se system.SysError
-		_ = global.LRAG_DB.Model(&system.SysError{}).Where("id = ?", id).First(&se).Error
+		defer func() {
+			if r := recover(); r != nil {
+				global.LRAG_LOG.Error("panic in GetSysErrorSolution goroutine", zap.Any("recover", r), zap.String("id", id))
+			}
+		}()
 
-		// 构造 LLM 请求参数，使用管家模式(butler)根据错误信息生成解决方案
+		var se system.SysError
+		if err := global.LRAG_DB.Model(&system.SysError{}).Where("id = ?", id).First(&se).Error; err != nil {
+			global.LRAG_LOG.Warn("failed to load sys error for solution", zap.String("id", id), zap.Error(err))
+		}
+
 		var form, info string
 		if se.Form != nil {
 			form = *se.Form
@@ -111,14 +119,18 @@ func (sysErrorService *SysErrorService) GetSysErrorSolution(ctx context.Context,
 			"form": form,
 		}
 
-		// 调用服务层 LLMAuto，忽略错误但尽量写入方案
 		var solution string
 		if data, err := (&AutoCodeService{}).LLMAuto(context.Background(), llmReq); err == nil {
-			solution = fmt.Sprintf("%v", data.(map[string]interface{})["text"])
-			_ = global.LRAG_DB.Model(&system.SysError{}).Where("id = ?", id).Updates(map[string]interface{}{"status": "处理完成", "solution": solution}).Error
+			if m, ok := data.(map[string]interface{}); ok {
+				solution = fmt.Sprintf("%v", m["text"])
+			}
+			if uerr := global.LRAG_DB.Model(&system.SysError{}).Where("id = ?", id).Updates(map[string]interface{}{"status": "处理完成", "solution": solution}).Error; uerr != nil {
+				global.LRAG_LOG.Warn("failed to update error status", zap.String("id", id), zap.String("status", "处理完成"), zap.Error(uerr))
+			}
 		} else {
-			// 即使生成失败也标记为完成，避免任务卡住
-			_ = global.LRAG_DB.Model(&system.SysError{}).Where("id = ?", id).Update("status", "处理失败").Error
+			if uerr := global.LRAG_DB.Model(&system.SysError{}).Where("id = ?", id).Update("status", "处理失败").Error; uerr != nil {
+				global.LRAG_LOG.Warn("failed to update error status", zap.String("id", id), zap.String("status", "处理失败"), zap.Error(uerr))
+			}
 		}
 	}(ID)
 

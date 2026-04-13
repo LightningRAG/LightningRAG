@@ -2,7 +2,7 @@
   <div class="flex justify-between items-center gap-2 w-full">
     <el-cascader
       v-if="pathIsSelect"
-      placeholder="请选择文件路径"
+      :placeholder="$t('admin.menu.componentCascader.phSelectPath')"
       :options="pathOptions"
       v-model="activeComponent"
       filterable
@@ -13,11 +13,11 @@
     <el-input
       v-else
       v-model="tempPath"
-      placeholder="页面:view/xxx/xx.vue 插件:plugin/xx/xx.vue"
+      :placeholder="$t('admin.menu.componentCascader.phManualPath')"
       @change="emitChange"
     />
     <el-button @click="togglePathIsSelect"
-      >{{ pathIsSelect ? '手动输入' : '快捷选择' }}
+      >{{ pathIsSelect ? $t('admin.menu.componentCascader.manualInput') : $t('admin.menu.componentCascader.quickSelect') }}
     </el-button>
   </div>
 </template>

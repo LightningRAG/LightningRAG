@@ -7,6 +7,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/LightningRAG/LightningRAG/server/global"
+	"github.com/LightningRAG/LightningRAG/server/i18n"
 	"github.com/LightningRAG/LightningRAG/server/model/system/request"
 	"github.com/LightningRAG/LightningRAG/server/utils"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
@@ -71,7 +72,7 @@ func (casbinService *CasbinService) UpdateCasbin(adminAuthorityID, AuthorityID u
 	}
 	success, _ := e.AddPolicies(rules)
 	if !success {
-		return errors.New("存在相同api,添加失败,请联系管理员")
+		return i18n.NewError("svc.casbin.add_failed")
 	}
 	return nil
 }

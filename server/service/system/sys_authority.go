@@ -7,13 +7,14 @@ import (
 	systemReq "github.com/LightningRAG/LightningRAG/server/model/system/request"
 
 	"github.com/LightningRAG/LightningRAG/server/global"
+	"github.com/LightningRAG/LightningRAG/server/i18n"
 	"github.com/LightningRAG/LightningRAG/server/model/common/request"
 	"github.com/LightningRAG/LightningRAG/server/model/system"
 	"github.com/LightningRAG/LightningRAG/server/model/system/response"
 	"gorm.io/gorm"
 )
 
-var ErrRoleExistence = errors.New("存在相同角色id")
+var ErrRoleExistence = i18n.NewError("svc.authority.id_taken")
 
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: CreateAuthority
@@ -116,7 +117,7 @@ func (authorityService *AuthorityService) UpdateAuthority(auth system.SysAuthori
 	err = global.LRAG_DB.Where("authority_id = ?", auth.AuthorityId).First(&oldAuthority).Error
 	if err != nil {
 		global.LRAG_LOG.Debug(err.Error())
-		return system.SysAuthority{}, errors.New("查询角色数据失败")
+		return system.SysAuthority{}, i18n.NewError("svc.authority.query_failed")
 	}
 	err = global.LRAG_DB.Model(&oldAuthority).Updates(&auth).Error
 	return auth, err
@@ -130,16 +131,16 @@ func (authorityService *AuthorityService) UpdateAuthority(auth system.SysAuthori
 
 func (authorityService *AuthorityService) DeleteAuthority(auth *system.SysAuthority) error {
 	if errors.Is(global.LRAG_DB.Debug().Preload("Users").First(&auth).Error, gorm.ErrRecordNotFound) {
-		return errors.New("该角色不存在")
+		return i18n.NewError("svc.authority.not_found")
 	}
 	if len(auth.Users) != 0 {
-		return errors.New("此角色有用户正在使用禁止删除")
+		return i18n.NewError("svc.authority.has_users")
 	}
 	if !errors.Is(global.LRAG_DB.Where("authority_id = ?", auth.AuthorityId).First(&system.SysUser{}).Error, gorm.ErrRecordNotFound) {
-		return errors.New("此角色有用户正在使用禁止删除")
+		return i18n.NewError("svc.authority.has_users")
 	}
 	if !errors.Is(global.LRAG_DB.Where("parent_id = ?", auth.AuthorityId).First(&system.SysAuthority{}).Error, gorm.ErrRecordNotFound) {
-		return errors.New("此角色存在子角色不允许删除")
+		return i18n.NewError("svc.authority.has_children")
 	}
 
 	return global.LRAG_DB.Transaction(func(tx *gorm.DB) error {
@@ -252,7 +253,7 @@ func (authorityService *AuthorityService) CheckAuthorityIDAuth(authorityID, targ
 		}
 	}
 	if !hasAuth {
-		return errors.New("您提交的角色ID不合法")
+		return i18n.NewError("svc.authority.invalid_authority_id")
 	}
 	return nil
 }

@@ -136,6 +136,8 @@ func (s *ChannelConnectorService) ListChannelConnectors(ctx context.Context, uid
 	pageSize := req.PageSize
 	if pageSize < 1 {
 		pageSize = 10
+	} else if pageSize > 100 {
+		pageSize = 100
 	}
 	var list []rag.RagChannelConnector
 	if err := db.Order("id DESC").Offset((page - 1) * pageSize).Limit(pageSize).Find(&list).Error; err != nil {

@@ -44,12 +44,12 @@ export const getDict = async (
 ) => {
   // 参数验证
   if (!type || typeof type !== 'string') {
-    console.warn('getDict: type参数必须是非空字符串')
+    console.warn('getDict: type must be a non-empty string')
     return []
   }
 
   if (typeof options.depth !== 'number' || options.depth < 0) {
-    console.warn('getDict: depth参数必须是非负数')
+    console.warn('getDict: depth must be a non-negative number')
     options.depth = 0
   }
 
@@ -68,7 +68,7 @@ export const getDict = async (
     // 返回数据，确保返回数组
     return Array.isArray(result) ? result : []
   } catch (error) {
-    console.error('getDict: 获取字典数据失败', { type, options, error })
+    console.error('getDict: failed to load dictionary data', { type, options, error })
     return []
   }
 }

@@ -148,7 +148,7 @@
           <div class="text-xs text-gray-400 mt-1">{{ $t('rag.kb.concurrentTasksHint') }}</div>
         </el-form-item>
         <el-form-item v-if="showDelimiterField" :label="$t('rag.kb.delimiter')">
-          <el-input v-model="form.delimiter" placeholder="\n!?。；！？">
+          <el-input v-model="form.delimiter" :placeholder="$t('rag.kb.delimiterPlaceholder')">
             <template #append>
               <el-tooltip :content="$t('rag.kb.delimiterTooltip')" placement="top">
                 <el-icon><QuestionFilled /></el-icon>
@@ -451,7 +451,7 @@
         }
       }
     } catch (e) {
-      console.warn(`加载 ${scenarioType} 模型列表失败`, e)
+      console.warn(`Failed to load ${scenarioType} model list`, e)
     }
     return { admin: [], user: [] }
   }

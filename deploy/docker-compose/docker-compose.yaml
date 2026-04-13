@@ -34,7 +34,7 @@ services:
     depends_on:
       server:
         condition: service_healthy
-    command: ["nginx-debug", "-g", "daemon off;"]
+    command: ["nginx", "-g", "daemon off;"]
     networks:
       network:
         ipv4_address: 177.7.0.11

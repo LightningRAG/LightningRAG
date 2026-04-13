@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/LightningRAG/LightningRAG/server/global"
+	"github.com/LightningRAG/LightningRAG/server/i18n"
 	"github.com/LightningRAG/LightningRAG/server/model/system"
 	"gorm.io/gorm"
 )
@@ -21,16 +22,16 @@ var BaseMenuServiceApp = new(BaseMenuService)
 func (baseMenuService *BaseMenuService) DeleteBaseMenu(id int) (err error) {
 	err = global.LRAG_DB.First(&system.SysBaseMenu{}, "parent_id = ?", id).Error
 	if err == nil {
-		return errors.New("此菜单存在子菜单不可删除")
+		return i18n.NewError("svc.menu.has_children")
 	}
 	var menu system.SysBaseMenu
 	err = global.LRAG_DB.First(&menu, id).Error
 	if err != nil {
-		return errors.New("记录不存在")
+		return i18n.NewError("svc.menu.not_found")
 	}
 	err = global.LRAG_DB.First(&system.SysAuthority{}, "default_router = ?", menu.Name).Error
 	if err == nil {
-		return errors.New("此菜单有角色正在作为首页，不可删除")
+		return i18n.NewError("svc.menu.is_home_page")
 	}
 	return global.LRAG_DB.Transaction(func(tx *gorm.DB) error {
 
@@ -90,7 +91,7 @@ func (baseMenuService *BaseMenuService) UpdateBaseMenu(menu system.SysBaseMenu) 
 		if oldMenu.Name != menu.Name {
 			if !errors.Is(tx.Where("id <> ? AND name = ?", menu.ID, menu.Name).First(&system.SysBaseMenu{}).Error, gorm.ErrRecordNotFound) {
 				global.LRAG_LOG.Debug("存在相同name修改失败")
-				return errors.New("存在相同name修改失败")
+				return i18n.NewError("svc.menu.duplicate_name")
 			}
 		}
 		txErr := tx.Unscoped().Delete(&system.SysBaseMenuParameter{}, "sys_base_menu_id = ?", menu.ID).Error

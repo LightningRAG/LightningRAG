@@ -14,91 +14,91 @@
         <div class="mb-3">
           <div class="text-base font-medium mb-2">{{ $t('tools.aiPicture.secPageUse') }}</div>
           <el-radio-group v-model="pageType" class="mb-2" @change="handlePageTypeChange">
-            <el-radio label="企业官网">{{ $t('tools.aiPicture.ptCorp') }}</el-radio>
-            <el-radio label="电商页面">{{ $t('tools.aiPicture.ptEcom') }}</el-radio>
-            <el-radio label="个人博客">{{ $t('tools.aiPicture.ptBlog') }}</el-radio>
-            <el-radio label="产品介绍">{{ $t('tools.aiPicture.ptProduct') }}</el-radio>
-            <el-radio label="活动落地页">{{ $t('tools.aiPicture.ptLanding') }}</el-radio>
-            <el-radio label="其他">{{ $t('tools.aiPicture.other') }}</el-radio>
+            <el-radio label="corporate">{{ $t('tools.aiPicture.ptCorp') }}</el-radio>
+            <el-radio label="ecommerce">{{ $t('tools.aiPicture.ptEcom') }}</el-radio>
+            <el-radio label="blog">{{ $t('tools.aiPicture.ptBlog') }}</el-radio>
+            <el-radio label="product">{{ $t('tools.aiPicture.ptProduct') }}</el-radio>
+            <el-radio label="landing">{{ $t('tools.aiPicture.ptLanding') }}</el-radio>
+            <el-radio label="other">{{ $t('tools.aiPicture.other') }}</el-radio>
           </el-radio-group>
-          <el-input v-if="pageType === '其他'" v-model="pageTypeCustom" :placeholder="$t('tools.aiPicture.phPageUse')" class="w-full" />
+          <el-input v-if="pageType === 'other'" v-model="pageTypeCustom" :placeholder="$t('tools.aiPicture.phPageUse')" class="w-full" />
         </div>
         
         <div class="mb-3">
           <div class="text-base font-medium mb-2">{{ $t('tools.aiPicture.secBlocks') }}</div>
           <el-checkbox-group v-model="contentBlocks" class="flex flex-wrap gap-2 mb-2">
-            <el-checkbox label="Banner轮播图">{{ $t('tools.aiPicture.cbBanner') }}</el-checkbox>
-            <el-checkbox label="产品/服务介绍">{{ $t('tools.aiPicture.cbProductSvc') }}</el-checkbox>
-            <el-checkbox label="功能特点展示">{{ $t('tools.aiPicture.cbFeatures') }}</el-checkbox>
-            <el-checkbox label="客户案例">{{ $t('tools.aiPicture.cbCases') }}</el-checkbox>
-            <el-checkbox label="团队介绍">{{ $t('tools.aiPicture.cbTeam') }}</el-checkbox>
-            <el-checkbox label="联系表单">{{ $t('tools.aiPicture.cbContact') }}</el-checkbox>
-            <el-checkbox label="新闻/博客列表">{{ $t('tools.aiPicture.cbNews') }}</el-checkbox>
-            <el-checkbox label="价格表">{{ $t('tools.aiPicture.cbPricing') }}</el-checkbox>
-            <el-checkbox label="FAQ/常见问题">{{ $t('tools.aiPicture.cbFaq') }}</el-checkbox>
-            <el-checkbox label="用户评价">{{ $t('tools.aiPicture.cbReviews') }}</el-checkbox>
-            <el-checkbox label="数据统计">{{ $t('tools.aiPicture.cbStats') }}</el-checkbox>
-            <el-checkbox label="商品列表">{{ $t('tools.aiPicture.cbProductList') }}</el-checkbox>
-            <el-checkbox label="商品卡片">{{ $t('tools.aiPicture.cbProductCard') }}</el-checkbox>
-            <el-checkbox label="购物车">{{ $t('tools.aiPicture.cbCart') }}</el-checkbox>
-            <el-checkbox label="结算页面">{{ $t('tools.aiPicture.cbCheckout') }}</el-checkbox>
-            <el-checkbox label="订单跟踪">{{ $t('tools.aiPicture.cbOrder') }}</el-checkbox>
-            <el-checkbox label="商品分类">{{ $t('tools.aiPicture.cbCategory') }}</el-checkbox>
-            <el-checkbox label="热门推荐">{{ $t('tools.aiPicture.cbHot') }}</el-checkbox>
-            <el-checkbox label="限时特惠">{{ $t('tools.aiPicture.cbSale') }}</el-checkbox>
-            <el-checkbox label="其他">{{ $t('tools.aiPicture.other') }}</el-checkbox>
+            <el-checkbox label="banner">{{ $t('tools.aiPicture.cbBanner') }}</el-checkbox>
+            <el-checkbox label="product_service">{{ $t('tools.aiPicture.cbProductSvc') }}</el-checkbox>
+            <el-checkbox label="features">{{ $t('tools.aiPicture.cbFeatures') }}</el-checkbox>
+            <el-checkbox label="cases">{{ $t('tools.aiPicture.cbCases') }}</el-checkbox>
+            <el-checkbox label="team">{{ $t('tools.aiPicture.cbTeam') }}</el-checkbox>
+            <el-checkbox label="contact">{{ $t('tools.aiPicture.cbContact') }}</el-checkbox>
+            <el-checkbox label="news">{{ $t('tools.aiPicture.cbNews') }}</el-checkbox>
+            <el-checkbox label="pricing">{{ $t('tools.aiPicture.cbPricing') }}</el-checkbox>
+            <el-checkbox label="faq">{{ $t('tools.aiPicture.cbFaq') }}</el-checkbox>
+            <el-checkbox label="reviews">{{ $t('tools.aiPicture.cbReviews') }}</el-checkbox>
+            <el-checkbox label="stats">{{ $t('tools.aiPicture.cbStats') }}</el-checkbox>
+            <el-checkbox label="product_list">{{ $t('tools.aiPicture.cbProductList') }}</el-checkbox>
+            <el-checkbox label="product_card">{{ $t('tools.aiPicture.cbProductCard') }}</el-checkbox>
+            <el-checkbox label="cart">{{ $t('tools.aiPicture.cbCart') }}</el-checkbox>
+            <el-checkbox label="checkout">{{ $t('tools.aiPicture.cbCheckout') }}</el-checkbox>
+            <el-checkbox label="order_tracking">{{ $t('tools.aiPicture.cbOrder') }}</el-checkbox>
+            <el-checkbox label="category">{{ $t('tools.aiPicture.cbCategory') }}</el-checkbox>
+            <el-checkbox label="hot_picks">{{ $t('tools.aiPicture.cbHot') }}</el-checkbox>
+            <el-checkbox label="flash_sale">{{ $t('tools.aiPicture.cbSale') }}</el-checkbox>
+            <el-checkbox label="other">{{ $t('tools.aiPicture.other') }}</el-checkbox>
           </el-checkbox-group>
-          <el-input v-if="contentBlocks.includes('其他')" v-model="contentBlocksCustom" :placeholder="$t('tools.aiPicture.phBlocks')" class="w-full" />
+          <el-input v-if="contentBlocks.includes('other')" v-model="contentBlocksCustom" :placeholder="$t('tools.aiPicture.phBlocks')" class="w-full" />
         </div>
         
         <div class="mb-3">
           <div class="text-base font-medium mb-2">{{ $t('tools.aiPicture.secStyle') }}</div>
           <el-radio-group v-model="stylePreference" class="mb-2">
-            <el-radio label="简约">{{ $t('tools.aiPicture.stMinimal') }}</el-radio>
-            <el-radio label="科技感">{{ $t('tools.aiPicture.stTech') }}</el-radio>
-            <el-radio label="温馨">{{ $t('tools.aiPicture.stCozy') }}</el-radio>
-            <el-radio label="专业">{{ $t('tools.aiPicture.stPro') }}</el-radio>
-            <el-radio label="创意">{{ $t('tools.aiPicture.stCreative') }}</el-radio>
-            <el-radio label="复古">{{ $t('tools.aiPicture.stVintage') }}</el-radio>
-            <el-radio label="奢华">{{ $t('tools.aiPicture.stLuxury') }}</el-radio>
-            <el-radio label="其他">{{ $t('tools.aiPicture.other') }}</el-radio>
+            <el-radio label="minimal">{{ $t('tools.aiPicture.stMinimal') }}</el-radio>
+            <el-radio label="tech">{{ $t('tools.aiPicture.stTech') }}</el-radio>
+            <el-radio label="cozy">{{ $t('tools.aiPicture.stCozy') }}</el-radio>
+            <el-radio label="professional">{{ $t('tools.aiPicture.stPro') }}</el-radio>
+            <el-radio label="creative">{{ $t('tools.aiPicture.stCreative') }}</el-radio>
+            <el-radio label="vintage">{{ $t('tools.aiPicture.stVintage') }}</el-radio>
+            <el-radio label="luxury">{{ $t('tools.aiPicture.stLuxury') }}</el-radio>
+            <el-radio label="other">{{ $t('tools.aiPicture.other') }}</el-radio>
           </el-radio-group>
-          <el-input v-if="stylePreference === '其他'" v-model="stylePreferenceCustom" :placeholder="$t('tools.aiPicture.phStyle')" class="w-full" />
+          <el-input v-if="stylePreference === 'other'" v-model="stylePreferenceCustom" :placeholder="$t('tools.aiPicture.phStyle')" class="w-full" />
         </div>
         
         <div class="mb-3">
           <div class="text-base font-medium mb-2">{{ $t('tools.aiPicture.secLayout') }}</div>
           <el-radio-group v-model="layoutDesign" class="mb-2">
-            <el-radio label="单栏布局">{{ $t('tools.aiPicture.lySingle') }}</el-radio>
-            <el-radio label="双栏布局">{{ $t('tools.aiPicture.lyDouble') }}</el-radio>
-            <el-radio label="三栏布局">{{ $t('tools.aiPicture.lyTriple') }}</el-radio>
-            <el-radio label="网格布局">{{ $t('tools.aiPicture.lyGrid') }}</el-radio>
-            <el-radio label="画廊布局">{{ $t('tools.aiPicture.lyGallery') }}</el-radio>
-            <el-radio label="瀑布流">{{ $t('tools.aiPicture.lyMasonry') }}</el-radio>
-            <el-radio label="卡片式">{{ $t('tools.aiPicture.lyCard') }}</el-radio>
-            <el-radio label="侧边栏+内容布局">{{ $t('tools.aiPicture.lySidebar') }}</el-radio>
-            <el-radio label="分屏布局">{{ $t('tools.aiPicture.lySplit') }}</el-radio>
-            <el-radio label="全屏滚动布局">{{ $t('tools.aiPicture.lyFullScroll') }}</el-radio>
-            <el-radio label="混合布局">{{ $t('tools.aiPicture.lyMixed') }}</el-radio>
-            <el-radio label="响应式">{{ $t('tools.aiPicture.lyResponsive') }}</el-radio>
-            <el-radio label="其他">{{ $t('tools.aiPicture.other') }}</el-radio>
+            <el-radio label="single_column">{{ $t('tools.aiPicture.lySingle') }}</el-radio>
+            <el-radio label="two_column">{{ $t('tools.aiPicture.lyDouble') }}</el-radio>
+            <el-radio label="three_column">{{ $t('tools.aiPicture.lyTriple') }}</el-radio>
+            <el-radio label="grid">{{ $t('tools.aiPicture.lyGrid') }}</el-radio>
+            <el-radio label="gallery">{{ $t('tools.aiPicture.lyGallery') }}</el-radio>
+            <el-radio label="masonry">{{ $t('tools.aiPicture.lyMasonry') }}</el-radio>
+            <el-radio label="card">{{ $t('tools.aiPicture.lyCard') }}</el-radio>
+            <el-radio label="sidebar">{{ $t('tools.aiPicture.lySidebar') }}</el-radio>
+            <el-radio label="split_screen">{{ $t('tools.aiPicture.lySplit') }}</el-radio>
+            <el-radio label="fullscreen_scroll">{{ $t('tools.aiPicture.lyFullScroll') }}</el-radio>
+            <el-radio label="mixed">{{ $t('tools.aiPicture.lyMixed') }}</el-radio>
+            <el-radio label="responsive">{{ $t('tools.aiPicture.lyResponsive') }}</el-radio>
+            <el-radio label="other">{{ $t('tools.aiPicture.other') }}</el-radio>
           </el-radio-group>
-          <el-input v-if="layoutDesign === '其他'" v-model="layoutDesignCustom" :placeholder="$t('tools.aiPicture.phLayout')" class="w-full" />
+          <el-input v-if="layoutDesign === 'other'" v-model="layoutDesignCustom" :placeholder="$t('tools.aiPicture.phLayout')" class="w-full" />
         </div>
         
         <div class="mb-3">
           <div class="text-base font-medium mb-2">{{ $t('tools.aiPicture.secColor') }}</div>
           <el-radio-group v-model="colorScheme" class="mb-2">
-            <el-radio label="蓝色系">{{ $t('tools.aiPicture.colBlue') }}</el-radio>
-            <el-radio label="绿色系">{{ $t('tools.aiPicture.colGreen') }}</el-radio>
-            <el-radio label="红色系">{{ $t('tools.aiPicture.colRed') }}</el-radio>
-            <el-radio label="黑白灰">{{ $t('tools.aiPicture.colGray') }}</el-radio>
-            <el-radio label="纯黑白">{{ $t('tools.aiPicture.colBw') }}</el-radio>
-            <el-radio label="暖色调">{{ $t('tools.aiPicture.colWarm') }}</el-radio>
-            <el-radio label="冷色调">{{ $t('tools.aiPicture.colCool') }}</el-radio>
-            <el-radio label="其他">{{ $t('tools.aiPicture.other') }}</el-radio>
+            <el-radio label="blue">{{ $t('tools.aiPicture.colBlue') }}</el-radio>
+            <el-radio label="green">{{ $t('tools.aiPicture.colGreen') }}</el-radio>
+            <el-radio label="red">{{ $t('tools.aiPicture.colRed') }}</el-radio>
+            <el-radio label="grayscale">{{ $t('tools.aiPicture.colGray') }}</el-radio>
+            <el-radio label="black_white">{{ $t('tools.aiPicture.colBw') }}</el-radio>
+            <el-radio label="warm">{{ $t('tools.aiPicture.colWarm') }}</el-radio>
+            <el-radio label="cool">{{ $t('tools.aiPicture.colCool') }}</el-radio>
+            <el-radio label="other">{{ $t('tools.aiPicture.other') }}</el-radio>
           </el-radio-group>
-          <el-input v-if="colorScheme === '其他'" v-model="colorSchemeCustom" :placeholder="$t('tools.aiPicture.phColor')" class="w-full" />
+          <el-input v-if="colorScheme === 'other'" v-model="colorSchemeCustom" :placeholder="$t('tools.aiPicture.phColor')" class="w-full" />
         </div>
       </div>
       
@@ -226,25 +226,23 @@ const copySnippet = (vueString) => {
       })
 }
 
-// 选项模式相关变量
-const pageType = ref('企业官网')
+const pageType = ref('corporate')
 const pageTypeCustom = ref('')
-const contentBlocks = ref(['Banner轮播图', '产品/服务介绍'])
+const contentBlocks = ref(['banner', 'product_service'])
 const contentBlocksCustom = ref('')
-const stylePreference = ref('简约')
+const stylePreference = ref('minimal')
 const stylePreferenceCustom = ref('')
-const layoutDesign = ref('响应式')
+const layoutDesign = ref('responsive')
 const layoutDesignCustom = ref('')
-const colorScheme = ref('蓝色系')
+const colorScheme = ref('blue')
 const colorSchemeCustom = ref('')
 
-// 页面用途与内容板块的推荐映射关系
 const pageTypeContentMap = {
-  '企业官网': ['Banner轮播图', '产品/服务介绍', '功能特点展示', '客户案例', '联系表单'],
-  '电商页面': ['Banner轮播图', '商品列表', '商品卡片', '购物车', '商品分类', '热门推荐', '限时特惠', '结算页面', '用户评价'],
-  '个人博客': ['Banner轮播图', '新闻/博客列表', '用户评价', '联系表单'],
-  '产品介绍': ['Banner轮播图', '产品/服务介绍', '功能特点展示', '价格表', 'FAQ/常见问题'],
-  '活动落地页': ['Banner轮播图', '功能特点展示', '联系表单', '数据统计']
+  corporate: ['banner', 'product_service', 'features', 'cases', 'contact'],
+  ecommerce: ['banner', 'product_list', 'product_card', 'cart', 'category', 'hot_picks', 'flash_sale', 'checkout', 'reviews'],
+  blog: ['banner', 'news', 'reviews', 'contact'],
+  product: ['banner', 'product_service', 'features', 'pricing', 'faq'],
+  landing: ['banner', 'features', 'contact', 'stats']
 }
 
 const prompt = ref('')
@@ -284,8 +282,8 @@ const loadVueComponent = async (vueCode) => {
                 })
               }
               
-              console.warn('请求未知文件:', url)
-              return Promise.reject(new Error(`找不到文件: ${url}`))
+              console.warn('Unknown file requested:', url)
+              return Promise.reject(new Error(`File not found: ${url}`))
             },
             addStyle(textContent) {
               // 不再将样式添加到document.head，而是返回样式内容
@@ -305,7 +303,7 @@ const loadVueComponent = async (vueCode) => {
           const comp = await loadModule(fakePath, options)
           return comp.default || comp
         } catch (error) {
-          console.error('组件加载详细错误:', error)
+          console.error('Component load error:', error)
           throw error
         }
       },
@@ -317,7 +315,7 @@ const loadVueComponent = async (vueCode) => {
       errorComponent: {
         props: ['error'],
         setup(props) {
-          console.error('错误组件收到的错误:', props.error)
+          console.error('Error component received:', props.error)
           return () =>
             h(
               'div',
@@ -330,7 +328,7 @@ const loadVueComponent = async (vueCode) => {
       delay: 200,
       suspensible: false,
       onError(error, retry, fail) {
-        console.error('加载错误，细节:', error)
+        console.error('Load error details:', error)
         fail()
       }
     })
@@ -374,36 +372,55 @@ const loadVueComponent = async (vueCode) => {
     loadedComponents.value = markRaw(ShadowWrapper)
     return ShadowWrapper
   } catch (error) {
-    console.error('组件创建总错误:', error)
+    console.error('Component creation error:', error)
     return null
   }
 }
 
 // 当页面用途改变时，更新内容板块的选择
 const handlePageTypeChange = (value) => {
-  if (value !== '其他' && pageTypeContentMap[value]) {
+  if (value !== 'other' && pageTypeContentMap[value]) {
     contentBlocks.value = [...pageTypeContentMap[value]]
   }
 }
 
+const resolveLabel = (key, i18nPrefix) => {
+  const fullKey = `${i18nPrefix}.${key}`
+  const translated = t(fullKey)
+  return translated !== fullKey ? translated : key
+}
+
 const llmAutoFunc = async () => {
   let fullPrompt = ''
-  const other = '其他'
 
-  fullPrompt += `${t('tools.aiPicture.promptPageUse')}: ${pageType.value === other ? pageTypeCustom.value : pageType.value}\n`
+  const pageLabel = pageType.value === 'other'
+    ? pageTypeCustom.value
+    : resolveLabel(pageType.value, 'tools.aiPicture.val.pageType')
+  fullPrompt += `${t('tools.aiPicture.promptPageUse')}: ${pageLabel}\n`
 
   fullPrompt += `${t('tools.aiPicture.promptBlocks')}: `
-  const blocks = contentBlocks.value.filter((block) => block !== other)
+  const blocks = contentBlocks.value
+    .filter((b) => b !== 'other')
+    .map((b) => resolveLabel(b, 'tools.aiPicture.val.block'))
   if (contentBlocksCustom.value) {
     blocks.push(contentBlocksCustom.value)
   }
   fullPrompt += blocks.join(', ') + '\n'
 
-  fullPrompt += `${t('tools.aiPicture.promptStyle')}: ${stylePreference.value === other ? stylePreferenceCustom.value : stylePreference.value}\n`
+  const styleLabel = stylePreference.value === 'other'
+    ? stylePreferenceCustom.value
+    : resolveLabel(stylePreference.value, 'tools.aiPicture.val.style')
+  fullPrompt += `${t('tools.aiPicture.promptStyle')}: ${styleLabel}\n`
 
-  fullPrompt += `${t('tools.aiPicture.promptLayout')}: ${layoutDesign.value === other ? layoutDesignCustom.value : layoutDesign.value}\n`
+  const layoutLabel = layoutDesign.value === 'other'
+    ? layoutDesignCustom.value
+    : resolveLabel(layoutDesign.value, 'tools.aiPicture.val.layout')
+  fullPrompt += `${t('tools.aiPicture.promptLayout')}: ${layoutLabel}\n`
 
-  fullPrompt += `${t('tools.aiPicture.promptColor')}: ${colorScheme.value === other ? colorSchemeCustom.value : colorScheme.value}\n`
+  const colorLabel = colorScheme.value === 'other'
+    ? colorSchemeCustom.value
+    : resolveLabel(colorScheme.value, 'tools.aiPicture.val.color')
+  fullPrompt += `${t('tools.aiPicture.promptColor')}: ${colorLabel}\n`
 
   if (prompt.value) {
     fullPrompt += `\n${t('tools.aiPicture.promptDetail')}: ${prompt.value}`

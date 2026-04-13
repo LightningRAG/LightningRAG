@@ -20,7 +20,7 @@
         @blur="handleInputConfirm"
       />
       <el-button v-else class="button-new-tag" size="small" @click="showInput">
-        + 新增
+        {{ $t('common.addNew') }}
       </el-button>
     </template>
   </div>

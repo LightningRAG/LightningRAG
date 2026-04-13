@@ -1,11 +1,13 @@
 # github.com/LightningRAG/LightningRAG/server Global Configuration
 
 # jwt configuration
+# WARNING: Replace signing-key with a strong random string before deploying!
+# Generate one with: openssl rand -hex 32
 jwt:
-    signing-key: qmPlus
+    signing-key: change-me-before-deploy
     expires-time: 7d
     buffer-time: 1d
-    issuer: qmPlus
+    issuer: LightningRAG
 # zap logger configuration
 zap:
     level: info

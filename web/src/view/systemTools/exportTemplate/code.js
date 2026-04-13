@@ -25,7 +25,6 @@ const offset = ref(0); // ${t('tools.exportTemplate.codeCommentOffset')}
 const order = ref('id desc'); // ${t('tools.exportTemplate.codeCommentOrder')}
 
 const handleSuccess = (res) => {
-  console.log(res);
   // ${t('tools.exportTemplate.codeCommentImportCallback')}
 };
 </script>`

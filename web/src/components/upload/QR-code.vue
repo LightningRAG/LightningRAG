@@ -74,7 +74,6 @@ const createQrCode = () => {
     '&t=' +
     Date.now()
   dialogVisible.value = true
-  console.log(codeUrl.value)
 }
 
 const onFinished = () => {

@@ -15,7 +15,10 @@ type SystemModelApi struct{}
 // ListAdminModels 列出管理员模型（系统全局模型）
 func (a *SystemModelApi) ListAdminModels(c *gin.Context) {
 	var req request.AdminModelList
-	_ = c.ShouldBindJSON(&req)
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
 	list, total, err := systemModelService.ListAdminModels(c.Request.Context(), req)
 	if err != nil {
 		global.LRAG_LOG.Error("获取管理员模型列表失败", zap.Error(err))

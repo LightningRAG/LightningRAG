@@ -19,6 +19,7 @@
   import { Marked } from 'marked'
   import { markedHighlight } from 'marked-highlight'
   import hljs from 'highlight.js'
+  import DOMPurify from 'dompurify'
   import { ElMessage } from 'element-plus'
   import { onMounted, ref, watchEffect } from 'vue'
   import { useI18n } from 'vue-i18n'
@@ -91,7 +92,7 @@
       if (activeName.value === '') {
         activeName.value = key
       }
-      document.getElementById(key).innerHTML = marked.parse(useCode.value[key])
+      document.getElementById(key).innerHTML = DOMPurify.sanitize(marked.parse(useCode.value[key]))
     }
   })
 

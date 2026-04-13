@@ -164,7 +164,7 @@ export const useDictionaryStore = defineStore('dictionary', () => {
           }
         }
       } catch (error) {
-        console.error('根据value获取字典数据失败:', error)
+        console.error('Failed to get dictionary data by value:', error)
         return []
       }
     }
@@ -222,7 +222,7 @@ export const useDictionaryStore = defineStore('dictionary', () => {
           }
         }
       } catch (error) {
-        console.error('获取字典数据失败:', error)
+        console.error('Failed to load dictionary data:', error)
         // 发生错误时回退到原有方式
         const res = await findSysDictionary({ type })
         if (res.code === 0) {
