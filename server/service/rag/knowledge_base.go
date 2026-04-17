@@ -14,6 +14,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/LightningRAG/LightningRAG/server/global"
 	"github.com/LightningRAG/LightningRAG/server/i18n"
@@ -756,14 +757,17 @@ func deleteDocumentSliceStorage(ctx context.Context, kb *rag.RagKnowledgeBase, u
 		seen[id] = struct{}{}
 		uniq = append(uniq, id)
 	}
-	store, _ := createVectorStoreForDocDelete(ctx, kb, uid)
-	if store != nil {
+	withVectorStoreForDeleteOps(ctx, kb, uid, func(opCtx context.Context, store interfaces.VectorStore) {
 		ns := "kb_" + strconv.FormatUint(uint64(kb.ID), 10)
 		if len(uniq) > 0 {
-			_ = store.DeleteByIDs(ctx, uniq)
+			if err := store.DeleteByIDs(opCtx, uniq); err != nil {
+				global.LRAG_LOG.Warn("删除文档向量行失败（已跳过）", zap.Uint("documentId", docID), zap.Error(err))
+			}
 		}
-		_ = store.DeleteByMetadata(ctx, ns, "document_id", docID)
-	}
+		if err := store.DeleteByMetadata(opCtx, ns, "document_id", docID); err != nil {
+			global.LRAG_LOG.Warn("按 document_id 清理向量失败（已跳过）", zap.Uint("documentId", docID), zap.Error(err))
+		}
+	})
 	db.Where("document_id = ?", docID).Delete(&rag.RagChunk{})
 }
 
@@ -794,6 +798,15 @@ func (s *KnowledgeBaseService) DeleteDocument(ctx context.Context, uid uint, doc
 
 // createVectorStoreForDocDelete 为删除文档创建向量存储（仅用于 DeleteByMetadata）
 func createVectorStoreForDocDelete(ctx context.Context, kb *rag.RagKnowledgeBase, userID uint) (interfaces.VectorStore, error) {
+	if kb.VectorStoreID > 0 {
+		var vsCfg rag.RagVectorStoreConfig
+		if err := global.LRAG_DB.WithContext(ctx).Select("enabled").Where("id = ?", kb.VectorStoreID).First(&vsCfg).Error; err != nil {
+			return nil, fmt.Errorf("向量存储配置不存在: %w", err)
+		}
+		if !vsCfg.Enabled {
+			return nil, fmt.Errorf("向量存储配置已禁用")
+		}
+	}
 	emb, err := resolveEmbeddingConfig(ctx, kb, userID)
 	if err != nil {
 		return nil, err
@@ -810,6 +823,36 @@ func createVectorStoreForDocDelete(ctx context.Context, kb *rag.RagKnowledgeBase
 	}
 	ns := "kb_" + strconv.FormatUint(uint64(kb.ID), 10)
 	return createVectorStoreFromKB(ctx, kb, embedder, ns, emb.Dimensions)
+}
+
+// vectorStoreDeleteOpTimeout 删除路径上初始化/操作向量库的时限；配置错误或外部不可达时避免长时间阻塞 HTTP。
+const vectorStoreDeleteOpTimeout = 20 * time.Second
+
+// openVectorStoreForDeleteOrNil 限时创建向量存储；失败或超时返回 nil store，调用方应跳过向量删除并继续删库内数据。若 store 非 nil，必须调用 cancel 释放定时器。
+func openVectorStoreForDeleteOrNil(ctx context.Context, kb *rag.RagKnowledgeBase, userID uint) (store interfaces.VectorStore, opCtx context.Context, cancel context.CancelFunc) {
+	opCtx, cancel = context.WithTimeout(ctx, vectorStoreDeleteOpTimeout)
+	s, err := createVectorStoreForDocDelete(opCtx, kb, userID)
+	if err != nil {
+		global.LRAG_LOG.Warn("跳过向量存储删除（初始化失败或超时，可能为嵌入/向量配置错误）", zap.Uint("knowledgeBaseId", kb.ID), zap.Error(err))
+		cancel()
+		return nil, ctx, func() {}
+	}
+	if s == nil {
+		global.LRAG_LOG.Warn("跳过向量存储删除（向量存储未就绪或不支持的类型）", zap.Uint("knowledgeBaseId", kb.ID))
+		cancel()
+		return nil, ctx, func() {}
+	}
+	return s, opCtx, cancel
+}
+
+// withVectorStoreForDeleteOps 在限时内创建向量存储并执行 fn；失败时仅打日志，不执行 fn。
+func withVectorStoreForDeleteOps(ctx context.Context, kb *rag.RagKnowledgeBase, userID uint, fn func(opCtx context.Context, store interfaces.VectorStore)) {
+	store, opCtx, cancel := openVectorStoreForDeleteOrNil(ctx, kb, userID)
+	defer cancel()
+	if store == nil {
+		return
+	}
+	fn(opCtx, store)
 }
 
 // RetryDocument 重试解析文档（仅限 failed 状态）

@@ -73,7 +73,7 @@ func (s *KnowledgeBaseService) UpdateVectorStoreConfig(ctx context.Context, req 
 		updates["provider"] = req.Provider
 	}
 	if req.Config != nil {
-		updates["config"] = req.Config
+		updates["config"] = common.JSONMap(req.Config)
 	}
 	if req.Enabled != nil {
 		updates["enabled"] = *req.Enabled
@@ -214,7 +214,7 @@ func (s *KnowledgeBaseService) UpdateFileStorageConfig(ctx context.Context, req 
 		updates["provider"] = req.Provider
 	}
 	if req.Config != nil {
-		updates["config"] = req.Config
+		updates["config"] = common.JSONMap(req.Config)
 	}
 	if req.Enabled != nil {
 		updates["enabled"] = *req.Enabled

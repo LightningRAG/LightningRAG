@@ -53,3 +53,4 @@ web/.pnpm-debug.log
 /dist/
 /server/lightningrag
 /build/
+/server/config.dev.yaml

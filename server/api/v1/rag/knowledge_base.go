@@ -1,10 +1,12 @@
 package rag
 
 import (
+	"context"
 	"errors"
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/LightningRAG/LightningRAG/server/global"
 	"github.com/LightningRAG/LightningRAG/server/i18n"
@@ -188,7 +190,10 @@ func (k *KnowledgeBaseApi) DeleteDocument(c *gin.Context) {
 		return
 	}
 	uid := utils.GetUserID(c)
-	if err := knowledgeBaseService.DeleteDocument(c.Request.Context(), uid, req.ID); err != nil {
+	// 删除含向量与图谱清理，可能超过客户端/代理等待时间；不因客户端断开而取消，避免半删与 context canceled
+	ctx, cancel := context.WithTimeout(context.WithoutCancel(c.Request.Context()), 30*time.Minute)
+	defer cancel()
+	if err := knowledgeBaseService.DeleteDocument(ctx, uid, req.ID); err != nil {
 		global.LRAG_LOG.Error("删除文档失败", zap.Error(err))
 		response.FailWithError(c, err)
 		return
@@ -348,7 +353,9 @@ func (k *KnowledgeBaseApi) BatchDeleteDocuments(c *gin.Context) {
 		response.FailWithMessage(i18n.Msg(c, "common.not_logged_in"), c)
 		return
 	}
-	if err := knowledgeBaseService.BatchDeleteDocuments(c.Request.Context(), uid, req); err != nil {
+	ctx, cancel := context.WithTimeout(context.WithoutCancel(c.Request.Context()), 30*time.Minute)
+	defer cancel()
+	if err := knowledgeBaseService.BatchDeleteDocuments(ctx, uid, req); err != nil {
 		global.LRAG_LOG.Error("批量删除文档失败", zap.Error(err))
 		response.FailWithError(c, err)
 		return

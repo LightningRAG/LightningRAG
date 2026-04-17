@@ -33,6 +33,7 @@ func extractPlainFullPdfGo(data []byte) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("解析 PDF 失败: %w", err)
 	}
+	defer r.Close()
 	n, err := r.NumPages()
 	if err != nil {
 		return "", err
@@ -40,20 +41,28 @@ func extractPlainFullPdfGo(data []byte) (string, error) {
 	if n == 0 {
 		return "", fmt.Errorf("PDF 未提取到文本（可能是扫描件或图片型 PDF，需 OCR）")
 	}
+	// 与 pdf-go readtextadvanced 示例一致：每页 ExtractTextAdvanced，单页失败不阻断其余页
 	opts := lrpdf.ExtractTextOptions{}
-	parts := make([]string, 0, n)
+	var sb strings.Builder
 	for i := 0; i < n; i++ {
 		p, err := r.Page(i)
 		if err != nil {
-			return "", fmt.Errorf("第 %d 页: %w", i+1, err)
+			continue
 		}
 		txt, err := p.ExtractTextAdvanced(opts)
 		if err != nil {
-			return "", fmt.Errorf("第 %d 页文本: %w", i+1, err)
+			continue
 		}
-		parts = append(parts, strings.TrimSpace(txt))
+		t := strings.TrimSpace(txt)
+		if t == "" {
+			continue
+		}
+		if sb.Len() > 0 {
+			sb.WriteString("\n\n")
+		}
+		sb.WriteString(t)
 	}
-	s := strings.TrimSpace(strings.Join(parts, "\n\n"))
+	s := strings.TrimSpace(sb.String())
 	if s == "" {
 		return "", fmt.Errorf("PDF 未提取到文本（可能是扫描件或图片型 PDF，需 OCR）")
 	}
@@ -65,6 +74,7 @@ func extractPagesPdfGo(data []byte) ([]string, error) {
 	if err != nil {
 		return nil, fmt.Errorf("解析 PDF 失败: %w", err)
 	}
+	defer r.Close()
 	n, err := r.NumPages()
 	if err != nil {
 		return nil, err
@@ -74,11 +84,13 @@ func extractPagesPdfGo(data []byte) ([]string, error) {
 	for i := 0; i < n; i++ {
 		p, err := r.Page(i)
 		if err != nil {
-			return nil, fmt.Errorf("第 %d 页: %w", i+1, err)
+			out[i] = ""
+			continue
 		}
 		txt, err := p.ExtractTextAdvanced(opts)
 		if err != nil {
-			return nil, fmt.Errorf("第 %d 页文本: %w", i+1, err)
+			out[i] = ""
+			continue
 		}
 		out[i] = txt
 	}

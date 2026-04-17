@@ -154,7 +154,7 @@ mysql:
     log-zap: false
 #mysql:
 #    prefix: ""
-#    port: "5455"
+#    port: "13306"
 #    config: charset=utf8mb4&parseTime=True&loc=Local
 #    db-name: lrag
 #    username: root
