@@ -542,7 +542,7 @@
     rerankTopK: 0,
     pageIndexLlmId: 0,
     pageIndexLlmSource: 'admin',
-    useOcr: true,
+    useOcr: false,
     ocrId: 0,
     ocrSource: 'admin',
     useImageDescription: false,
