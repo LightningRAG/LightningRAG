@@ -22,6 +22,7 @@ export default {
       skipMain: 'Skip to main content',
       navMain: 'Main navigation',
       brandHome: 'LightningRAG home',
+      navToggle: 'Open or close the main navigation menu',
     },
     brand: { logoAlt: 'LightningRAG' },
     nav: {
@@ -105,6 +106,7 @@ export default {
       skipMain: '跳到主要内容',
       navMain: '主导航',
       brandHome: 'LightningRAG 首页',
+      navToggle: '打开或关闭主导航菜单',
     },
     brand: { logoAlt: 'LightningRAG' },
     nav: {
@@ -188,6 +190,7 @@ export default {
       skipMain: '跳到主要內容',
       navMain: '主要導覽',
       brandHome: 'LightningRAG 首頁',
+      navToggle: '打開或關閉主要導覽選單',
     },
     brand: { logoAlt: 'LightningRAG' },
     nav: {
@@ -273,6 +276,7 @@ export default {
       skipMain: 'Ir al contenido principal',
       navMain: 'Navegación principal',
       brandHome: 'Inicio de LightningRAG',
+      navToggle: 'Abrir o cerrar el menú de navegación principal',
     },
     brand: { logoAlt: 'LightningRAG' },
     nav: {
@@ -359,6 +363,7 @@ export default {
       skipMain: 'Aller au contenu principal',
       navMain: 'Navigation principale',
       brandHome: 'Accueil LightningRAG',
+      navToggle: 'Ouvrir ou fermer le menu de navigation principal',
     },
     brand: { logoAlt: 'LightningRAG' },
     nav: {
@@ -445,6 +450,7 @@ export default {
       skipMain: 'Zum Hauptinhalt springen',
       navMain: 'Hauptnavigation',
       brandHome: 'LightningRAG Startseite',
+      navToggle: 'Hauptnavigation öffnen oder schließen',
     },
     brand: { logoAlt: 'LightningRAG' },
     nav: {
@@ -530,6 +536,7 @@ export default {
       skipMain: 'メインコンテンツへスキップ',
       navMain: 'メインナビゲーション',
       brandHome: 'LightningRAG ホーム',
+      navToggle: 'メインナビゲーションメニューを開くまたは閉じる',
     },
     brand: { logoAlt: 'LightningRAG' },
     nav: {
@@ -613,6 +620,7 @@ export default {
       skipMain: '본문으로 건너뛰기',
       navMain: '주요 탐색',
       brandHome: 'LightningRAG 홈',
+      navToggle: '주요 탐색 메뉴 열기 또는 닫기',
     },
     brand: { logoAlt: 'LightningRAG' },
     nav: {
@@ -698,6 +706,7 @@ export default {
       skipMain: 'Ir para o conteúdo principal',
       navMain: 'Navegação principal',
       brandHome: 'Página inicial LightningRAG',
+      navToggle: 'Abrir ou fechar o menu de navegação principal',
     },
     brand: { logoAlt: 'LightningRAG' },
     nav: {
@@ -784,6 +793,7 @@ export default {
       skipMain: 'Перейти к основному содержимому',
       navMain: 'Основная навигация',
       brandHome: 'Главная LightningRAG',
+      navToggle: 'Открыть или закрыть главное меню навигации',
     },
     brand: { logoAlt: 'LightningRAG' },
     nav: {
@@ -870,6 +880,7 @@ export default {
       skipMain: 'Vai al contenuto principale',
       navMain: 'Navigazione principale',
       brandHome: 'Home LightningRAG',
+      navToggle: 'Apri o chiudi il menu di navigazione principale',
     },
     brand: { logoAlt: 'LightningRAG' },
     nav: {

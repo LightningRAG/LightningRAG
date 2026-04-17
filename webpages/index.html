@@ -76,7 +76,22 @@
           />
           <span>LightningRAG</span>
         </a>
-        <nav class="site-nav" aria-label="Main navigation" data-i18n-aria-label="a11y.navMain">
+        <button
+          type="button"
+          class="site-nav-toggle"
+          aria-expanded="false"
+          aria-controls="lr-site-nav"
+          data-i18n-aria-label="a11y.navToggle"
+          aria-label="Open or close the main navigation menu"
+        >
+          <span class="site-nav-toggle__bars" aria-hidden="true"></span>
+        </button>
+        <nav
+          id="lr-site-nav"
+          class="site-nav"
+          aria-label="Main navigation"
+          data-i18n-aria-label="a11y.navMain"
+        >
           <a href="#features" data-i18n="nav.features">Features</a>
           <a href="#advantages" data-i18n="nav.advantages">Advantages</a>
           <a href="articles/" data-i18n="nav.articles">Articles</a>
@@ -309,6 +324,7 @@
       </div>
     </footer>
 
+    <script defer src="js/site-nav.js"></script>
     <script type="module" src="js/home-i18n.js"></script>
   </body>
 </html>

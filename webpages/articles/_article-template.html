@@ -50,7 +50,16 @@
           />
           <span>LightningRAG</span>
         </a>
-        <nav class="site-nav" aria-label="主导航">
+        <button
+          type="button"
+          class="site-nav-toggle"
+          aria-expanded="false"
+          aria-controls="lr-site-nav"
+          aria-label="打开或关闭主导航菜单"
+        >
+          <span class="site-nav-toggle__bars" aria-hidden="true"></span>
+        </button>
+        <nav id="lr-site-nav" class="site-nav" aria-label="主导航">
           <a href="../index.html#features">产品特点</a>
           <a href="../index.html#advantages">核心优势</a>
           <a href="index.html">文章</a>
@@ -92,5 +101,6 @@
         </div>
       </div>
     </footer>
+    <script defer src="../js/site-nav.js"></script>
   </body>
 </html>

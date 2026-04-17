@@ -145,6 +145,141 @@ img {
   text-decoration: none;
 }
 
+/* 窄屏：汉堡按钮 + 可展开的纵向主导航 */
+.site-nav-toggle {
+  display: none;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--lr-border);
+  border-radius: var(--lr-radius);
+  background: var(--lr-surface);
+  color: var(--lr-text-muted);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.site-nav-toggle:hover {
+  border-color: var(--lr-primary);
+  color: var(--lr-primary);
+}
+
+.site-nav-toggle:focus-visible {
+  outline: 2px solid var(--lr-primary);
+  outline-offset: 2px;
+}
+
+.site-nav-toggle__bars {
+  position: relative;
+  display: block;
+  width: 1.125rem;
+  height: 2px;
+  background: currentColor;
+  border-radius: 1px;
+  transition: background 0.2s ease;
+}
+
+.site-nav-toggle__bars::before,
+.site-nav-toggle__bars::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: currentColor;
+  border-radius: 1px;
+  transition: transform 0.2s ease, top 0.2s ease;
+}
+
+.site-nav-toggle__bars::before {
+  top: -6px;
+}
+
+.site-nav-toggle__bars::after {
+  top: 6px;
+}
+
+body.lr-nav-open .site-nav-toggle__bars {
+  background: transparent;
+}
+
+body.lr-nav-open .site-nav-toggle__bars::before {
+  top: 0;
+  transform: rotate(45deg);
+}
+
+body.lr-nav-open .site-nav-toggle__bars::after {
+  top: 0;
+  transform: rotate(-45deg);
+}
+
+@media (max-width: 900px) {
+  .site-header {
+    height: auto;
+    min-height: var(--lr-header-h);
+  }
+
+  .site-header__inner {
+    flex-wrap: wrap;
+    row-gap: 0;
+    align-items: center;
+  }
+
+  .site-brand {
+    min-width: 0;
+    max-width: min(100%, 14rem);
+  }
+
+  .site-brand span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .site-nav-toggle {
+    display: inline-flex;
+    order: 2;
+    margin-left: auto;
+  }
+
+  .site-header__actions {
+    order: 3;
+    flex-shrink: 0;
+  }
+
+  .site-nav {
+    order: 4;
+    display: none;
+    width: 100%;
+    flex-basis: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    flex-wrap: nowrap;
+    gap: 0;
+    margin: 0;
+    padding: 0.35rem 0 0.75rem;
+    border-top: 1px solid var(--lr-border);
+  }
+
+  body.lr-nav-open .site-nav {
+    display: flex;
+  }
+
+  .site-nav a {
+    padding: 0.7rem 0.15rem;
+    font-size: 0.9375rem;
+    border-bottom: 1px solid var(--lr-border);
+  }
+
+  .site-nav a:last-child {
+    border-bottom: none;
+  }
+}
+
 /* —— 主按钮 —— */
 .btn {
   display: inline-flex;

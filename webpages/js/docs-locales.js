@@ -54,6 +54,7 @@ const EN = {
     skipMain: 'Skip to main content',
     navMain: 'Main navigation',
     brandHome: 'LightningRAG home',
+    navToggle: 'Open or close the main navigation menu',
   },
   brand: { logoAlt: 'LightningRAG' },
   nav: {
@@ -217,6 +218,7 @@ const ZH_CN = {
     skipMain: '跳到主要内容',
     navMain: '主导航',
     brandHome: 'LightningRAG 首页',
+    navToggle: '打开或关闭主导航菜单',
   },
   nav: {
     features: '产品特点',
@@ -371,6 +373,7 @@ const ZH_TW = {
     skipMain: '跳到主要內容',
     navMain: '主要導覽',
     brandHome: 'LightningRAG 首頁',
+    navToggle: '打開或關閉主要導覽選單',
   },
   nav: {
     features: '產品特點',
