@@ -80,7 +80,7 @@ export default {
       articles: 'Browse articles (updated over time)',
     },
     footer: {
-      copy: '© LightningRAG open-source community. All rights reserved.',
+      copy: '© LightningRAG open-source community. All rights reserved. 合肥云亿连',
       docs: 'Documentation',
       githubRepo: 'GitHub repository',
       articles: 'Articles',
@@ -164,7 +164,7 @@ export default {
       articles: '浏览文章（持续更新）',
     },
     footer: {
-      copy: '© LightningRAG 开源社区。保留所有权利。',
+      copy: '© LightningRAG 开源社区。保留所有权利。合肥云亿连',
       docs: '文档',
       githubRepo: 'GitHub 仓库',
       articles: '文章',
@@ -248,7 +248,7 @@ export default {
       articles: '瀏覽文章（持續更新）',
     },
     footer: {
-      copy: '© LightningRAG 開源社群。保留所有權利。',
+      copy: '© LightningRAG 開源社群。保留所有權利。合肥云亿连',
       docs: '文件',
       githubRepo: 'GitHub 儲存庫',
       articles: '文章',
@@ -335,7 +335,7 @@ export default {
       articles: 'Ver artículos (actualizados con el tiempo)',
     },
     footer: {
-      copy: '© Comunidad de código abierto LightningRAG. Todos los derechos reservados.',
+      copy: '© Comunidad de código abierto LightningRAG. Todos los derechos reservados. 合肥云亿连',
       docs: 'Documentación',
       githubRepo: 'Repositorio en GitHub',
       articles: 'Artículos',
@@ -422,7 +422,7 @@ export default {
       articles: 'Parcourir les articles (mis à jour au fil du temps)',
     },
     footer: {
-      copy: '© Communauté open source LightningRAG. Tous droits réservés.',
+      copy: '© Communauté open source LightningRAG. Tous droits réservés. 合肥云亿连',
       docs: 'Documentation',
       githubRepo: 'Dépôt GitHub',
       articles: 'Articles',
@@ -509,7 +509,7 @@ export default {
       articles: 'Artikel durchsuchen (fortlaufend aktualisiert)',
     },
     footer: {
-      copy: '© LightningRAG Open-Source-Community. Alle Rechte vorbehalten.',
+      copy: '© LightningRAG Open-Source-Community. Alle Rechte vorbehalten. 合肥云亿连',
       docs: 'Dokumentation',
       githubRepo: 'GitHub-Repository',
       articles: 'Artikel',
@@ -594,7 +594,7 @@ export default {
       articles: '記事を見る（随時更新）',
     },
     footer: {
-      copy: '© LightningRAG オープンソースコミュニティ。無断転載を禁じます。',
+      copy: '© LightningRAG オープンソースコミュニティ。無断転載を禁じます。合肥云亿连',
       docs: 'ドキュメント',
       githubRepo: 'GitHub リポジトリ',
       articles: '記事',
@@ -678,7 +678,7 @@ export default {
       articles: '글 보기(지속 업데이트)',
     },
     footer: {
-      copy: '© LightningRAG 오픈소스 커뮤니티. 무단 복제를 금합니다.',
+      copy: '© LightningRAG 오픈소스 커뮤니티. 무단 복제를 금합니다. 合肥云亿连',
       docs: '문서',
       githubRepo: 'GitHub 저장소',
       articles: '글',
@@ -765,7 +765,7 @@ export default {
       articles: 'Ver artigos (atualizados ao longo do tempo)',
     },
     footer: {
-      copy: '© Comunidade open source LightningRAG. Todos os direitos reservados.',
+      copy: '© Comunidade open source LightningRAG. Todos os direitos reservados. 合肥云亿连',
       docs: 'Documentação',
       githubRepo: 'Repositório no GitHub',
       articles: 'Artigos',
@@ -852,7 +852,7 @@ export default {
       articles: 'Статьи (обновляются со временем)',
     },
     footer: {
-      copy: '© Сообщество LightningRAG с открытым исходным кодом. Все права защищены.',
+      copy: '© Сообщество LightningRAG с открытым исходным кодом. Все права защищены. 合肥云亿连',
       docs: 'Документация',
       githubRepo: 'Репозиторий на GitHub',
       articles: 'Статьи',
@@ -939,7 +939,7 @@ export default {
       articles: 'Sfoglia gli articoli (aggiornati nel tempo)',
     },
     footer: {
-      copy: '© Comunità open source LightningRAG. Tutti i diritti riservati.',
+      copy: '© Comunità open source LightningRAG. Tutti i diritti riservati. 合肥云亿连',
       docs: 'Documentazione',
       githubRepo: 'Repository GitHub',
       articles: 'Articoli',

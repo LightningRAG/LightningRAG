@@ -73,7 +73,7 @@ const EN = {
   btn: { github: 'GitHub' },
   ui: { langAria: 'Language' },
   footer: {
-    copy: '© LightningRAG open-source community. All rights reserved.',
+    copy: '© LightningRAG open-source community. All rights reserved. 合肥云亿连',
     home: 'Home',
     docs: 'Documentation',
     articles: 'Articles',
@@ -235,7 +235,7 @@ const ZH_CN = {
   },
   ui: { langAria: '语言' },
   footer: {
-    copy: '© LightningRAG 开源社区。保留所有权利。',
+    copy: '© LightningRAG 开源社区。保留所有权利。合肥云亿连',
     home: '首页',
     docs: '文档',
     articles: '文章',
@@ -390,7 +390,7 @@ const ZH_TW = {
   },
   ui: { langAria: '語言' },
   footer: {
-    copy: '© LightningRAG 開源社群。保留所有權利。',
+    copy: '© LightningRAG 開源社群。保留所有權利。合肥云亿连',
     home: '首頁',
     docs: '文件',
     articles: '文章',
@@ -537,7 +537,7 @@ const ES = deepMerge(EN, {
   },
   ui: { langAria: 'Idioma' },
   footer: {
-    copy: '© Comunidad de código abierto LightningRAG. Todos los derechos reservados.',
+    copy: '© Comunidad de código abierto LightningRAG. Todos los derechos reservados. 合肥云亿连',
     home: 'Inicio',
     docs: 'Documentación',
     articles: 'Artículos',
@@ -656,7 +656,7 @@ const FR = deepMerge(EN, {
   },
   ui: { langAria: 'Langue' },
   footer: {
-    copy: '© Communauté open source LightningRAG. Tous droits réservés.',
+    copy: '© Communauté open source LightningRAG. Tous droits réservés. 合肥云亿连',
     home: 'Accueil',
     docs: 'Documentation',
     articles: 'Articles',
@@ -775,7 +775,7 @@ const DE = deepMerge(EN, {
   },
   ui: { langAria: 'Sprache' },
   footer: {
-    copy: '© LightningRAG Open-Source-Community. Alle Rechte vorbehalten.',
+    copy: '© LightningRAG Open-Source-Community. Alle Rechte vorbehalten. 合肥云亿连',
     home: 'Startseite',
     docs: 'Dokumentation',
     articles: 'Artikel',
@@ -889,7 +889,7 @@ const JA = deepMerge(EN, {
   },
   ui: { langAria: '言語' },
   footer: {
-    copy: '© LightningRAG オープンソースコミュニティ。無断転載を禁じます。',
+    copy: '© LightningRAG オープンソースコミュニティ。無断転載を禁じます。合肥云亿连',
     home: 'ホーム',
     docs: 'ドキュメント',
     articles: '記事',
@@ -1002,7 +1002,7 @@ const KO = deepMerge(EN, {
   },
   ui: { langAria: '언어' },
   footer: {
-    copy: '© LightningRAG 오픈소스 커뮤니티. 무단 복제를 금합니다.',
+    copy: '© LightningRAG 오픈소스 커뮤니티. 무단 복제를 금합니다. 合肥云亿连',
     home: '홈',
     docs: '문서',
     articles: '글',
@@ -1114,7 +1114,7 @@ const PT = deepMerge(EN, {
   },
   ui: { langAria: 'Idioma' },
   footer: {
-    copy: '© Comunidade open source LightningRAG. Todos os direitos reservados.',
+    copy: '© Comunidade open source LightningRAG. Todos os direitos reservados. 合肥云亿连',
     home: 'Início',
     docs: 'Documentação',
     articles: 'Artigos',
@@ -1228,7 +1228,7 @@ const RU = deepMerge(EN, {
   },
   ui: { langAria: 'Язык' },
   footer: {
-    copy: '© Сообщество LightningRAG с открытым исходным кодом. Все права защищены.',
+    copy: '© Сообщество LightningRAG с открытым исходным кодом. Все права защищены. 合肥云亿连',
     home: 'Главная',
     docs: 'Документация',
     articles: 'Статьи',
@@ -1338,7 +1338,7 @@ const IT = deepMerge(EN, {
   },
   ui: { langAria: 'Lingua' },
   footer: {
-    copy: '© Comunità open source LightningRAG. Tutti i diritti riservati.',
+    copy: '© Comunità open source LightningRAG. Tutti i diritti riservati. 合肥云亿连',
     home: 'Home',
     docs: 'Documentazione',
     articles: 'Articoli',
