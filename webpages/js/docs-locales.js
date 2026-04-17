@@ -43,7 +43,7 @@ const EN = {
   metaLicense: {
     title: 'Commercial license — LightningRAG',
     description:
-      'Purchase a commercial license or request a quote: contact LightningRAG for enterprise terms and branding notices.',
+      'Commercial license US$699 one-time lifetime. Contact LightningRAG for quotes, enterprise terms, and branding notices.',
   },
   metaPreview: {
     title: 'Product interface — LightningRAG',
@@ -106,6 +106,8 @@ const EN = {
     title: 'Commercial license',
     lead:
       'LightningRAG is open source under Apache License 2.0. Some production uses may require a commercial license—for example to comply with branding or attribution requirements described in the project notices.',
+    pricing:
+      'Commercial authorization: US$699 (USD) one-time payment, lifetime license.',
     p1:
       'To purchase a license, request a quote, or discuss enterprise terms, contact us using the email below. Please include your company or organization name, approximate deployment scale, and how you plan to use LightningRAG.',
     hContact: 'Contact',
@@ -204,7 +206,7 @@ const ZH_CN = {
   metaLicense: {
     title: '商用授权 — LightningRAG',
     description:
-      '购买商用授权或索取报价：通过下列方式联系 LightningRAG，了解企业条款与品牌标识相关约定。',
+      '商用授权人民币5000元终身；购买、报价与企业条款请通过下列方式联系 LightningRAG。',
   },
   metaPreview: {
     title: '产品界面 — LightningRAG',
@@ -261,6 +263,7 @@ const ZH_CN = {
     title: '商用授权',
     lead:
       'LightningRAG 以 Apache License 2.0 开源。部分生产环境使用可能需要另行取得商用授权，例如为满足项目中关于品牌展示或署名等声明的要求。',
+    pricing: '商用授权费用：人民币 5000 元，一次性付费，终身授权。',
     p1:
       '如需购买授权、索取报价或洽谈企业条款，请通过下方邮箱联系。建议在邮件中说明公司或组织名称、大致部署规模以及使用场景。',
     hContact: '联系方式',
@@ -357,7 +360,7 @@ const ZH_TW = {
   metaLicense: {
     title: '商用授權 — LightningRAG',
     description:
-      '購買商用授權或索取報價：透過下列方式聯絡 LightningRAG，了解企業條款與品牌標示相關約定。',
+      '商用授權 699 美元終身一次付清；購買、報價與企業條款請透過下列方式聯絡 LightningRAG。',
   },
   metaPreview: {
     title: '產品介面 — LightningRAG',
@@ -414,6 +417,7 @@ const ZH_TW = {
     title: '商用授權',
     lead:
       'LightningRAG 以 Apache License 2.0 開源。部分正式環境使用可能需要另行取得商用授權，例如為符合專案中關於品牌展示或署名等聲明的要求。',
+    pricing: '商用授權費用：699 美元，一次性付費，終身授權。',
     p1:
       '如需購買授權、索取報價或洽談企業條款，請透過下方電子郵件聯絡。建議於郵件中說明公司或組織名稱、大致部署規模以及使用情境。',
     hContact: '聯絡方式',
@@ -603,6 +607,10 @@ const ES = deepMerge(EN, {
     sec1:
       'JWT, rutas dinámicas y Casbin alinean menús y API con roles para despliegues privados.',
   },
+  pageLicense: {
+    pricing:
+      'Autorización comercial: 699 USD, pago único, licencia de por vida.',
+  },
 });
 
 const FR = deepMerge(EN, {
@@ -718,6 +726,10 @@ const FR = deepMerge(EN, {
     sec1:
       'JWT, routes dynamiques et Casbin alignent menus et API sur les rôles.',
   },
+  pageLicense: {
+    pricing:
+      'Autorisation commerciale : 699 USD, paiement unique, licence à vie.',
+  },
 });
 
 const DE = deepMerge(EN, {
@@ -828,6 +840,10 @@ const DE = deepMerge(EN, {
     securityH: 'Nutzer & Rechte',
     sec1: 'JWT, dynamische Routen und Casbin für Menüs und APIs nach Rollen.',
   },
+  pageLicense: {
+    pricing:
+      'Kommerzielle Lizenz: 699 USD einmalig, lebenslange Berechtigung.',
+  },
 });
 
 const JA = deepMerge(EN, {
@@ -937,6 +953,10 @@ const JA = deepMerge(EN, {
     securityH: 'ユーザーと権限',
     sec1: 'JWT・動的ルート・Casbin でメニューと API をロールに合わせる。',
   },
+  pageLicense: {
+    pricing:
+      '商用ライセンス：699 US ドル・一括払い・生涯ライセンス。',
+  },
 });
 
 const KO = deepMerge(EN, {
@@ -1045,6 +1065,9 @@ const KO = deepMerge(EN, {
       '캔버스에서 Begin, Retrieval, LLM, Message, 분기, HTTP 등 구성. 버전 저장 후 실행.',
     securityH: '사용자 및 권한',
     sec1: 'JWT, 동적 라우트, Casbin으로 메뉴·API를 역할에 맞춥니다.',
+  },
+  pageLicense: {
+    pricing: '상용 라이선스: 일시불 699 USD, 평생 라이선스.',
   },
 });
 
@@ -1161,6 +1184,10 @@ const PT = deepMerge(EN, {
     sec1:
       'JWT, rotas dinâmicas e Casbin alinham menus e APIs às funções.',
   },
+  pageLicense: {
+    pricing:
+      'Licença comercial: US$ 699 pagamento único, autorização vitalícia.',
+  },
 });
 
 const RU = deepMerge(EN, {
@@ -1267,6 +1294,10 @@ const RU = deepMerge(EN, {
     sec1:
       'JWT, динамические маршруты и Casbin связывают меню и API с ролями.',
   },
+  pageLicense: {
+    pricing:
+      'Коммерческая лицензия: 699 USD единовременно, пожизненная авторизация.',
+  },
 });
 
 const IT = deepMerge(EN, {
@@ -1372,6 +1403,10 @@ const IT = deepMerge(EN, {
     securityH: 'Utenti e permessi',
     sec1:
       'JWT, route dinamiche e Casbin allineano menu e API ai ruoli.',
+  },
+  pageLicense: {
+    pricing:
+      'Licenza commerciale: 699 USD in unica soluzione, autorizzazione a vita.',
   },
 });
 
