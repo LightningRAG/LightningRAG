@@ -6,12 +6,9 @@ import (
 	"github.com/LightningRAG/LightningRAG/server/service/rag/docparse"
 )
 
-// PDF 文本抽取由 docparse 统一实现（对齐 Ragflow）：
-//   - 默认：优先 pypdf（docparse/pypdfplain + references/pypdf），失败或正文为空再 ledongthuc/pdf。
-//   - LIGHTNINGRAG_PDF_ENGINE：pypdf | ledongthuc | thuc | auto（先 ledongthuc 再 pypdf）。
-// 环境变量：LIGHTNINGRAG_PYPDF_SRC、LIGHTNINGRAG_REPO_ROOT、LIGHTNINGRAG_PYTHON、
-// LIGHTNINGRAG_PDF_PASSWORD、LIGHTNINGRAG_PYPDF_EXTRACTION_MODE、页范围与 full 附加块、
-// LIGHTNINGRAG_PYPDF_STRICT、LIGHTNINGRAG_PYPDF_ROOT_RECOVERY_LIMIT 等见仓库文档与 pypdfplain 包注释。
+// PDF 文本抽取由 docparse 统一实现：
+//   - 默认：优先 github.com/lightningrag/pdf-go（每页 ExtractTextAdvanced），失败或正文为空再 ledongthuc/pdf。
+//   - LIGHTNINGRAG_PDF_ENGINE：pdfgo | pypdf（同 pdf-go）| ledongthuc | thuc | auto（先 ledongthuc 再 pdf-go）。
 
 // ParsePDFContent 从 PDF 文件中提取纯文本。
 func ParsePDFContent(r io.Reader) (string, error) {
@@ -41,7 +38,7 @@ func ParsePDFByPage(data []byte) ([]string, error) {
 // PDFPypdfDocInfo 为 pypdf 文档信息字段（与 docparse 一致）。
 type PDFPypdfDocInfo = docparse.PDFPypdfDocInfo
 
-// ExtractPDFPypdfDocInfo 使用 references/pypdf 读取文档信息字典（非 XMP）。
+// ExtractPDFPypdfDocInfo 读取文档信息字典（非 XMP）；由 pdf-go 实现。
 func ExtractPDFPypdfDocInfo(data []byte) (*PDFPypdfDocInfo, error) {
 	return docparse.ExtractPDFPypdfDocInfo(data)
 }
@@ -61,7 +58,7 @@ func ExtractPDFPypdfAttachmentNames(data []byte) ([]string, error) {
 	return docparse.ExtractPDFPypdfAttachmentNames(data)
 }
 
-// ExtractPDFPypdfXMPMetadata 返回 pypdf xmp_metadata 摘要字段。
+// ExtractPDFPypdfXMPMetadata 返回 XMP 摘要字段（pdf-go 解析）。
 func ExtractPDFPypdfXMPMetadata(data []byte) (map[string]any, error) {
 	return docparse.ExtractPDFPypdfXMPMetadata(data)
 }

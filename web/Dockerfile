@@ -18,7 +18,7 @@ ENV NODE_OPTIONS="--max-old-space-size=3072"
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install && pnpm run build
 
 FROM nginx:alpine
-LABEL maintainer="bypanghu@163.com"
-COPY --from=base  /app/.docker-compose/nginx/conf.d/my.conf /etc/nginx/conf.d/my.conf
+LABEL maintainer="newfarry@126.com"
+COPY --from=build /app/.docker-compose/nginx/conf.d/my.conf /etc/nginx/conf.d/my.conf
 COPY --from=build /app/dist /usr/share/nginx/html
 EXPOSE 8080

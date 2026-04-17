@@ -31,6 +31,7 @@ require (
 	github.com/jung-kurt/gofpdf v1.16.2
 	github.com/kuhahalong/ddgsearch v0.0.0-20241205095054-d297f4189b6e
 	github.com/ledongthuc/pdf v0.0.0-20250511090121-5959a4027728
+	github.com/lightningrag/pdf-go v1.0.0
 	github.com/mark3labs/mcp-go v0.41.1
 	github.com/mholt/archives v0.1.1
 	github.com/microsoft/go-mssqldb v1.8.0

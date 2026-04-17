@@ -2,12 +2,9 @@ package docparse
 
 import (
 	"bytes"
-	"fmt"
-	"os/exec"
 	"strings"
 	"testing"
 
-	"github.com/LightningRAG/LightningRAG/server/service/rag/docparse/pypdfplain"
 	"github.com/jung-kurt/gofpdf"
 	"github.com/ledongthuc/pdf"
 )
@@ -50,41 +47,45 @@ func TestParsePDFFromBytes_LedongthucGofpdf(t *testing.T) {
 	}
 }
 
-func TestParsePDFFromBytes_PypdfWhenAvailable(t *testing.T) {
-	root, err := pypdfplain.FindPypdfSourceRoot()
-	if err != nil {
-		t.Skip("no references/pypdf:", err)
-	}
-	_ = root
-	py := pypdfplain.PythonExecutable()
-	if _, err := exec.LookPath(py); err != nil {
-		t.Skip("python not on PATH:", py, err)
-	}
+func gofpdfMinimalPDF(t *testing.T) []byte {
+	t.Helper()
 	p := gofpdf.New("P", "mm", "A4", "")
 	p.AddPage()
 	p.SetFont("Helvetica", "", 14)
-	p.Cell(40, 10, "PYPDF_ENGINE_LINE")
+	p.Cell(40, 10, "PDF_GO_ENGINE_LINE")
 	var buf bytes.Buffer
 	if err := p.Output(&buf); err != nil {
 		t.Fatal(err)
 	}
-	t.Setenv("LIGHTNINGRAG_PDF_ENGINE", "pypdf")
-	s, err := ParsePDFFromBytes(buf.Bytes())
+	return buf.Bytes()
+}
+
+func TestParsePDFFromBytes_PdfGoEngine(t *testing.T) {
+	t.Setenv("LIGHTNINGRAG_PDF_ENGINE", "pdfgo")
+	data := gofpdfMinimalPDF(t)
+	s, err := ParsePDFFromBytes(data)
 	if err != nil {
-		t.Skip("pypdf extract failed (install Python 3.9+ or set LIGHTNINGRAG_PYTHON):", err)
+		t.Fatal(err)
 	}
-	if !strings.Contains(s, "PYPDF_ENGINE_LINE") {
-		t.Fatalf("pypdf missing text: %q", s)
+	if !strings.Contains(s, "PDF_GO_ENGINE_LINE") {
+		t.Fatalf("pdf-go missing text: %q", s)
 	}
 }
 
-func TestGetPDFPageCount_PypdfWhenAvailable(t *testing.T) {
-	if _, err := pypdfplain.FindPypdfSourceRoot(); err != nil {
-		t.Skip("no references/pypdf:", err)
+func TestParsePDFFromBytes_PypdfEnvAliasPdfGo(t *testing.T) {
+	t.Setenv("LIGHTNINGRAG_PDF_ENGINE", "pypdf")
+	data := gofpdfMinimalPDF(t)
+	s, err := ParsePDFFromBytes(data)
+	if err != nil {
+		t.Fatal(err)
 	}
-	if _, err := exec.LookPath(pypdfplain.PythonExecutable()); err != nil {
-		t.Skip("no python:", err)
+	if !strings.Contains(s, "PDF_GO_ENGINE_LINE") {
+		t.Fatalf("pypdf alias missing text: %q", s)
 	}
+}
+
+func TestGetPDFPageCount_PdfGo(t *testing.T) {
+	t.Setenv("LIGHTNINGRAG_PDF_ENGINE", "pdfgo")
 	p := gofpdf.New("P", "mm", "A4", "")
 	p.AddPage()
 	p.SetFont("Helvetica", "", 12)
@@ -95,23 +96,17 @@ func TestGetPDFPageCount_PypdfWhenAvailable(t *testing.T) {
 	if err := p.Output(&buf); err != nil {
 		t.Fatal(err)
 	}
-	t.Setenv("LIGHTNINGRAG_PDF_ENGINE", "pypdf")
 	n, err := GetPDFPageCount(buf.Bytes())
 	if err != nil {
-		t.Skip("pypdf meta:", err)
+		t.Fatal(err)
 	}
 	if n != 2 {
 		t.Fatalf("page count: want 2, got %d", n)
 	}
 }
 
-func TestParsePDFByPage_PypdfWhenAvailable(t *testing.T) {
-	if _, err := pypdfplain.FindPypdfSourceRoot(); err != nil {
-		t.Skip("no references/pypdf:", err)
-	}
-	if _, err := exec.LookPath(pypdfplain.PythonExecutable()); err != nil {
-		t.Skip("no python:", err)
-	}
+func TestParsePDFByPage_PdfGo(t *testing.T) {
+	t.Setenv("LIGHTNINGRAG_PDF_ENGINE", "pdfgo")
 	p := gofpdf.New("P", "mm", "A4", "")
 	p.AddPage()
 	p.SetFont("Helvetica", "", 12)
@@ -122,10 +117,9 @@ func TestParsePDFByPage_PypdfWhenAvailable(t *testing.T) {
 	if err := p.Output(&buf); err != nil {
 		t.Fatal(err)
 	}
-	t.Setenv("LIGHTNINGRAG_PDF_ENGINE", "pypdf")
 	pages, err := ParsePDFByPage(buf.Bytes())
 	if err != nil {
-		t.Skip("pypdf pages:", err)
+		t.Fatal(err)
 	}
 	if len(pages) != 2 {
 		t.Fatalf("want 2 pages, got %d", len(pages))
@@ -135,13 +129,7 @@ func TestParsePDFByPage_PypdfWhenAvailable(t *testing.T) {
 	}
 }
 
-func TestExtractPDFPypdfDocInfo_WhenAvailable(t *testing.T) {
-	if _, err := pypdfplain.FindPypdfSourceRoot(); err != nil {
-		t.Skip("no references/pypdf:", err)
-	}
-	if _, err := exec.LookPath(pypdfplain.PythonExecutable()); err != nil {
-		t.Skip("no python:", err)
-	}
+func TestExtractPDFPypdfDocInfo_PdfGo(t *testing.T) {
 	p := gofpdf.New("P", "mm", "A4", "")
 	p.AddPage()
 	p.SetFont("Helvetica", "", 12)
@@ -152,7 +140,7 @@ func TestExtractPDFPypdfDocInfo_WhenAvailable(t *testing.T) {
 	}
 	info, err := ExtractPDFPypdfDocInfo(buf.Bytes())
 	if err != nil {
-		t.Skip("docinfo:", err)
+		t.Fatal(err)
 	}
 	if info.PageCount < 1 {
 		t.Fatalf("page_count: %+v", info)
@@ -162,45 +150,7 @@ func TestExtractPDFPypdfDocInfo_WhenAvailable(t *testing.T) {
 	}
 }
 
-func TestPypdfPageRangeFromEnv_WhenAvailable(t *testing.T) {
-	if _, err := pypdfplain.FindPypdfSourceRoot(); err != nil {
-		t.Skip("no references/pypdf:", err)
-	}
-	if _, err := exec.LookPath(pypdfplain.PythonExecutable()); err != nil {
-		t.Skip("no python:", err)
-	}
-	p := gofpdf.New("P", "mm", "A4", "")
-	for i := 1; i <= 3; i++ {
-		p.AddPage()
-		p.SetFont("Helvetica", "", 12)
-		p.Cell(40, 10, fmt.Sprintf("MARKER_%d", i))
-	}
-	var buf bytes.Buffer
-	if err := p.Output(&buf); err != nil {
-		t.Fatal(err)
-	}
-	t.Setenv("LIGHTNINGRAG_PDF_ENGINE", "pypdf")
-	t.Setenv("LIGHTNINGRAG_PDF_FROM_PAGE", "1")
-	t.Setenv("LIGHTNINGRAG_PDF_TO_PAGE", "2")
-	pages, err := ParsePDFByPage(buf.Bytes())
-	if err != nil {
-		t.Skip("pypdf pages range:", err)
-	}
-	if len(pages) != 1 {
-		t.Fatalf("range [1,2) want 1 page, got %d %#v", len(pages), pages)
-	}
-	if !strings.Contains(pages[0], "MARKER_2") || strings.Contains(pages[0], "MARKER_1") {
-		t.Fatalf("expected only page 2 content: %q", pages[0])
-	}
-}
-
-func TestExtractPDFPypdfPageLabels_WhenAvailable(t *testing.T) {
-	if _, err := pypdfplain.FindPypdfSourceRoot(); err != nil {
-		t.Skip("no references/pypdf:", err)
-	}
-	if _, err := exec.LookPath(pypdfplain.PythonExecutable()); err != nil {
-		t.Skip("no python:", err)
-	}
+func TestExtractPDFPypdfPageLabels_PdfGo(t *testing.T) {
 	p := gofpdf.New("P", "mm", "A4", "")
 	p.AddPage()
 	p.SetFont("Helvetica", "", 12)
@@ -211,20 +161,14 @@ func TestExtractPDFPypdfPageLabels_WhenAvailable(t *testing.T) {
 	}
 	labels, err := ExtractPDFPypdfPageLabels(buf.Bytes())
 	if err != nil {
-		t.Skip("pagelabels:", err)
+		t.Fatal(err)
 	}
 	if len(labels) != 1 {
 		t.Fatalf("want 1 page label, got %d %#v", len(labels), labels)
 	}
 }
 
-func TestExtractPDFPypdfURILinks_WhenAvailable(t *testing.T) {
-	if _, err := pypdfplain.FindPypdfSourceRoot(); err != nil {
-		t.Skip("no references/pypdf:", err)
-	}
-	if _, err := exec.LookPath(pypdfplain.PythonExecutable()); err != nil {
-		t.Skip("no python:", err)
-	}
+func TestExtractPDFPypdfURILinks_PdfGo(t *testing.T) {
 	p := gofpdf.New("P", "mm", "A4", "")
 	p.AddPage()
 	p.SetFont("Helvetica", "", 12)
@@ -235,20 +179,14 @@ func TestExtractPDFPypdfURILinks_WhenAvailable(t *testing.T) {
 	}
 	links, err := ExtractPDFPypdfURILinks(buf.Bytes())
 	if err != nil {
-		t.Skip("links:", err)
+		t.Fatal(err)
 	}
 	if links == nil {
 		t.Fatal("expected non-nil slice")
 	}
 }
 
-func TestExtractPDFPypdfAttachmentNames_WhenAvailable(t *testing.T) {
-	if _, err := pypdfplain.FindPypdfSourceRoot(); err != nil {
-		t.Skip("no references/pypdf:", err)
-	}
-	if _, err := exec.LookPath(pypdfplain.PythonExecutable()); err != nil {
-		t.Skip("no python:", err)
-	}
+func TestExtractPDFPypdfAttachmentNames_PdfGo(t *testing.T) {
 	p := gofpdf.New("P", "mm", "A4", "")
 	p.AddPage()
 	var buf bytes.Buffer
@@ -257,20 +195,14 @@ func TestExtractPDFPypdfAttachmentNames_WhenAvailable(t *testing.T) {
 	}
 	names, err := ExtractPDFPypdfAttachmentNames(buf.Bytes())
 	if err != nil {
-		t.Skip("attachmentnames:", err)
+		t.Fatal(err)
 	}
 	if names == nil {
 		t.Fatal("expected non-nil slice")
 	}
 }
 
-func TestExtractPDFPypdfXMPMetadata_WhenAvailable(t *testing.T) {
-	if _, err := pypdfplain.FindPypdfSourceRoot(); err != nil {
-		t.Skip("no references/pypdf:", err)
-	}
-	if _, err := exec.LookPath(pypdfplain.PythonExecutable()); err != nil {
-		t.Skip("no python:", err)
-	}
+func TestExtractPDFPypdfXMPMetadata_PdfGo(t *testing.T) {
 	p := gofpdf.New("P", "mm", "A4", "")
 	p.AddPage()
 	var buf bytes.Buffer
@@ -279,7 +211,7 @@ func TestExtractPDFPypdfXMPMetadata_WhenAvailable(t *testing.T) {
 	}
 	xmp, err := ExtractPDFPypdfXMPMetadata(buf.Bytes())
 	if err != nil {
-		t.Skip("xmp:", err)
+		t.Fatal(err)
 	}
 	_ = xmp
 }
