@@ -24,7 +24,7 @@ gomod:
 
 before:
   hooks:
-    - sh -c "cd web && npm install --no-audit --no-fund && npm run build"
+    - sh -c "cd web && pnpm install --frozen-lockfile && pnpm run build"
     - bash scripts/sync-web-dist.sh
 
 builds:
